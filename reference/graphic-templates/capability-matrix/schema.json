@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://federal-proposal-assistant.local/graphic-templates/capability-matrix.v1.json",
+  "title": "Capability Matrix Graphic — Data Schema",
+  "description": "Input data for reference/graphic-templates/capability-matrix/template.html. Produces a two-column capability table: left column lists capabilities (what we do), right column lists corresponding proof points or evidence (how we prove it). Optionally supports a 3-column layout (Capability / Requirement / Evidence). Dark canvas with accent header row; rows alternate subtle panel backgrounds for readability.",
+  "type": "object",
+  "required": ["title", "columns", "rows", "footer"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Title bar (e.g., '[Your Company] Capability -> Proof Point Map'). All caps applied by CSS.",
+      "maxLength": 120
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "Optional one-line framing.",
+      "maxLength": 180
+    },
+    "columns": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "description": "Column headers. 2 columns = Capability / Evidence. 3 columns = Capability / Requirement / Evidence. Order matters.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string", "maxLength": 40, "description": "Column header label (CAPS recommended)."},
+          "accent": {"type": "boolean", "default": false, "description": "If true, this column gets the accent color treatment. Typically only the first (Capability) column."}
+        }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 12,
+      "description": "Matrix rows — one row per capability. Each row's `cells` array length must equal `columns` array length.",
+      "items": {
+        "type": "object",
+        "required": ["cells"],
+        "properties": {
+          "cells": {
+            "type": "array",
+            "description": "Cell text in column order. 2 items for 2-column layout, 3 for 3-column.",
+            "items": {"type": "string", "maxLength": 220}
+          },
+          "highlight": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, this row is highlighted (accent tint) — use sparingly, typically for the strongest proof point."
+          }
+        }
+      }
+    },
+    "footer": {
+      "type": "object",
+      "required": ["brand", "tagline"],
+      "properties": {
+        "brand": {"type": "string", "maxLength": 40},
+        "tagline": {"type": "string", "maxLength": 160},
+        "website": {"type": "string", "maxLength": 60}
+      }
+    },
+    "theme": {
+      "type": "object",
+      "description": "Optional color overrides. Framework defaults are a neutral dark canvas with red accent — override these to match your brand by passing your own values, or copy the template to my-company/graphic-templates/ for a permanent override.",
+      "properties": {
+        "bg": {"type": "string", "default": "#191c20"},
+        "accent": {"type": "string", "default": "#ee2929"},
+        "panel": {"type": "string", "default": "#2a2d31"},
+        "panel_alt": {"type": "string", "default": "#23262a"},
+        "panel_border": {"type": "string", "default": "#393939"},
+        "text": {"type": "string", "default": "#ffffff"},
+        "muted": {"type": "string", "default": "#9f9f9f"}
+      }
+    }
+  }
+}

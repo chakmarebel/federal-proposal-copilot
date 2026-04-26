@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{title}}</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:{{theme.bg}};font-family:'Segoe UI',system-ui,sans-serif;
+       display:flex;justify-content:center;align-items:center;
+       min-height:100vh;padding:20px}
+  .canvas{width:1200px;background:{{theme.bg}};border-radius:12px;
+          overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+  .header{padding:18px 32px 10px;text-align:center;border-bottom:2px solid {{theme.accent}}}
+  .header h1{color:{{theme.text}};font-size:26px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+  .header p{color:{{theme.muted}};font-size:14px;margin-top:4px}
+  .matrix{width:100%;border-collapse:collapse;background:{{theme.bg}}}
+  .matrix th{
+    background:{{theme.accent}};color:{{theme.bg}};
+    font-size:15px;font-weight:700;letter-spacing:.5px;
+    padding:12px 20px;text-align:left;text-transform:uppercase;
+    border-right:2px solid {{theme.bg}};
+  }
+  .matrix th.plain{background:{{theme.panel}};color:{{theme.text}};border-bottom:2px solid {{theme.accent}}}
+  .matrix th:last-child{border-right:none}
+  .matrix td{
+    padding:14px 20px;vertical-align:top;
+    font-size:16px;line-height:1.45;color:{{theme.text}};
+    border-right:1px solid {{theme.panel_border}};
+    border-bottom:1px solid {{theme.panel_border}};
+  }
+  .matrix td:last-child{border-right:none}
+  .matrix tr.alt td{background:{{theme.panel_alt}}}
+  .matrix tr.alt:not(.alt) td,.matrix tr:not(.alt) td{background:{{theme.panel}}}
+  .matrix tr.highlight td{
+    background:rgba(238,41,41,.12);
+    border-top:1px solid {{theme.accent}};
+    border-bottom:1px solid {{theme.accent}};
+  }
+  .matrix tr.highlight td:first-child{color:{{theme.accent}};font-weight:600}
+  .matrix td:first-child{font-weight:600;color:{{theme.text}};width:34%}
+  .footer{background:#111315;padding:10px 32px;display:flex;justify-content:space-between;align-items:center}
+  .footer .brand{color:{{theme.accent}};font-size:13px;font-weight:700;opacity:.85;letter-spacing:.5px}
+  .footer .tagline{color:{{theme.muted}};font-size:12px}
+  .footer .site{color:{{theme.muted}};font-size:12px}
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <div class="header">
+    <h1>{{title}}</h1>
+    <p>{{subtitle}}</p>
+  </div>
+
+  <table class="matrix">
+    <thead>
+      <tr>
+        <!-- REPEAT:columns -->
+        <th class="{{item.plain_class}}">{{item.name}}</th>
+        <!-- END:REPEAT -->
+      </tr>
+    </thead>
+    <tbody>
+      <!-- REPEAT:rows -->
+      <tr class="{{item.row_class}}">
+        <!-- REPEAT:item.cells -->
+        <td>{{item}}</td>
+        <!-- END:REPEAT -->
+      </tr>
+      <!-- END:REPEAT -->
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <span class="brand">{{footer.brand}}</span>
+    <span class="tagline">{{footer.tagline}}</span>
+    <span class="site">{{footer.website}}</span>
+  </div>
+
+</div>
+</body>
+</html>

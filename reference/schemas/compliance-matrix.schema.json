@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://federal-proposal-assistant.local/schemas/compliance-matrix.v1.json",
+  "title": "Compliance Matrix",
+  "description": "Structured sidecar for working/compliance-matrix.md. Produced by /compliance-check. Tracks every requirement from the solicitation's compliance sources through section assignment and draft status.",
+  "type": "object",
+  "required": ["schema_version", "generated_by", "generated_at", "proposal_name", "type_id", "compliance_sources", "rows", "summary"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "compliance-matrix.v1",
+      "description": "Must match the schema $id version"
+    },
+    "generated_by": {
+      "type": "string",
+      "description": "Name of the skill that produced this file (e.g., 'compliance-check', 'proposal-manager')"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of generation"
+    },
+    "proposal_name": {
+      "type": "string"
+    },
+    "type_id": {
+      "type": "string",
+      "description": "The proposal-type from working/proposal-type.md (e.g., 'far-rfp', 'cso-brief')"
+    },
+    "compliance_sources": {
+      "type": "array",
+      "description": "Parts of the solicitation that drive the matrix, from the proposal type's frontmatter",
+      "items": {
+        "type": "string",
+        "enum": ["L", "M", "PWS", "SOW", "SOO", "EvaluationCriteria", "AreasOfInterest", "TopicDescription", "RFIQuestions", "SourcesSoughtQuestions", "CDRLs", "Reps&Certs", "MilestoneSchedule", "StatementOfObjectives", "NegotiatedTerms", "TechnicalTopics", "ResearchObjectives", "Phase1Results", "NAICS", "SizeStandard"]
+      }
+    },
+    "rows": {
+      "type": "array",
+      "description": "One entry per 'shall' or scored requirement from the compliance sources",
+      "items": {
+        "type": "object",
+        "required": ["req_id", "source", "requirement", "status"],
+        "properties": {
+          "req_id": {
+            "type": "string",
+            "description": "Stable identifier (e.g., 'L.3.2.1', 'M.2', 'PWS.4.5')"
+          },
+          "source": {
+            "type": "string",
+            "description": "Which compliance source this row came from"
+          },
+          "requirement": {
+            "type": "string",
+            "description": "Verbatim requirement text, trimmed to <=200 chars"
+          },
+          "section": {
+            "type": ["string", "null"],
+            "description": "Where in the draft this requirement is addressed (e.g., 'drafts/technical-approach.md §3.2'). Null if not yet assigned."
+          },
+          "page": {
+            "type": ["string", "null"],
+            "description": "Page reference in the final document. Typically 'TBD' until final assembly."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Planned", "Drafted", "Covered", "Partial", "Exception", "Gap"],
+            "description": "Current coverage status. See compliance-matrix-template.md for definitions."
+          },
+          "evidence": {
+            "type": ["string", "null"],
+            "description": "1-line note pointing to supporting evidence in the draft, or rationale for Exception status"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "description": "Evidence ledger references (Phase C). Optional in Phase A.",
+            "items": {"type": "string", "pattern": "^EV-[0-9]+$"}
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total", "covered", "drafted", "planned", "partial", "exception", "gap"],
+      "properties": {
+        "total": {"type": "integer", "minimum": 0},
+        "covered": {"type": "integer", "minimum": 0},
+        "drafted": {"type": "integer", "minimum": 0},
+        "planned": {"type": "integer", "minimum": 0},
+        "partial": {"type": "integer", "minimum": 0},
+        "exception": {"type": "integer", "minimum": 0},
+        "gap": {"type": "integer", "minimum": 0},
+        "coverage_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of rows with Status in {Covered, Drafted} out of total"
+        }
+      }
+    }
+  }
+}

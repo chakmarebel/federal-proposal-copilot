@@ -1,0 +1,97 @@
+{
+  "_comment": "EXAMPLE ledger — fictional company Acme AI. Shows the shape a real my-company/evidence-ledger.json should take. DO NOT ship this as your actual ledger; seed your own from my-company/past-performance.md and capabilities.md.",
+  "schema_version": "evidence-ledger.v1",
+  "generated_at": "2026-04-22T16:00:00Z",
+  "owner": "Acme AI (example, fictional)",
+  "items": [
+    {
+      "id": "EV-001",
+      "type": "capability_claim",
+      "summary": "On-device LLM inference with no cloud dependency",
+      "detail": "Acme AI platform performs all generative inference on-device. No cloud API calls, no connectivity required during operation. Core architectural property, not a retrofit.",
+      "source_file": "my-company/capabilities.md",
+      "source_anchor": "§Core Capabilities",
+      "relevance_tags": ["ddil", "on-device", "disconnected", "air-gap"],
+      "approval_status": "approved",
+      "proof_strength": "high",
+      "created_at": "2026-01-15T00:00:00Z"
+    },
+    {
+      "id": "EV-022",
+      "type": "customer_deployment",
+      "summary": "14-month DDIL deployment at [redacted DoD customer]",
+      "detail": "Platform deployed across 4 forward locations supporting 18 operators. Continuous operation March 2025 - April 2026, zero-connectivity mode, no cloud dependency. No unplanned outages; operator-reported utility ratings consistently high.",
+      "source_file": "my-company/past-performance.md",
+      "source_anchor": "§USASOC Deployment",
+      "contract_number": "(example — W56HZV-25-X-XXXX)",
+      "customer": "[redacted DoD customer]",
+      "contract_value_usd": 2400000,
+      "period_of_performance": "2025-03 to 2026-04 (ongoing)",
+      "relevance_tags": ["ddil", "on-device", "inference", "sf", "forward-deployed"],
+      "approval_status": "approved",
+      "cpars_rating": "Very Good",
+      "proof_strength": "highest",
+      "created_at": "2026-04-22T16:00:00Z"
+    },
+    {
+      "id": "EV-031",
+      "type": "named_personnel",
+      "summary": "Dr. Jane Doe — PI on three DARPA programs in adjacent topics",
+      "detail": "Principal Investigator for MS3, CCU, and Assured Autonomy. Ten years of neuro-symbolic AI research. TS/SCI clearance. Proposed as technical lead.",
+      "source_file": "my-company/past-performance.md",
+      "source_anchor": "§Key Personnel — Dr. Doe",
+      "relevance_tags": ["darpa", "neuro-symbolic", "ml-ar", "key-personnel"],
+      "approval_status": "approved",
+      "proof_strength": "medium",
+      "created_at": "2026-03-01T00:00:00Z"
+    },
+    {
+      "id": "EV-042",
+      "type": "commercial_sales",
+      "summary": "$4M ARR across non-government customers in regulated sectors",
+      "detail": "Commercial customer base in financial services and healthcare. Supports FAR 2.101 commercial-item determination for CSO procurements.",
+      "source_file": "my-company/capabilities.md",
+      "source_anchor": "§Commercial Traction",
+      "relevance_tags": ["commercial-item", "far-2.101", "cso", "revenue"],
+      "approval_status": "approved",
+      "proof_strength": "high",
+      "created_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "EV-055",
+      "type": "internal_benchmark",
+      "summary": "LoRA adapter fine-tuning pipeline delivers specialized adapter in 60 days",
+      "detail": "Measured from adapter spec handoff to operational deployment at prior customer. Four adapter sets delivered across 2025 for different mission sets.",
+      "source_file": "my-company/capabilities.md",
+      "source_anchor": "§Adapter Pipeline",
+      "relevance_tags": ["adapter", "lora", "fine-tuning", "specialization"],
+      "approval_status": "approved",
+      "proof_strength": "medium",
+      "created_at": "2026-02-15T00:00:00Z"
+    },
+    {
+      "id": "EV-067",
+      "type": "capability_claim",
+      "summary": "FedRAMP Moderate ATO in final stages; IL5 roadmap defined",
+      "detail": "FedRAMP Moderate 3PAO assessment completed Q1 2026; ATO expected Q3 2026. IL5 roadmap targets completion 18 months post-award with detailed plan available. Interim compensating controls documented.",
+      "source_file": "my-company/capabilities.md",
+      "source_anchor": "§Security Posture",
+      "relevance_tags": ["fedramp", "il5", "ato", "cui", "security"],
+      "approval_status": "approved",
+      "proof_strength": "medium",
+      "created_at": "2026-03-10T00:00:00Z"
+    },
+    {
+      "id": "EV-099",
+      "type": "risk_assertion",
+      "summary": "Cloud-dependent solutions fail in DDIL operational tempo",
+      "detail": "Even intermittent cloud connectivity — for 'telemetry' or 'model updates' — breaks operational continuity in contested environments. Used to ghost cloud-retrofit competitors without naming them.",
+      "source_file": "my-company/capabilities.md",
+      "source_anchor": "§DDIL Architecture",
+      "relevance_tags": ["ddil", "ghosting", "cloud-retrofit", "contested-environments"],
+      "approval_status": "approved",
+      "proof_strength": "medium",
+      "created_at": "2026-02-01T00:00:00Z"
+    }
+  ]
+}

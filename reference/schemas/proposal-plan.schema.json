@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://federal-proposal-assistant.local/schemas/proposal-plan.v1.json",
+  "title": "Proposal Plan",
+  "description": "Structured sidecar for working/proposal-plan.md. Produced by /proposal-manager. Captures opportunity classification, evaluation factors, win themes, discriminators, ghosting targets, bid/no-bid assessment, and open questions as machine-readable data.",
+  "type": "object",
+  "required": ["schema_version", "generated_by", "generated_at", "proposal_name", "type_id"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "proposal-plan.v1"
+    },
+    "generated_by": {"type": "string"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "proposal_name": {"type": "string"},
+    "type_id": {"type": "string"},
+
+    "classification": {
+      "type": "object",
+      "description": "Opportunity classification from proposal-manager Step 1",
+      "properties": {
+        "vehicle": {"type": "string", "description": "FAR / BAA / CSO / OTA / SBIR / RFI / SourcesSought / IDIQ / unsolicited"},
+        "contract_type": {"type": "string", "description": "FFP / CPFF / CPIF / T&M / etc."},
+        "competition": {"type": "string", "description": "Full-and-open / SB set-aside / 8(a) / limited-source / sole-source"},
+        "incumbent": {"type": ["string", "null"]},
+        "evaluation_approach": {"type": "string", "description": "best-value / LPTA / merit-review / etc."}
+      }
+    },
+
+    "response_requirements": {
+      "type": "object",
+      "description": "Required sections, page limits, formatting constraints",
+      "properties": {
+        "total_page_limit": {"type": ["string", "integer", "null"]},
+        "font_size_min": {"type": ["string", "null"]},
+        "required_sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "source": {"type": "string", "description": "e.g., 'CSO §Submission'"},
+              "limit": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    },
+
+    "evaluation_factors": {
+      "type": "array",
+      "description": "Scoring factors extracted from Section M or equivalent",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "importance_rank"],
+        "properties": {
+          "id": {"type": "string", "description": "Stable identifier (e.g., 'EF-1', 'M.1')"},
+          "name": {"type": "string"},
+          "importance_rank": {
+            "type": ["integer", "string"],
+            "description": "1 = most important. Or descriptive string ('Most Important', 'Gate')"
+          },
+          "weight": {"type": ["string", "number", "null"], "description": "Explicit weight if stated; null if order-of-importance only"},
+          "evaluation_standard": {"type": "string"},
+          "source_anchor": {"type": "string", "description": "Where in solicitation this is defined"},
+          "our_strength": {"type": "string", "enum": ["STRONG", "MODERATE", "WEAK", "UNKNOWN"]},
+          "subfactors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {"type": "string"},
+                "name": {"type": "string"},
+                "our_strength": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "win_themes": {
+      "type": "array",
+      "description": "Win themes — strategic messages reinforced in every major section",
+      "items": {
+        "type": "object",
+        "required": ["id", "statement"],
+        "properties": {
+          "id": {"type": "string", "description": "e.g., 'WT-1'"},
+          "statement": {"type": "string", "description": "The theme in proposal voice"},
+          "rationale": {"type": "string", "description": "Why this theme wins"},
+          "evaluation_factor_refs": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Which evaluation factors this theme reinforces"
+          }
+        }
+      }
+    },
+
+    "discriminators": {
+      "type": "array",
+      "description": "Claims we make that competitors cannot credibly match — each with proof point",
+      "items": {
+        "type": "object",
+        "required": ["id", "claim"],
+        "properties": {
+          "id": {"type": "string", "description": "e.g., 'DS-1'"},
+          "claim": {"type": "string"},
+          "proof_point": {"type": "string", "description": "Short description of the evidence (Phase A). In Phase C, evidence_refs points to evidence ledger IDs."},
+          "evidence_refs": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^EV-[0-9]+$"},
+            "description": "Evidence ledger references (Phase C)"
+          },
+          "evaluation_factor_ref": {"type": "string"},
+          "evidence_type": {
+            "type": "string",
+            "enum": ["deployed_customer", "independent_benchmark", "cpars_or_ppq", "published_research", "internal_benchmark", "named_personnel", "certification", "commercial_sales", "product_demo", "analyst_mention", "unsupported"]
+          }
+        }
+      }
+    },
+
+    "ghosting_targets": {
+      "type": "array",
+      "description": "Known competitor weaknesses to subtly contrast with our approach",
+      "items": {
+        "type": "object",
+        "properties": {
+          "competitor_pattern": {"type": "string", "description": "Generic category — never name the competitor"},
+          "weakness": {"type": "string"},
+          "our_framing": {"type": "string", "description": "The positive claim we make that implicitly contrasts"}
+        }
+      }
+    },
+
+    "bid_nobid": {
+      "type": "object",
+      "required": ["decision", "rationale"],
+      "properties": {
+        "decision": {"type": "string", "enum": ["GO", "NO-GO", "CONDITIONAL", "HOLD"]},
+        "rationale": {"type": "string"},
+        "conditions": {"type": "array", "items": {"type": "string"}, "description": "For CONDITIONAL decisions, what must be true"}
+      }
+    },
+
+    "assumptions": {
+      "type": "array",
+      "items": {"type": "object", "properties": {"id": {"type": "string"}, "assumption": {"type": "string"}, "impact_if_wrong": {"type": "string"}}}
+    },
+
+    "open_questions": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+
+    "due_date": {"type": ["string", "null"], "format": "date"},
+    "customer_name": {"type": ["string", "null"]},
+    "agency": {"type": ["string", "null"]}
+  }
+}

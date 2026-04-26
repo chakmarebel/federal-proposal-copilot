@@ -1,0 +1,35 @@
+# ─────────────────────────────────────────────────────────────────
+# Proprietary / per-company content — NEVER push to GitHub
+# ─────────────────────────────────────────────────────────────────
+
+# Company knowledge base: CAGE, UEI, capabilities, past performance,
+# past proposals, brand palette, product PDFs. All company IP.
+my-company/
+
+# Active and past proposal workspaces: solicitations, customer context,
+# drafts, reviews, pricing, teaming strategy — all sensitive.
+proposals/
+
+# Personal Claude Code settings (may contain paths, tokens, allow-lists)
+.claude/settings.local.json
+
+# ─────────────────────────────────────────────────────────────────
+# Local build artifacts — not source
+# ─────────────────────────────────────────────────────────────────
+
+# Node deps installed inside a proposal (e.g., puppeteer for HTML→PNG)
+**/node_modules/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# ─────────────────────────────────────────────────────────────────
+# OS / editor noise
+# ─────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~

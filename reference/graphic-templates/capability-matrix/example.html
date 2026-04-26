@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Capability → Proof Point Map</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#191c20;font-family:'Segoe UI',system-ui,sans-serif;
+       display:flex;justify-content:center;align-items:center;
+       min-height:100vh;padding:20px}
+  .canvas{width:1200px;background:#191c20;border-radius:12px;
+          overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+  .header{padding:18px 32px 10px;text-align:center;border-bottom:2px solid #ee2929}
+  .header h1{color:#ffffff;font-size:26px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+  .header p{color:#9f9f9f;font-size:14px;margin-top:4px}
+  .matrix{width:100%;border-collapse:collapse;background:#191c20}
+  .matrix th{
+    background:#ee2929;color:#191c20;
+    font-size:15px;font-weight:700;letter-spacing:.5px;
+    padding:12px 20px;text-align:left;text-transform:uppercase;
+    border-right:2px solid #191c20;
+  }
+  .matrix th.plain{background:#2a2d31;color:#ffffff;border-bottom:2px solid #ee2929}
+  .matrix th:last-child{border-right:none}
+  .matrix td{
+    padding:14px 20px;vertical-align:top;
+    font-size:16px;line-height:1.45;color:#ffffff;
+    border-right:1px solid #393939;
+    border-bottom:1px solid #393939;
+  }
+  .matrix td:last-child{border-right:none}
+  .matrix tr.alt td{background:#23262a}
+  .matrix tr.alt:not(.alt) td,.matrix tr:not(.alt) td{background:#2a2d31}
+  .matrix tr.highlight td{
+    background:rgba(238,41,41,.12);
+    border-top:1px solid #ee2929;
+    border-bottom:1px solid #ee2929;
+  }
+  .matrix tr.highlight td:first-child{color:#ee2929;font-weight:600}
+  .matrix td:first-child{font-weight:600;color:#ffffff;width:34%}
+  .footer{background:#111315;padding:10px 32px;display:flex;justify-content:space-between;align-items:center}
+  .footer .brand{color:#ee2929;font-size:13px;font-weight:700;opacity:.85;letter-spacing:.5px}
+  .footer .tagline{color:#9f9f9f;font-size:12px}
+  .footer .site{color:#9f9f9f;font-size:12px}
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <div class="header">
+    <h1>Capability → Proof Point Map</h1>
+    <p>Every commitment in this proposal traces to deployed evidence or peer-reviewed research</p>
+  </div>
+
+  <table class="matrix">
+    <thead>
+      <tr>
+        
+        <th class="">Capability</th>
+        
+        <th class="plain">Evidence & Proof Point</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr class="">
+        <!-- REPEAT:item.cells -->
+        <td>{'cells': ['On-device inference in DDIL environments', 'Deployed at 1st, 7th, and 10th Special Forces Groups under the SOF AI Pilot — operational today'], 'row_class': '', 'highlight': False}</td>
+        
+      <tr class="alt">
+        <!-- REPEAT:item.cells -->
+        <td>{'cells': ['Military task performance matching cloud-class models', 'Published research: small on-device model matches or exceeds GPT-5 on military benchmarks at 95%+ statistical significance'], 'row_class': 'alt', 'highlight': False}</td>
+        
+      <tr class="">
+        <!-- REPEAT:item.cells -->
+        <td>{'cells': ['Rapid mission-specific specialization (LoRA)', 'Five production MOS/AFSC adapters shipped (Logistics, Combat Medic, Combat Arms, Acquisitions, Cyber)'], 'row_class': '', 'highlight': False}</td>
+        
+      <tr class="alt">
+        <!-- REPEAT:item.cells -->
+        <td>{'cells': ['Multi-platform deployment (laptops, edge servers, TAK, fly-away kits)', 'Active deployments spanning SOF schoolhouse (SWCS) and conventional force (4th ID NGC2)'], 'row_class': 'alt', 'highlight': False}</td>
+        
+      <tr class="">
+        <!-- REPEAT:item.cells -->
+        <td>{'cells': ['Research credibility in military AI domain', 'First-of-its-kind military LLM refusal benchmark (MilDeflect) — peer-reviewed, established baseline for the field'], 'row_class': '', 'highlight': True}</td>
+        
+      <tr class="alt">
+        <!-- REPEAT:item.cells -->
+        <td>{'cells': ['Direct procurement path', "CDAO Tradewinds 'Awardable' status + SAM.gov active (CAGE 9Z176 / UEI SLZTJUA8DBD3)"], 'row_class': 'alt', 'highlight': False}</td>
+        
+      </tr>
+      <!-- END:REPEAT -->
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <span class="brand">EDGE AI</span>
+    <span class="tagline">Every capability cited, every claim backed by deployed evidence or peer-reviewed research</span>
+    <span class="site">example.com</span>
+  </div>
+
+</div>
+</body>
+</html>

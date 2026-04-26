@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://federal-proposal-assistant.local/schemas/evidence-ledger.v1.json",
+  "title": "Evidence Ledger",
+  "description": "Per-company library of approved proof points available for citation in any proposal. Each entry gets a stable ID (EV-###) that drafts reference via inline HTML comments. Location: my-company/evidence-ledger.json (user-local, gitignored). Consumed by proposal-writer (picks citations), /evidence-check (diffs citations vs. ledger), and red-team-review Gold Team (scores unsupported claims).",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "items"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "evidence-ledger.v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update. Humans may edit this file directly; the timestamp marks the last human or skill-driven update."
+    },
+    "owner": {
+      "type": "string",
+      "description": "Company name (e.g., 'Your Company, Inc.'). Optional but recommended."
+    },
+    "items": {
+      "type": "array",
+      "description": "Evidence items available for citation. Items are append-only in practice — once approved for a proposal, they stay in the ledger. Superseded items get status='retired' rather than deleted.",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "summary", "approval_status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^EV-[0-9]{3,4}$",
+            "description": "Stable identifier, e.g., 'EV-022'. Three or four digits. Never reused after retirement."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "past_performance",
+              "customer_deployment",
+              "cpars_rating",
+              "ppq_narrative",
+              "benchmark_result",
+              "independent_validation",
+              "published_research",
+              "patent",
+              "internal_benchmark",
+              "named_personnel",
+              "personnel_credential",
+              "partnership",
+              "certification",
+              "commercial_sales",
+              "product_demo",
+              "analyst_mention",
+              "capability_claim",
+              "risk_assertion",
+              "customer_fact",
+              "pricing_assumption"
+            ],
+            "description": "Category of evidence. Roughly ranked by credibility (past_performance through partnership are strong; product_demo and analyst_mention are weaker)."
+          },
+          "summary": {
+            "type": "string",
+            "description": "One-sentence human-readable description. Displayed in the writer's citation picker."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Longer-form explanation of the evidence. Optional. Used by writer when drafting the claim's supporting prose."
+          },
+          "source_file": {
+            "type": ["string", "null"],
+            "description": "Path (relative to repo root) to the authoritative source document for this evidence, e.g., 'my-company/past-performance.md' or 'my-company/artifacts/product-datasheet.pdf'."
+          },
+          "source_anchor": {
+            "type": ["string", "null"],
+            "description": "Where in source_file to find the evidence (e.g., section heading, page number)."
+          },
+          "contract_number": {
+            "type": ["string", "null"],
+            "description": "For past_performance / customer_deployment / cpars_rating — the contract / award number if releasable."
+          },
+          "customer": {
+            "type": ["string", "null"],
+            "description": "Named customer organization. Use the redacted/approved form if the real customer name can't be used externally."
+          },
+          "contract_value_usd": {
+            "type": ["number", "null"],
+            "minimum": 0
+          },
+          "period_of_performance": {
+            "type": ["string", "null"],
+            "description": "e.g., '2024-01 to 2025-06', '14 months ongoing'"
+          },
+          "relevance_tags": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Tags to help the writer surface this evidence for the right sections (e.g., 'ddil', 'on-device', 'il5', 'adapter-specialization', 'sf', 'psyop')."
+          },
+          "approval_status": {
+            "type": "string",
+            "enum": ["approved", "pending_review", "retired", "restricted"],
+            "description": "approved = cleared for citation. pending_review = don't cite yet. retired = superseded/stale — do not cite. restricted = cleared only for specific classification/distribution contexts."
+          },
+          "restrictions": {
+            "type": "string",
+            "description": "If approval_status=restricted, describe what contexts allow citation (e.g., 'Government-only distribution; do not use in commercial or CSO proposals')."
+          },
+          "cpars_rating": {
+            "type": ["string", "null"],
+            "enum": ["Exceptional", "Very Good", "Satisfactory", "Marginal", "Unsatisfactory", null],
+            "description": "For type=cpars_rating — the CPARS-style rating. Used by past-performance skill for confidence scoring."
+          },
+          "proof_strength": {
+            "type": "string",
+            "enum": ["highest", "high", "medium", "low"],
+            "description": "Evidence credibility tier from reference/proposal-writing-patterns.md. Deployed customer references = highest; internal demos / analyst mentions = low."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "retired_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "retired_reason": {
+            "type": ["string", "null"]
+          }
+        }
+      }
+    }
+  }
+}

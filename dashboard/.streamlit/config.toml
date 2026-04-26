@@ -1,0 +1,16 @@
+[server]
+# Local-only — don't expose on network
+address = "127.0.0.1"
+port = 8501
+headless = false
+fileWatcherType = "auto"
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#1F4E79"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F5F7FA"
+textColor = "#1A1A1A"
+font = "sans serif"

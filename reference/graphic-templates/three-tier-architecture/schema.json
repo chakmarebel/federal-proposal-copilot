@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://federal-proposal-assistant.local/graphic-templates/three-tier-architecture.v1.json",
+  "title": "Three-Tier Architecture Graphic — Data Schema",
+  "description": "Input data for reference/graphic-templates/three-tier-architecture/template.html. Produces a dark-canvas, red-accent architecture diagram with three horizontal tiers (Enterprise → GCC/Theater → Tactical Edge), security/DDIL boundaries between tiers, and a footer strip. The bottom (Edge) tier gets accent treatment (red border, red fill tint) to emphasize it as the proposal's center of gravity.",
+  "type": "object",
+  "required": ["title", "subtitle", "tiers", "boundaries", "footer"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Main title across the top — ~8-12 words. All caps applied by CSS, no need to uppercase in data.",
+      "maxLength": 120
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "One-line sentence under the title. Context / positioning.",
+      "maxLength": 200
+    },
+    "tiers": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "Exactly 3 tiers, in visual order: top (Enterprise), middle (GCC/Theater), bottom (Tactical Edge — accented). Order MATTERS.",
+      "items": {
+        "type": "object",
+        "required": ["name", "subtitle", "components", "pill"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Tier name (e.g., 'ENTERPRISE TIER'). 3-4 words max.",
+            "maxLength": 60
+          },
+          "subtitle": {
+            "type": "string",
+            "description": "Middle-dot-separated list of examples (e.g., 'CDAO · Pentagon · National Labs'). 3-5 items.",
+            "maxLength": 140
+          },
+          "components": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "Exactly 4 component labels — one per column in this tier. 2-5 words each. Positions are SVG-fixed, so array index = column.",
+            "items": {"type": "string", "maxLength": 40}
+          },
+          "pill": {
+            "type": "string",
+            "description": "The highlighted pill/badge at the bottom of this tier (e.g., 'ENTERPRISE MODEL REGISTRY'). All caps applied by CSS.",
+            "maxLength": 60
+          }
+        }
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Exactly 2 boundaries — one between tier 0 and tier 1, one between tier 1 and tier 2. Each describes the transition (security boundary, DDIL boundary, etc.) and the arrow labels in both directions.",
+      "items": {
+        "type": "object",
+        "required": ["label", "down_arrow_label", "up_arrow_label"],
+        "properties": {
+          "label": {"type": "string", "description": "Badge text on the boundary line (e.g., 'SECURITY BOUNDARY').", "maxLength": 40},
+          "down_arrow_label": {"type": "string", "description": "Label on the downward arrow (flow from upper tier to lower). 1-3 words.", "maxLength": 30},
+          "up_arrow_label": {"type": "string", "description": "Label on the upward arrow (flow from lower tier to upper). 1-3 words.", "maxLength": 30}
+        }
+      }
+    },
+    "footer": {
+      "type": "object",
+      "required": ["brand", "tagline"],
+      "properties": {
+        "brand": {"type": "string", "description": "Company brand shorthand in footer-left (e.g., 'YOUR COMPANY').", "maxLength": 40},
+        "tagline": {"type": "string", "description": "One-sentence positioning line in footer-center.", "maxLength": 160},
+        "website": {"type": "string", "description": "Optional website in footer-right.", "maxLength": 60}
+      }
+    },
+    "theme": {
+      "type": "object",
+      "description": "Optional color overrides. Framework defaults are a neutral dark canvas with red accent.",
+      "properties": {
+        "bg": {"type": "string", "default": "#191c20"},
+        "accent": {"type": "string", "default": "#ee2929"},
+        "panel": {"type": "string", "default": "#2a2d31"},
+        "panel_border": {"type": "string", "default": "#393939"},
+        "text": {"type": "string", "default": "#ffffff"},
+        "muted": {"type": "string", "default": "#9f9f9f"}
+      }
+    }
+  }
+}

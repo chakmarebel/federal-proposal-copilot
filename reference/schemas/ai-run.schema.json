@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://federal-proposal-assistant.local/schemas/ai-run.v1.json",
+  "title": "AI Run Entry",
+  "description": "One line in working/ai-runs.jsonl — a JSON Lines file where each line is one AI model invocation. Appended to by every content-producing skill. Consumed by the Phase B dashboard for spend tracking and by the smoke test for skill-hygiene validation.",
+  "type": "object",
+  "required": ["schema_version", "timestamp", "skill", "proposal_id"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "ai-run.v1"},
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "skill": {
+      "type": "string",
+      "description": "Which skill made this AI call"
+    },
+    "proposal_id": {
+      "type": "string",
+      "description": "Proposal slug (matches the proposals/<slug>/ directory name)"
+    },
+    "job_type": {
+      "type": "string",
+      "enum": ["extraction", "planning", "drafting", "review", "suggestion", "other"],
+      "description": "Categorization of what the AI call was for (aligns with v2 doc's job taxonomy)"
+    },
+    "provider": {
+      "type": "string",
+      "enum": ["anthropic", "openai", "azure-openai", "bedrock", "local", "unknown"],
+      "default": "anthropic"
+    },
+    "model": {
+      "type": ["string", "null"],
+      "description": "Model ID (e.g., 'claude-opus-4-7', 'claude-sonnet-4-6')"
+    },
+    "prompt_version": {
+      "type": ["string", "null"],
+      "description": "Optional version tag of the prompt used (for reproducibility)"
+    },
+    "input_tokens_estimate": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "description": "Estimated input tokens. Phase A: best-effort estimate. Phase B+: real counts when available from SDK."
+    },
+    "output_tokens_estimate": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "cost_estimate_usd": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "description": "Estimated USD cost based on current model pricing. Derived from tokens * rate."
+    },
+    "latency_ms": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "cache_hit": {
+      "type": ["boolean", "null"],
+      "description": "Whether this invocation hit the prompt cache (Phase E+ when caching is wired in)"
+    },
+    "inputs": {
+      "type": "array",
+      "description": "List of input files or identifiers the call operated on (for audit / fingerprint)",
+      "items": {"type": "string"}
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-form notes. Used in Phase A before real token counts are available to record approximations or context."
+    }
+  }
+}

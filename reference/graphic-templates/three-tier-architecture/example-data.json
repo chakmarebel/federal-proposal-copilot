@@ -1,0 +1,65 @@
+{
+  "_comment": "Example data for three-tier-architecture/template.html. Fictional generic example — a neutral 'edge AI ecosystem' pattern that demonstrates every placeholder. Replace with your actual content when authoring a real proposal graphic.",
+  "title": "Where Edge AI Fits — The Three-Tier AI Ecosystem",
+  "subtitle": "Enterprise AI investments reach the tactical edge — and operational learning returns up the chain",
+  "tiers": [
+    {
+      "name": "ENTERPRISE TIER",
+      "subtitle": "HQ · National Labs · Cloud Infrastructure · Policy Bodies",
+      "components": [
+        "Frontier Model Development",
+        "Security & Governance",
+        "Training Data Aggregation",
+        "Policy & Standards"
+      ],
+      "pill": "ENTERPRISE MODEL REGISTRY"
+    },
+    {
+      "name": "GCC / THEATER TIER",
+      "subtitle": "Theater Commands · Research Labs · IC Programs",
+      "components": [
+        "Mission-Specific Fine-Tuning",
+        "Benchmark & Evaluation",
+        "LoRA Adapter Creation",
+        "Data Curation & Validation"
+      ],
+      "pill": "GCC MODEL REGISTRY"
+    },
+    {
+      "name": "TACTICAL EDGE — EDGE AI",
+      "subtitle": "Forward Deployed · DDIL · Air-Gapped · On-Device",
+      "components": [
+        "Secure On-Device Inference",
+        "Mission Agentic Workflows",
+        "Operator Decision Support",
+        "Structured Data Capture"
+      ],
+      "pill": "NO CLOUD DEPENDENCY · NO DATA EGRESS"
+    }
+  ],
+  "boundaries": [
+    {
+      "label": "SECURITY BOUNDARY",
+      "down_arrow_label": "Approved Models",
+      "up_arrow_label": "Operational Data"
+    },
+    {
+      "label": "DDIL BOUNDARY",
+      "down_arrow_label": "Models + LoRAs",
+      "up_arrow_label": "Store & Forward"
+    }
+  ],
+  "footer": {
+    "brand": "EDGE AI",
+    "tagline": "Edge AI closes the gap between enterprise investment and operational use — in any environment",
+    "website": "example.com"
+  },
+  "theme": {
+    "bg": "#191c20",
+    "accent": "#ee2929",
+    "panel": "#2a2d31",
+    "panel_border": "#393939",
+    "text": "#ffffff",
+    "muted": "#9f9f9f"
+  }
+}

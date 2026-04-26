@@ -1,0 +1,73 @@
+{
+  "_comment": "Example data for capability-matrix template. Fictional 'edge AI capability → proof point' matrix, 6 rows, 2 columns. Replace with your actual capabilities and evidence citations when authoring a real proposal graphic.",
+  "title": "Capability → Proof Point Map",
+  "subtitle": "Every commitment in this proposal traces to deployed evidence or peer-reviewed research",
+  "columns": [
+    {"name": "Capability", "accent": true, "plain_class": ""},
+    {"name": "Evidence & Proof Point", "accent": false, "plain_class": "plain"}
+  ],
+  "rows": [
+    {
+      "cells": [
+        "On-device inference in DDIL environments",
+        "Deployed at 1st, 7th, and 10th Special Forces Groups under the SOF AI Pilot — operational today"
+      ],
+      "row_class": "",
+      "highlight": false
+    },
+    {
+      "cells": [
+        "Military task performance matching cloud-class models",
+        "Published research: small on-device model matches or exceeds GPT-5 on military benchmarks at 95%+ statistical significance"
+      ],
+      "row_class": "alt",
+      "highlight": false
+    },
+    {
+      "cells": [
+        "Rapid mission-specific specialization (LoRA)",
+        "Five production MOS/AFSC adapters shipped (Logistics, Combat Medic, Combat Arms, Acquisitions, Cyber)"
+      ],
+      "row_class": "",
+      "highlight": false
+    },
+    {
+      "cells": [
+        "Multi-platform deployment (laptops, edge servers, TAK, fly-away kits)",
+        "Active deployments spanning SOF schoolhouse (SWCS) and conventional force (4th ID NGC2)"
+      ],
+      "row_class": "alt",
+      "highlight": false
+    },
+    {
+      "cells": [
+        "Research credibility in military AI domain",
+        "First-of-its-kind military LLM refusal benchmark (MilDeflect) — peer-reviewed, established baseline for the field"
+      ],
+      "row_class": "",
+      "highlight": true
+    },
+    {
+      "cells": [
+        "Direct procurement path",
+        "CDAO Tradewinds 'Awardable' status + SAM.gov active (CAGE 9Z176 / UEI SLZTJUA8DBD3)"
+      ],
+      "row_class": "alt",
+      "highlight": false
+    }
+  ],
+  "footer": {
+    "brand": "EDGE AI",
+    "tagline": "Every capability cited, every claim backed by deployed evidence or peer-reviewed research",
+    "website": "example.com"
+  },
+  "theme": {
+    "bg": "#191c20",
+    "accent": "#ee2929",
+    "panel": "#2a2d31",
+    "panel_alt": "#23262a",
+    "panel_border": "#393939",
+    "text": "#ffffff",
+    "muted": "#9f9f9f"
+  }
+}

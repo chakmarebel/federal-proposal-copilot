@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://federal-proposal-assistant.local/schemas/activity-entry.v1.json",
+  "title": "Activity Entry",
+  "description": "Machine-readable shape of one line in working/activity.md. The markdown file is the canonical human-readable form; this schema documents how each line maps to structured fields for dashboard / tooling consumers.",
+  "type": "object",
+  "required": ["timestamp", "skill", "summary"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "activity-entry.v1"},
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp (the '## YYYY-MM-DD HH:MM' prefix in the markdown line)"
+    },
+    "skill": {
+      "type": "string",
+      "description": "The skill name (e.g., 'proposal-manager', 'red-team-review')"
+    },
+    "mode": {
+      "type": ["string", "null"],
+      "description": "Optional mode marker for skills with sub-modes (e.g., 'pink', 'red', 'gold', 'white-glove' for red-team-review)"
+    },
+    "summary": {
+      "type": "string",
+      "description": "One-line human-readable summary of what happened"
+    },
+    "output_path": {
+      "type": ["string", "null"],
+      "description": "Path to the primary output file(s) produced by this invocation"
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Skill-specific structured metrics (optional, extensible)",
+      "additionalProperties": true
+    }
+  }
+}
