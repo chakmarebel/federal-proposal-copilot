@@ -63,6 +63,7 @@ If any required input is missing, explicitly state it.
 - **Include eval/benchmarking as a capability.** Mission-representative evaluation — building statistically significant test sets that reflect warfighter needs — is a differentiator worth calling out in the architecture concept.
 - **Position data capture as optional.** When describing operational data feedback loops, frame data capture as an opportunity ("when operational data is available, it can be leveraged") rather than a requirement. This avoids triggering security/privacy concerns.
 - **Identify boilerplate blocks early.** Company description, CAGE/UEI/NAICS, past performance, distribution statements — flag these as reusable blocks in the architecture phase so writers don't reinvent them.
+- **Architecture graphics must pass 8.5×11 print legibility.** Anticipate that diagrams will embed at full-column width (6.5") in the proposal — every label, axis tick, and component name must be readable at ≥10pt rendered. The `proposal-graphics` skill enforces font-size minimums during rendering; the architect's job is to keep the architecture concept simple enough that 10pt-readable labels actually fit. If a tier has 12 components each requiring 4 lines of text, the architecture is too dense — simplify before handoff to graphics. See `proposal-graphics` SKILL.md §"Legibility for 8.5×11 proposal embedding" for the canvas + embed sizing rule.
 
 ## Requirement Matrix Format
 | ID | Requirement | Source | Explicit/Implicit | Response Approach | Capability Source | Gap/Risk |

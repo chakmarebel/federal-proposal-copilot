@@ -159,7 +159,7 @@ chrome --headless --disable-gpu --screenshot="graphics/rendered/fig1-architectur
 Target sizing:
 - **Logical size:** 1200 × 800 (landscape) or 1000 × 1200 (portrait)
 - **Device scale factor:** 2 (for print-quality Retina output)
-- **Final PNG size:** 2400 × 1600 (landscape) — embeds at ~5" wide in Word at 480 DPI equivalent
+- **Final PNG size:** 2400 × 1600 (landscape) — embeds at **6.5" wide** (full column on 8.5×11 page with 1" margins) by default. See "Legibility for 8.5×11 proposal embedding" below for the canvas/embed sizing rule that drives all minimum font sizes.
 
 Run this step at the end of graphic creation. `/export-proposal` will verify each PNG exists and regenerate any missing ones before building the Word doc.
 
@@ -172,13 +172,49 @@ When the proposal type or user requests a briefing deck (e.g., OTA kickoff brief
 - **Write rendered HTML graphics to `graphics/`** (top-level, not inside `inputs/`)
 - **Render each HTML to PNG in `graphics/rendered/`** at 2x DPI before calling graphics done
 - **Never embed action captions inside the graphic** — captions live in the Word doc text so the writer can control numbering and cross-references
-- **Every graphic must be legible at half-page print scale** — this is non-negotiable
+- **Every graphic must be legible when embedded in an 8.5×11 proposal at full-column width** — see "Legibility for 8.5×11 proposal embedding" below for the binding rule. Non-negotiable.
+
+## Legibility for 8.5×11 proposal embedding (mandatory)
+
+**Target: ≥10pt rendered body text** for any graphic embedded in an 8.5×11 federal proposal. Headings ≥12pt, titles ≥18pt, captions ≥9pt. Below these thresholds the graphic fails the print-legibility test and gets flagged by White Glove review.
+
+### The pixel-to-point math
+
+For a canvas of `W` logical pixels embedded at `E` inches wide, each logical pixel renders at `(E × 72) ÷ W` points.
+
+Solve for the logical pixel size needed: `logical_px = target_pt × W ÷ (E × 72)`.
+
+> ⚠ **Why this matters:** the framework's earlier default — 1200-logical-px canvas embedded at 5" wide — produced **0.30 pt per logical pixel**, so an 18px label rendered as a 5.4pt sliver. That is illegible on paper. Always pick a canvas + embed combination from the table below.
+
+### Recommended canvas + embed combinations
+
+| Canvas (logical px) | Embed width | px/pt ratio | Min body (10pt) | Min heading (12pt) | Min title (18pt) |
+|---|---|---|---|---|---|
+| **1200 × 800** | **6.5" (full column)** ← default for hero figures | 0.39 pt/px | **26px** | **31px** | **46px** |
+| 1000 × 700 | 5.0" (half column / two-up) | 0.36 pt/px | 28px | 33px | 50px |
+| 800 × 500 | 3.25" (inline / quarter column) | 0.29 pt/px | 34px | 41px | 62px |
+
+**Default for hero architecture figures:** 1200 × 800 canvas embedded at 6.5" wide (full column on a standard 8.5×11 page with 1" margins). Use this unless space dictates a smaller embed.
+
+### Minimum font sizes (1200×800 canvas at 6.5" embed — the default)
+
+- **Title:** 46–54px (≥18pt)
+- **Section heading:** 31–38px (≥12pt)
+- **Body / label text:** 26–30px (≥10pt)
+- **Caption / secondary:** 24–28px (≥9–10pt) — never below 24px
+- **Footer / brand strip:** 22px minimum
+
+These minimums are non-negotiable for federal proposal embedding. Anything below 24px in body/label position fails White Glove review.
+
+### Verifying after rendering
+
+After PNG render, open the PNG at 100% in an image viewer sized so the image fills ~6.5 inches of screen width (or print a test page). If body text isn't readable from arm's length, the graphic fails — increase font sizes in the HTML and re-render before declaring graphics done.
 
 ## Lessons Learned (Calibration Session — White Paper Graphics)
 
 ### Sizing & Legibility
-- **Half-page print is the target.** Every graphic will be screenshotted and embedded in a Word doc at ~5" wide. Design for this from the start.
-- **Minimum font sizes:** Titles 28px, headings 22px, body text 17-19px, secondary text 15px, captions 14px. Anything smaller is unreadable when cropped.
+- **8.5×11 print is the target.** See the "Legibility for 8.5×11 proposal embedding" section above for the binding rule. Body text below ~10pt rendered (24px logical at the default canvas/embed) is unreadable on paper.
+- **Earlier guidance was undersized.** Prior versions of this skill recommended 17–19px body text on a 1200-canvas at 5" embed, which renders as ~5.4pt. That guidance is superseded — use the canvas + embed table above.
 - **Minimize whitespace aggressively.** Compact layouts read better at small sizes. Remove spacer elements, reduce padding, tighten gaps.
 - **Test text overflow.** Long labels ("Automated LoRA & Fine-Tuning Platform") will overflow small SVG boxes. Always check that text fits within its container.
 
