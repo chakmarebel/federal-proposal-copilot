@@ -23,7 +23,7 @@ At the start of the skill, ask the user which review gate they want to run — o
 | `--mode=mock-eval` | Post-draft (alias) | Rubric-driven mock evaluation only (backward-compat alias for the framework's historical Gold mode) |
 | `--mode=gold` | Pre-submit | **Executive profit/risk sign-off** (Shipley-canonical Gold). NOT a proposal-quality review — that's Red's job |
 | `--mode=white-glove` | Pre-submit | Editorial QA, formatting, submission checklist, package readiness |
-| `--mode=lessons-learned` | Post-submit | Process and strategy improvement review using customer debrief if available |
+| `--mode=lessons-learned` | Post-submit | Process and strategy improvement review. If a calibration corpus entry exists at `corpus/calibration/<slug>/` (created by `/capture-submission`), diffs auto-draft vs final-submitted, ingests `edit-notes.md`, and writes framework improvement proposals to `reviews/lessons-learned-<slug>.md`. Otherwise runs as a customer-debrief-driven retrospective |
 | `--mode=full` | Default | Runs the relevant teams in sequence based on workspace state |
 
 ### Backward compatibility
@@ -362,12 +362,72 @@ Runs all four passes in sequence. Write findings to all four output files. Prese
 
 ---
 
+## Lessons Learned — Post-Submit Review
+
+`--mode=lessons-learned`
+
+Run **after submission** to extract framework improvement signal from the gap between auto-generated draft and what you actually submitted.
+
+### Two operating modes
+
+**Mode A — Corpus-driven (preferred).** When `corpus/calibration/<slug>/` exists with status=complete (i.e., user has run `/capture-submission` through Phase 3):
+
+1. Read `corpus/calibration/<slug>/manifest.json` — get type, customer, dates
+2. Read `corpus/calibration/<slug>/edit-notes.md` — user's reflection on what they changed and why
+3. **Diff** every section in `corpus/calibration/<slug>/auto-draft/` against the corresponding file in `corpus/calibration/<slug>/final-submitted/`
+4. **Classify** each diff into edit categories:
+   - Tone / voice
+   - Customer-language adoption
+   - Tightening / compression
+   - Adding proof points / evidence
+   - Restructuring / reordering
+   - Cross-section redundancy
+   - Factual fixes / hallucinations
+   - Formatting / numbering
+5. **Detect patterns** — edits that appear in 2+ sections are systemic, not one-off. These are the highest-leverage to fix in the framework.
+6. **Generate framework improvement proposals** — concrete, actionable suggestions targeting specific files:
+   - SKILL prompt language (e.g., "proposal-writer should add a rule against 'leverage' as a verb")
+   - Section patterns (e.g., "section X should lead with the customer's stated problem, not capability boilerplate")
+   - Style guide (e.g., "add anti-pattern: 'cutting-edge' / 'innovative' / 'next-generation'")
+   - Reference patterns (e.g., "winning examples for type Y always include ___; add to convention file")
+7. Write findings to `reviews/lessons-learned-<slug>.md` with sections:
+   - Summary statistics (total edits, edit-hours, dominant categories)
+   - Systemic patterns (with section frequency)
+   - Cited framework improvement proposals (each with: file path, current state, proposed state, rationale, expected impact)
+   - One-off corrections (low-priority list for completeness)
+8. Append to `working/activity.md`:
+   ```
+   ## YYYY-MM-DD HH:MM — red-team-review [lessons-learned] — N edits classified, M systemic patterns, K framework proposals → reviews/lessons-learned-<slug>.md
+   ```
+
+**Mode B — Customer-debrief retrospective (fallback).** When no corpus entry exists, run a traditional Shipley-style post-submit retrospective using customer debrief notes (if any), proposal team retrospective inputs, and the win/loss outcome. Output: `reviews/lessons-learned-<slug>.md` focused on capture/strategy (not framework calibration).
+
+### Discipline rules for Mode A
+
+- **Don't propose framework changes for one-off edits.** Single-occurrence edits go in the "one-off corrections" section, not the proposals section. The signal-to-noise ratio matters — proposing 50 framework changes for one proposal devalues every proposal.
+- **Cite evidence in every proposal.** Each framework improvement proposal must reference the specific section(s) where the edit pattern appeared. No proposals from intuition.
+- **Respect the user's edit-notes.** Their reflection on *why* they made an edit is more authoritative than the AI's classification. Use the notes as ground truth.
+- **Do not auto-apply changes.** This skill *proposes* changes. The user reviews, accepts, and applies (or instructs you to apply) — the skill never edits SKILL files or patterns directly.
+
+### When to run Mode A
+
+After every submission once corpus entry is complete. Even one entry generates useful proposals — but the signal compounds across 5+ entries.
+
+### Cross-reference
+
+- Corpus structure: [`corpus/calibration/README.md`](../../../corpus/calibration/README.md)
+- Capture skill: [`/capture-submission`](../capture-submission/SKILL.md)
+- Future cross-proposal pattern analysis: `/recalibrate-framework` (not yet built) — operates on the entire corpus rather than one entry
+
+---
+
 ## Output Files (by mode)
 - Pink Team → `reviews/pink-team.md` (references `reviews/compliance-gaps.md` from `/compliance-check`)
 - Red Team → `reviews/red-team-notes.md`
 - Gold Team → `reviews/gold-team-scorecard.md`
 - White Glove → `reviews/white-glove-checklist.md`
-- Full Review → all four files
+- Lessons Learned → `reviews/lessons-learned-<slug>.md`
+- Full Review → all four scoring files (lessons-learned not included in `--mode=full`)
 
 **Critical Rule: Always write to files — never just display in chat.**
 

@@ -10,6 +10,12 @@ my-company/
 # drafts, reviews, pricing, teaming strategy — all sensitive.
 proposals/
 
+# Calibration corpus per-proposal content — auto-drafts, final submissions,
+# edit notes contain real proposal text, customer info, and IP. Keep the
+# structure (README + _template) committed but never the per-slug content.
+corpus/calibration/*/
+!corpus/calibration/_template/
+
 # Personal Claude Code settings (may contain paths, tokens, allow-lists)
 .claude/settings.local.json
 

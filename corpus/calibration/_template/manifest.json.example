@@ -1,0 +1,13 @@
+{
+  "schema_version": "calibration-manifest.v1",
+  "slug": "example-proposal-slug",
+  "proposal_type": "far-rfp",
+  "customer": "Example Agency",
+  "captured_pre": "2026-04-29T10:00:00Z",
+  "captured_post": null,
+  "submitted_date": null,
+  "status": "pre-edit",
+  "outcome": null,
+  "edit_hours_estimate": null,
+  "notes": "Filled in by /capture-submission. Status progresses: pre-edit -> post-submit -> complete."
+}

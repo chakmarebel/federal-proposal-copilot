@@ -1,0 +1,64 @@
+# Edit Notes — [Proposal Slug]
+
+**Submitted:** YYYY-MM-DD
+**Proposal type:** <type_id>
+**Customer:** <customer name>
+**Outcome (if known):** awarded / not awarded / pending / withdrawn
+
+> Five minutes. Don't over-engineer this. Rough estimates and short bullets beat polished prose.
+
+## 1. Time spent on post-AI editing
+
+**Total hours:** _
+
+## 2. Edit categories — % of edit time
+
+Estimate roughly. Doesn't need to add to 100%.
+
+- Tone / voice adjustment (too AI-generic, wrong register, marketing-speak): _%
+- Customer-language adoption (replacing generic terms with the customer's actual phrasing): _%
+- Tightening / compression (AI was verbose): _%
+- Adding specific proof points / evidence (AI made unsupported claims): _%
+- Restructuring / reordering (sections in wrong order, wrong emphasis): _%
+- Cross-section redundancy (same point made in 2+ sections): _%
+- Factual fixes / hallucinations (AI invented something incorrect): _%
+- Formatting / numbering / table layout: _%
+- Other (describe): _%
+
+## 3. Top 3 systemic patterns
+
+What did you fix more than once across the draft? These are the highest-leverage to fix in the framework — patterns that repeat within one proposal almost certainly repeat across proposals.
+
+1.
+2.
+3.
+
+## 4. Framework gaps surfaced
+
+What was missing from the auto-generation that you had to add manually?
+
+-
+-
+-
+
+## 5. What worked (don't change)
+
+What did the AI get right? These are things to preserve when updating skills.
+
+-
+-
+
+## 6. Recommended framework changes
+
+Specific suggestions — concrete, not vague. Point at SKILL files, patterns, or style-guide entries.
+
+- Update `[skill or file]` to [specific change]
+- Add to `reference/[area]` a new pattern for [situation]
+- Style guide should rule out [specific phrase or pattern]
+
+## 7. One-off corrections (low signal — for completeness only)
+
+Things you fixed that probably won't repeat. Don't spend time on this section — it's mostly here so you don't feel obligated to put one-offs in section 3.
+
+-
+-
