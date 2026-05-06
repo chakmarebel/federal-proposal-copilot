@@ -144,176 +144,21 @@ The drafts-phase review should explicitly cite the approach-phase report and fla
 
 ## Core Review Areas
 
----
+Seven review areas. For each, ask the listed questions and flag any of the listed failure patterns. Severity is assigned per finding, not per area.
 
-# 1. Architecture Integrity
+| # | Area | Goal | Key Questions | Flag Examples (issue -> why it matters) |
+|---|---|---|---|---|
+| 1 | Architecture Integrity | Architecture is internally consistent and technically plausible | Does the architecture support the operational claims? Are components/interfaces clearly defined? Does data flow make sense? Are dependencies acknowledged? Are DDIL/disconnected claims plausible? Are latency, edge-compute, and sync assumptions realistic? Are cloud/local responsibilities separated? Are external dependencies hidden? Is the runtime model deployment path believable? | "Local inference" but architecture depends on enterprise APIs -> contradiction; disconnected claim with hidden cloud dependency -> operational failure risk; unrealistic GPU/memory assumptions -> deployment infeasible; ambiguous data authority model -> integration/governance risk; undefined interface boundaries -> integration ambiguity |
+| 2 | Integration Realism | Integration approach is operationally believable | Does the proposal assume unrealistic customer access? Are existing systems actually reachable? Are interfaces known or speculative? Is cross-domain movement realistic? Is integration effort underestimated? Are external vendor dependencies acknowledged? Is data normalization/governance ignored? Are assumed APIs guaranteed to exist? Is deployment inside customer infrastructure plausible? | "Integrates with existing systems" without naming mechanism -> hand-waving; assumes enterprise connectivity in tactical context -> mission mismatch; assumes direct access to classified systems -> unrealistic deployment; CDS integration described vaguely -> high execution risk |
+| 3 | Operational Credibility | Proposal reflects real operational conditions | Are operational constraints acknowledged? Degraded connectivity? User/training burden? Perfect-data assumptions? Deployment realities? Sustainment burden? Workflow fit to operational tempo? Realistic operator experience? Is automation reliability overestimated? | Analysts manually curating large datasets -> unrealistic workflow; continuous synchronization -> operational mismatch; overstated autonomous behavior -> trust/control risk; ignored sustainment/training burden -> lifecycle credibility issue |
+| 4 | Security / ATO / Cyber Realism | Cyber and accreditation language is technically believable | Are IL classifications used correctly? Are ATO claims specific and truthful? Is reciprocity described accurately? Cross-domain assumptions realistic? Is zero-trust language concrete? Data-handling boundaries clear? Identity/access assumptions believable? Model update/distribution security addressed? Software supply-chain risks ignored? | "ATO ready" without explanation -> buzzword compliance theater; reciprocity implied as automatic -> factually incorrect; loose IL5/IL6 use -> evaluator credibility hit; vague cross-domain language -> high-risk architecture gap |
+| 5 | Timeline / Staffing / Execution Realism | Delivery plan is believable | Realistic schedule? Dependencies acknowledged? Believable staffing? Onboarding ignored? Government participation underestimated? Hardware lead times ignored? Test/integration cycles missing? RMF/ATO time ignored? Transition/sustainment underdeveloped? | Full deployment in 30 days with no integration assumptions -> unrealistic; no Government coordination -> delivery risk; aggressive staffing ramp -> resource credibility issue; ignored test event scheduling -> program realism gap |
+| 6 | Technical Claim Truthfulness | Prevent technical exaggeration and accidental hallucination | Is every major claim supportable? Are superiority claims qualified? Are benchmarks contextualized? Are deployment claims specific? Are prototype claims presented as operational deployments? Is experimental functionality overstated? Is roadmap described as current capability? Are assumptions disguised as facts? | (See Claim Categories table below — every major claim must be classified.) |
+| 7 | Technical Depth Calibration | Detail matches proposal type and audience | Too shallow? Too academic? Excessive implementation detail? Insufficient architecture detail? Customer-appropriate terminology? Explaining mechanisms the evaluator doesn't care about? Hiding important implementation realities? | Exec summary contains GPU/container detail -> move to technical approach; technical approach reads like marketing -> add architecture/process detail; white paper reads like FAR boilerplate -> compress and simplify; SBIR reads like product brochure -> add hypothesis and feasibility detail |
 
-## Goal
+### Area 6 — Claim Categories
 
-Determine whether the proposed architecture is internally consistent and technically plausible.
-
-## Review Questions
-
-- Does the architecture actually support the operational claims?
-- Are components/interfaces clearly defined?
-- Does data flow make sense?
-- Are dependencies acknowledged?
-- Are disconnected/DDIL claims technically plausible?
-- Are latency assumptions believable?
-- Is edge compute capacity realistic?
-- Are cloud/local responsibilities clearly separated?
-- Are synchronization assumptions realistic?
-- Are external dependencies hidden?
-- Is the runtime model deployment path believable?
-
-## Flag Examples
-
-| Issue | Why It Matters |
-|---|---|
-| "Local inference" but architecture still depends on enterprise APIs | Contradiction |
-| Claimed disconnected operation with hidden cloud dependencies | Operational failure risk |
-| Unrealistic GPU/memory assumptions | Deployment infeasible |
-| Ambiguous data authority model | Integration and governance risk |
-| Undefined interface boundaries | Integration ambiguity |
-
----
-
-# 2. Integration Realism
-
-## Goal
-
-Determine whether the proposed integration approach is operationally believable.
-
-## Review Questions
-
-- Does the proposal assume unrealistic customer access?
-- Are existing systems actually reachable?
-- Are interfaces known or speculative?
-- Is cross-domain movement realistic?
-- Does the proposal underestimate integration effort?
-- Are external vendor dependencies acknowledged?
-- Is data normalization/governance ignored?
-- Does the proposal assume API access that may not exist?
-- Is deployment inside customer infrastructure plausible?
-
-## Flag Examples
-
-| Issue | Why It Matters |
-|---|---|
-| "Integrates with existing systems" without naming mechanism | Hand-waving |
-| Assumes enterprise connectivity in tactical context | Mission mismatch |
-| Assumes direct access to classified systems | Unrealistic deployment assumption |
-| CDS integration described vaguely | High execution risk |
-
----
-
-# 3. Operational Credibility
-
-## Goal
-
-Determine whether the proposal sounds like it understands real operational conditions.
-
-## Review Questions
-
-- Does the proposal acknowledge operational constraints?
-- Does it account for degraded connectivity?
-- Does it acknowledge user burden/training burden?
-- Does it assume perfect data availability?
-- Does it understand deployment realities?
-- Does it acknowledge sustainment burden?
-- Does the workflow fit operational tempo?
-- Is the operator experience realistic?
-- Does the proposal overestimate automation reliability?
-
-## Flag Examples
-
-| Issue | Why It Matters |
-|---|---|
-| Assumes analysts will manually curate large datasets | Unrealistic workflow |
-| Assumes continuous synchronization | Operational mismatch |
-| Overstates autonomous behavior | Trust and control risk |
-| Ignores sustainment/training burden | Lifecycle credibility issue |
-
----
-
-# 4. Security / ATO / Cyber Realism
-
-## Goal
-
-Ensure cybersecurity and accreditation language is technically believable.
-
-## Review Questions
-
-- Are IL classifications used correctly?
-- Are ATO claims specific and truthful?
-- Is reciprocity described accurately?
-- Are cross-domain assumptions realistic?
-- Is zero-trust/security language concrete?
-- Are data-handling boundaries clear?
-- Are identity/access assumptions believable?
-- Is model update/distribution security addressed?
-- Are software supply-chain risks ignored?
-
-## Flag Examples
-
-| Issue | Why It Matters |
-|---|---|
-| "ATO ready" without explanation | Buzzword compliance theater |
-| Implies reciprocity is automatic | Factually incorrect |
-| Uses IL5/IL6 terminology loosely | Evaluator credibility hit |
-| Cross-domain described vaguely | High-risk architecture gap |
-
----
-
-# 5. Timeline / Staffing / Execution Realism
-
-## Goal
-
-Determine whether the delivery plan is believable.
-
-## Review Questions
-
-- Is the schedule realistic?
-- Are dependencies acknowledged?
-- Are staffing assumptions believable?
-- Is onboarding time ignored?
-- Is Government participation underestimated?
-- Are hardware lead times ignored?
-- Are test/integration cycles missing?
-- Is RMF/ATO time ignored?
-- Is transition/sustainment underdeveloped?
-
-## Flag Examples
-
-| Issue | Why It Matters |
-|---|---|
-| Full deployment in 30 days with no integration assumptions | Unrealistic |
-| No Government coordination assumptions | Delivery risk |
-| Staffing ramps too aggressively | Resource credibility issue |
-| Ignores test event scheduling realities | Program realism gap |
-
----
-
-# 6. Technical Claim Truthfulness
-
-## Goal
-
-Prevent technical exaggeration and accidental hallucination.
-
-## Review Questions
-
-- Is every major claim supportable?
-- Are superiority claims qualified?
-- Are benchmarks contextualized?
-- Are deployment claims specific?
-- Are prototype claims presented as operational deployments?
-- Is experimental functionality overstated?
-- Is future roadmap described as current capability?
-- Are assumptions disguised as facts?
-
-## Claim Categories
-
-Classify major technical claims as:
+Classify every major technical claim:
 
 | Category | Meaning |
 |---|---|
@@ -324,37 +169,10 @@ Classify major technical claims as:
 | High Risk | Likely to trigger evaluator skepticism |
 | Prohibited | Should not appear in proposal |
 
-## Required Output Table
+Output the per-claim row in the Required Output Table:
 
 | Claim | Classification | Risk | Recommended Action |
 |---|---|---|---|
-
----
-
-# 7. Technical Depth Calibration
-
-## Goal
-
-Ensure technical detail matches the proposal type and audience.
-
-## Review Questions
-
-- Is the proposal too shallow?
-- Is the proposal too academic?
-- Is implementation detail excessive?
-- Is architecture detail insufficient?
-- Is the customer likely to understand the terminology used?
-- Is the proposal explaining mechanisms the evaluator does not care about?
-- Is the proposal hiding important implementation realities?
-
-## Examples
-
-| Problem | Fix |
-|---|---|
-| Executive summary contains GPU/container detail | Move to technical approach |
-| Technical approach reads like marketing copy | Add architecture/process detail |
-| White paper reads like FAR boilerplate | Compress and simplify |
-| SBIR reads like a product brochure | Add technical hypothesis and feasibility detail |
 
 ---
 
