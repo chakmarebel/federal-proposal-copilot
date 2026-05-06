@@ -1,6 +1,6 @@
 ---
 name: technical-review
-description: Use this skill in two phases — `--phase=approach` BEFORE writing (validates architecture/storyboard feasibility) and `--phase=drafts` AFTER writing (validates claim truthfulness, integration realism, ATO/cyber realism). Catches technical risk where it's cheapest to fix.
+description: Validate technical feasibility and claim realism (architecture, integration, ATO/cyber). Run --phase=approach after solution-architect; --phase=drafts after proposal-editor, before red-team.
 ---
 
 # Technical Review Skill

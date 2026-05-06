@@ -49,19 +49,20 @@ Recommended workflow:
 
 ## Inputs
 
-Read in this order:
-
+### Always read
 1. `working/proposal-type.md`
 2. `working/opportunity-summary.md`
-3. `working/customer-profile.md` if present
-4. `working/competitor-assessment.md` if present
-5. `working/capability-matrix.md`
-6. `working/requirement-matrix.md`
-7. `working/teaming-strategy.md` if present
-8. `working/win-themes.md` if present
-9. `my-company/company-profile.md`
-10. `my-company/evidence-ledger.json` if present
-11. Solicitation documents and notes
+3. `working/capability-matrix.md`
+4. `working/requirement-matrix.md`
+5. `my-company/company-profile.md`
+
+### Read if relevant
+- `working/customer-profile.md` — if `/customer-intel` was run (needed for belief objectives).
+- `working/competitor-assessment.md` — if `/competitor-assessment` was run (needed for ghosting + posture).
+- `working/teaming-strategy.md` — if teaming work has been done.
+- `working/win-themes.md` — if `/proposal-manager` produced a standalone themes file.
+- `my-company/evidence-ledger.json` — only when Phase C evidence is enabled.
+- Solicitation documents and notes — sample, don't read end-to-end. Use only to clarify ambiguous strategic questions.
 
 ## Required Output
 

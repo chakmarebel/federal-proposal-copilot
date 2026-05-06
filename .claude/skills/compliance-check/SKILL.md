@@ -1,6 +1,6 @@
 ---
 name: compliance-check
-description: Diff required vs. covered requirements in the compliance matrix, flag gaps, recompute coverage counters, and write findings to reviews/compliance-gaps.md. Reads working/compliance-matrix.md, working/proposal-type.md, and drafts/. Use after any proposal-writer pass, before every red-team review, and before final submission. If the proposal type has no compliance_sources (e.g., white-paper, rfi), skip with a note.
+description: Diff requirements against draft coverage and update the compliance matrix. Run after proposal-writer, before red-team-review. Reads working/compliance-matrix.md + drafts/; writes reviews/compliance-gaps.md.
 ---
 
 # /compliance-check

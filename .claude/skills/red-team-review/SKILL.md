@@ -1,6 +1,6 @@
 ---
 name: red-team-review
-description: Use this skill to review proposal drafts like a government evaluator and identify weaknesses, gaps, ambiguity, and redundancy. Reads from drafts/ and writes findings to reviews/.
+description: Score drafts against evaluator rubrics from a GS-14 perspective — narrative quality (red), mock S/W/D rating (gold), final QA (white-glove). Run after compliance-check + technical-review.
 ---
 
 # Red Team Review Skill

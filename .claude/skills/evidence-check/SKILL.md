@@ -1,6 +1,6 @@
 ---
 name: evidence-check
-description: Audit evidence citations across all draft sections. Diffs draft citations (<!-- evidence: EV-### --> HTML comments) against my-company/evidence-ledger.json. Reports missing citations (CLAIM-UNSUPPORTED markers), typo'd IDs (cited but not in ledger), retired evidence (still cited but status=retired), restricted evidence (cited in wrong context), and unused ledger entries (approved but never cited — opportunity to strengthen drafts). Writes reviews/evidence-check.md and updates the evidence_coverage metric in working/compliance-matrix.json. Use after proposal-writer, before red-team-review Gold Team.
+description: Audit draft evidence citations against my-company/evidence-ledger.json — flag CLAIM-UNSUPPORTED, typos, retired/restricted IDs. Run after proposal-writer, before red-team-review --mode=gold.
 ---
 
 # /evidence-check

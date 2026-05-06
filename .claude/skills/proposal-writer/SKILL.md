@@ -9,24 +9,27 @@ description: Use this skill to draft concise, evaluator-friendly proposal text f
 Turn approved solution strategy and architecture into proposal-ready narrative saved to local draft files.
 
 ## Inputs
-Read in this order:
+
+### Always read (mandatory before drafting)
 1. `working/proposal-type.md` — **read first.** If this skill is in `skipped_skills`, exit with "Skipped for type <type_id>." Adapt tone, section set, and page targets to `evaluator_framing` + `page_target` + `section_patterns`.
-2. `working/compliance-matrix.md` (if it exists) — this is the traceability map. Every section you draft must update it (see "Compliance Matrix Maintenance" below).
-3. `working/proposal-plan.md` — eval criteria and win themes
-4. `working/requirement-matrix.md`
-5. `working/capability-matrix.md`
-6. `working/assumptions-and-risks.md`
-7. `working/solution-strategy.md`
-8. `working/architecture-concept.md`
-9. `working/storyboard.md` (if exists)
-10. **`reference/section-patterns/<section_patterns>.md`** — derive from `section_patterns` field in `working/proposal-type.md`. E.g., if the type is `far-rfp`, its `section_patterns: full-proposal` → read `reference/section-patterns/full-proposal.md`. This file declares the section order, required/optional sections, per-section templates, and which winning patterns apply per section.
-11. **`reference/proposal-conventions/<vehicle-id>.md` (if it exists)** — calibrated structural and stylistic conventions for this proposal type, distilled from winning examples. Apply heading numbering conventions (bracketed solicitation refs where applicable), sentence-length norms, customer-language-adoption discipline, bullet/figure density. Mapping:
+2. `working/compliance-matrix.md` — traceability map. Every section drafted must update it (see "Compliance Matrix Maintenance").
+3. `working/proposal-plan.md` — eval criteria and win themes.
+4. `working/solution-strategy.md`
+5. `working/architecture-concept.md`
+6. **`reference/section-patterns/<section_patterns>.md`** — derived from `section_patterns` in `working/proposal-type.md`. Declares section order, required/optional sections, per-section templates, applicable patterns.
+7. **`reference/editorial-voice-guide.md`** — voice discipline applies to first drafts, not just to `/proposal-editor`. Avoid marketing adjectives, avoid template voice, prefer observable facts over claims.
+
+### Read if relevant (load on demand per section being drafted)
+- `working/requirement-matrix.md` — when drafting requirement-traceable sections.
+- `working/capability-matrix.md` — when drafting capability/technical-approach sections.
+- `working/assumptions-and-risks.md` — when drafting risk/management sections.
+- `working/storyboard.md` — if `/proposal-storyboard` was run; primary drafting plan when present.
+- `working/capture-intent.md` — if `/capture-intent` was run. Strategic guidance: customer beliefs, prohibited claims, posture, ghosting direction. Constrains claim aggressiveness across sections.
+- **`reference/proposal-conventions/<vehicle-id>.md`** — calibrated structural/stylistic conventions for this type, when a convention file exists. Mapping:
     - `section_patterns: full-proposal` → `reference/proposal-conventions/far-rfp.md`
     - `section_patterns: sbir` → `reference/proposal-conventions/sbir.md`
     - `section_patterns: gsa-mas-task-order` → `reference/proposal-conventions/gsa-mas.md` (also produces a separate Security Volume per `reference/section-patterns/security-volume.md` when the solicitation requires cleared work)
     - Other patterns: fall through to section-patterns alone if no convention file exists yet.
-12. **`reference/editorial-voice-guide.md` (mandatory).** Voice discipline applies to first drafts, not just to `/proposal-editor`. Read before drafting and during compression: avoid marketing adjectives, avoid template voice, prefer observable facts over claims. Apply at draft time so the editor's job is polish — not rescue.
-13. **`working/capture-intent.md` (if it exists).** Strategic guidance from `/capture-intent`: customer beliefs to create, prohibited claims, posture, ghosting direction, desired customer action. Use it to constrain claim aggressiveness and prevent contradictions across sections.
 
 ## Outputs
 
@@ -97,16 +100,16 @@ Read `reference/proposal-writing-patterns.md` before drafting. It defines four p
 ## Section Standard
 For each major section, in order:
 
-1. **Theme statement** (1 sentence — what/why/proof hook) — see Pattern 1
+1. **Theme statement** (1 sentence — what/why/proof hook)
 2. **Point** — the main claim of this section
 3. **How the solution works** — technical substance
-4. **Discriminator proof point** (at least 1 per scoring section) — see Pattern 2
+4. **Discriminator proof point** (at least 1 per scoring section)
 5. **Tie to requirement or mission outcome** — connect to Section M / evaluation criterion
 6. **Why the team is credible** — cite past performance or credentials
 7. **Evaluator takeaway** — close with the one thing the evaluator should remember
-8. **Graphic references** — each with an action caption per Pattern 3
+8. **Graphic references** — each with an action caption
 
-Ghosting (Pattern 4) is woven into the narrative where applicable — typically in the *how the solution works* and *discriminator* subsections, not as its own block.
+Ghosting is woven into the narrative where applicable — typically in the *how the solution works* and *discriminator* subsections, not as its own block.
 
 **Don't box-check.** Forcing a theme statement onto a 200-word boilerplate section makes it worse. These patterns apply to **scoring sections** — the technical approach, management approach, past performance, differentiators, risk reduction, etc. Reps and certs, CDRL lists, staffing rosters, and similar structural content get only what the solicitation requires.
 

@@ -35,23 +35,25 @@ Recommended workflow:
 
 ## Inputs
 
-Read in this order:
+### Always read
+1. `working/proposal-type.md` — proposal type, page target, evaluator framing, section pattern.
+2. `working/compliance-matrix.md` — requirement traceability and coverage targets.
+3. `working/proposal-plan.md` — evaluation criteria, win themes, bid strategy, discriminator candidates.
+4. `working/solution-strategy.md`
+5. `working/architecture-concept.md`
+6. `reference/section-patterns/<section_patterns>.md` — derived from `working/proposal-type.md`.
 
-1. `working/proposal-type.md` — proposal type, page target, evaluator framing, section pattern
-2. `working/compliance-matrix.md` — requirement traceability and coverage targets
-3. `working/proposal-plan.md` — evaluation criteria, win themes, bid strategy, discriminator candidates
-4. `working/requirement-matrix.md`
-5. `working/capability-matrix.md`
-6. `working/solution-strategy.md`
-7. `working/architecture-concept.md`
-8. `working/assumptions-and-risks.md`
-9. `working/customer-profile.md` if present
-10. `working/competitor-assessment.md` if present
-11. `working/graphics-brief.md` if present
-12. `reference/section-patterns/<section_patterns>.md` derived from `working/proposal-type.md`
-13. `reference/proposal-conventions/<vehicle-id>.md` if available
-14. `reference/editorial-voice-guide.md` if available
-15. `my-company/evidence-ledger.json` if available
+### Read if relevant
+- `working/requirement-matrix.md` — for traceability columns in coverage map.
+- `working/capability-matrix.md` — when storyboarding capability-mapped sections.
+- `working/assumptions-and-risks.md` — when storyboarding risk/management sections.
+- `working/customer-profile.md` — if `/customer-intel` was run.
+- `working/competitor-assessment.md` — if `/competitor-assessment` was run (required for ghosting angles).
+- `working/capture-intent.md` — if `/capture-intent` was run (drives belief objectives + prohibited claims).
+- `working/graphics-brief.md` — if `/proposal-graphics` was run.
+- `reference/proposal-conventions/<vehicle-id>.md` — if convention file exists for this type.
+- `reference/editorial-voice-guide.md` — for tone-section calibration.
+- `my-company/evidence-ledger.json` — only if Phase C evidence is enabled.
 
 ## Outputs
 

@@ -1,6 +1,6 @@
 ---
 name: proposal-editor
-description: Use this skill after proposal-writer to transform compliant draft content into natural, evaluator-friendly, submission-quality prose without breaking compliance or evidence traceability.
+description: Polish proposal-writer drafts into evaluator-friendly prose without breaking compliance or evidence traceability. Run after proposal-writer, before compliance-check. Reads + rewrites drafts/.
 ---
 
 # Proposal Editor Skill
