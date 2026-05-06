@@ -153,7 +153,7 @@ The single most distinctive structural element of a GSA MAS task-order technical
 
 See [`section-patterns/gsa-mas-task-order.md`](../section-patterns/gsa-mas-task-order.md) §"Past Performance Coverage Matrix" for the full template.
 
-### Coverage matrix pink-team check
+### Coverage matrix compliance check
 
 - Every column header has a bracketed solicitation reference (e.g., `[SOW 1.2.1, A,B,C,D,F]`)
 - Every row is a program/contract the offeror has executed (or an active subcontractor partner has executed)

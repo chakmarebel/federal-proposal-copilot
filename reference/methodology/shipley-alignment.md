@@ -146,7 +146,7 @@ A proposal can be 100% compliant but unresponsive. Example: customer wants "inno
 
 ### Divergence 2: Pink Team timing
 
-Framework's historical Pink runs on drafts; Shipley's Pink runs on storyboards/mock-ups before drafting. Resolved by adding `--mode=storyboard-pink` for the Shipley-canonical timing while preserving `--mode=pink` (compliance-on-drafts) for the framework's original behavior.
+Framework's historical Pink ran on drafts; Shipley's Pink runs on storyboards/mock-ups before drafting. Resolved by adding `--mode=storyboard-pink` for the Shipley-canonical timing and retiring the draft-Pink mode in May 2026 — compliance coverage on completed drafts is now solely owned by `/compliance-check`.
 
 ### Divergence 3: Gold Team scope
 

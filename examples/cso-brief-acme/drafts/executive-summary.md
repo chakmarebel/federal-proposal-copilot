@@ -1,16 +1,16 @@
 # Executive Summary
 
-*(Annotations in italics show which winning pattern each passage applies. Remove before submission.)*
+<!-- INTERNAL TRAINING NOTE: Pattern annotations removed for production use -->
 
 ---
 
-**On-device inference is not a product feature — it is the architectural foundation of Acme AI, validated by 14 months of disconnected operation at a DoD customer at the scale JED requires.** *[Pattern 1: Theme statement — states what (on-device foundation), why (disconnected validated at scale), proof hook (14-month DoD deployment).]*
+**On-device inference is not a product feature — it is the architectural foundation of Acme AI, validated by 14 months of disconnected operation at a DoD customer at the scale JED requires.**
 
-The Joint Expeditionary Directorate operates in DDIL environments where commercial AI tooling fails not because it is poorly designed, but because it was never designed to operate without a cloud to call home. *[Pattern 4: Ghosting — frames cloud-retrofit competitors as a category failure without naming them.]* Solutions that require persistent cloud connectivity — even intermittently, even for "telemetry" or "updates" — cannot support the operational tempo of forward-deployed units. Acme AI's platform was built disconnected-first: every mission-critical capability, from generation to adapter loading, executes entirely on the edge device.
+The Joint Expeditionary Directorate operates in DDIL environments where commercial AI tooling fails not because it is poorly designed, but because it was never designed to operate without a cloud to call home. Solutions that require persistent cloud connectivity — even intermittently, even for "telemetry" or "updates" — cannot support the operational tempo of forward-deployed units. Acme AI's platform was built disconnected-first: every mission-critical capability, from generation to adapter loading, executes entirely on the edge device.
 
 **We offer JED four specific capabilities mapped to your Areas of Interest:**
 
-1. **Proven DDIL deployment.** Our platform has operated at [redacted DoD customer] for 14 months in fully disconnected mode, supporting 18 operators across 4 forward locations with zero cloud dependency (AoI-1, AoI-2). *[Pattern 2: Discriminator proof point — specific claim, specific evidence, tied to eval criteria.]*
+1. **Proven DDIL deployment.** Our platform has operated at [redacted DoD customer] for 14 months in fully disconnected mode, supporting 18 operators across 4 forward locations with zero cloud dependency (AoI-1, AoI-2).
 
 2. **On-device adapter specialization in 60 days.** Our LoRA adapter pipeline delivered four specialized adapter sets for prior customer mission sets within 60 days of tasking, measured from adapter spec to operational deployment (AoI-3). Detail in Technical Approach §4.
 
@@ -18,13 +18,13 @@ The Joint Expeditionary Directorate operates in DDIL environments where commerci
 
 4. **IL5 roadmap with FedRAMP Moderate in hand.** Acme AI's FedRAMP Moderate ATO is in final stages; IL5 assessment roadmap is defined with a target completion of 18 months (AoI-4). This is a credible path, not a paper claim.
 
-Acme AI is a commercial company. Our platform generates $4M ARR across non-government customers in regulated commercial sectors (financial services, healthcare). JED would be acquiring a proven commercial capability under FAR 2.101, not funding a research project. *[Pattern 2: Discriminator proof point — commercial revenue base, specific number, specific sectors.]*
+Acme AI is a commercial company. Our platform generates $4M ARR across non-government customers in regulated commercial sectors (financial services, healthcare). JED would be acquiring a proven commercial capability under FAR 2.101, not funding a research project.
 
-See **Figure 1 (Three-tier architecture)** — Edge operations execute entirely disconnected; Garrison and Enterprise tiers carry only optional model updates. *[Pattern 3: Action caption reference — the writer points to the figure AND restates what it proves, so the evaluator who skims only the text still gets the point.]*
+See **Figure 1 (Three-tier architecture)** — Edge operations execute entirely disconnected; Garrison and Enterprise tiers carry only optional model updates.
 
 **What Acme AI commits to at Phase 1 selection:**
 - Submit a full Phase 2 proposal within 30 days of invitation
 - ROM range for Phase 2 engagement: $2.1M-$3.4M for initial 10-endpoint deployment with one adapter set (detail in ROM section)
-- Named technical lead (Dr. [PI] — PI on three DARPA programs in adjacent topics) committed through Phase 2 delivery *[Pattern 2: Discriminator proof point — named personnel with specific credentials.]*
+- Named technical lead (Dr. [PI] — PI on three DARPA programs in adjacent topics) committed through Phase 2 delivery
 
 We are ready to begin.

@@ -58,6 +58,7 @@ drafts/<section-id>.md
 - Make strengths easy for evaluators to find
 - Reduce perceived execution risk
 - **Apply the four writing patterns** per `reference/proposal-writing-patterns.md` (see next section)
+- Do not label or reference writing patterns explicitly in the output. Patterns are applied implicitly and must not appear in the text.
 
 ## Winning Patterns (mandatory, type-gated)
 

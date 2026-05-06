@@ -91,7 +91,7 @@ A theme statement passes the litmus test only if it satisfies **all** of:
 5. **Discriminator-bearing** — implies (or states) something only we offer, not a generic strength
 6. **Evaluator-actionable** — gives the evaluator a reason to score the section higher
 
-Theme statements that fail any of these are weak. Strengthen or replace before the section ships to Pink Team.
+Theme statements that fail any of these are weak. Strengthen or replace before the section ships to compliance-check.
 
 ### Section theme statement vs. section summary
 

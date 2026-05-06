@@ -127,11 +127,7 @@ This framework's `red-team-review` skill historically used a 4-mode model (Pink 
 
 **Framework (historical):** Pink reviews drafts AFTER drafting is complete. Compliance-focused.
 
-**Resolution:** The framework's `red-team-review --mode=pink` is more accurately described as "compliance check on completed drafts" — different from Shipley's Pink. Two paths forward:
-1. **Add an explicit "Storyboard Pink Team" mode** that reviews outlines/compliance-matrix structure before drafting begins (matches Shipley)
-2. **Keep the current draft-Pink mode** as a separate "Compliance Pink" — useful but not what Shipley calls Pink
-
-The skill now supports both modes: `--mode=pink` (compliance on drafts, framework's original) and `--mode=storyboard-pink` (Shipley-canonical, on storyboards/outlines).
+**Resolution:** The framework's draft-Pink mode (`--mode=pink`) was retired in May 2026. Compliance coverage on completed drafts is now solely the responsibility of `/compliance-check`, which already does the same matrix-vs-drafts diff. The Shipley-canonical pre-draft Pink remains available as `--mode=storyboard-pink`.
 
 ### Divergence 2: Gold Team scope
 
@@ -166,7 +162,7 @@ These run in the capture phase, before the bid decision. They are independent of
 | `--mode=blue` | Capture | Validates capture plan + win strategy | `working/capture-scorecard.md`, `working/competitor-assessment.md`, `working/customer-profile.md` |
 | `--mode=black-hat` | Capture | Reviews competitor strategies; identifies ghosting + differentiation gaps | `working/competitor-assessment.md` |
 | `--mode=storyboard-pink` | Pre-draft | Reviews storyboards/outlines for compliance + strategy deployment | `working/storyboards/`, `working/compliance-matrix.md`, `working/proposal-plan.md` |
-| `--mode=pink` (or `--mode=compliance`) | Mid-draft | Compliance check on completed drafts (framework's historical Pink) | `drafts/`, `working/compliance-matrix.md` |
+| `/compliance-check` (separate skill) | Mid-draft | Compliance coverage on completed drafts (replaces retired `--mode=pink`) | `drafts/`, `working/compliance-matrix.md` |
 | `--mode=red` | Post-draft | Customer focus + completeness + mock evaluation | `drafts/`, `working/proposal-plan.md`, `reference/evaluator-rubrics/` |
 | `--mode=mock-eval` | Post-draft (alias) | Rubric-driven mock evaluation only (backward-compat alias) | Same as red |
 | `--mode=gold` | Pre-submit | Executive profit/risk sign-off | `drafts/`, `working/pricing-inputs.md`, `working/risk-register.md` |

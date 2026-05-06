@@ -18,7 +18,6 @@ At the start of the skill, ask the user which review gate they want to run — o
 | `--mode=blue` | Capture (pre-bid) | Validates capture plan + win strategy. Independent senior reviewers (NOT proposal team). Output: strategy refinements, positioning actions |
 | `--mode=black-hat` | Capture (pre-bid) | Reviews competitors' likely strategies and solutions; updates own win strategy in response. Reviewers role-play top competitors |
 | `--mode=storyboard-pink` | Pre-draft | Reviews storyboards/outlines for compliance + strategy deployment BEFORE prose drafting begins. Catches structural issues before text is written |
-| `--mode=pink` (or `--mode=compliance`) | Mid-draft | **Compliance check on completed drafts** — framework's historical Pink. Different timing from Shipley-canonical Pink |
 | `--mode=red` | Post-draft | Customer focus + completeness + clarity of strategy + mock evaluation against rubric |
 | `--mode=mock-eval` | Post-draft (alias) | Rubric-driven mock evaluation only (backward-compat alias for the framework's historical Gold mode) |
 | `--mode=gold` | Pre-submit | **Executive profit/risk sign-off** (Shipley-canonical Gold). NOT a proposal-quality review — that's Red's job |
@@ -26,10 +25,13 @@ At the start of the skill, ask the user which review gate they want to run — o
 | `--mode=lessons-learned` | Post-submit | Process and strategy improvement review. If a calibration corpus entry exists at `corpus/calibration/<slug>/` (created by `/capture-submission`), diffs auto-draft vs final-submitted, ingests `edit-notes.md`, and writes framework improvement proposals to `reviews/lessons-learned-<slug>.md`. Otherwise runs as a customer-debrief-driven retrospective |
 | `--mode=full` | Default | Runs the relevant teams in sequence based on workspace state |
 
+### Compliance coverage
+
+Compliance coverage is validated using `/compliance-check`, which writes `reviews/compliance-gaps.md`. This skill no longer runs a separate compliance pass on completed drafts — that work belongs to `/compliance-check`.
+
 ### Backward compatibility
 
 The framework's historical mode names continue to work:
-- Old "Pink Team" = new `--mode=pink` (compliance check on drafts)
 - Old "Gold Team" (mock evaluation) = new `--mode=mock-eval` OR included in `--mode=red`
 - Old "White Glove" = new `--mode=white-glove`
 
@@ -41,65 +43,16 @@ Not every proposal warrants every team:
 
 | Proposal type | Recommended modes |
 |---|---|
-| FAR full proposal (high-stakes, $50M+) | blue, black-hat, storyboard-pink, pink, red, gold, white-glove, lessons-learned |
-| GSA MAS task-order BPA | blue, pink, red, white-glove (black-hat optional; gold optional) |
-| SBIR Phase II | pink, red, white-glove (blue/black-hat skipped — merit review) |
-| White paper | pink (compliance), white-glove (light) |
+| FAR full proposal (high-stakes, $50M+) | blue, black-hat, storyboard-pink, red, gold, white-glove, lessons-learned |
+| GSA MAS task-order BPA | blue, red, white-glove (black-hat optional; gold optional) |
+| SBIR Phase II | red, white-glove (blue/black-hat skipped — merit review) |
+| White paper | white-glove (light) |
 | RFI | white-glove only |
 | ROM | white-glove only |
 
+Compliance coverage on completed drafts is validated using `/compliance-check` — see the "Compliance coverage" note above.
+
 If no mode is specified, ask before proceeding.
-
----
-
-## Pink Team — Compliance Review
-
-**Purpose:** Find every hole before writing quality is assessed. A non-compliant proposal is disqualified before it's evaluated.
-
-**Inputs:** `working/proposal-type.md`, `working/compliance-matrix.md`, `working/proposal-plan.md`, all files in `drafts/`
-
-**Type check:** If `working/proposal-type.md` declares `compliance_sources: []` (white-paper, rfi, rom, sources-sought), skip formal compliance analysis and run only the attachment/formatting checks below.
-
-**Process:**
-1. **Run `/compliance-check` first.** It re-reads the matrix and drafts, recomputes the Status column, and writes `reviews/compliance-gaps.md`. Pink Team *starts from that output* — don't duplicate the diffing work here.
-2. Read `reviews/compliance-gaps.md` and treat every `Gap` row as a P0 finding.
-3. Treat `Partial` and `Planned (with drafts present)` rows as P1 findings.
-4. For `Exception` rows, verify the Evidence column contains a rationale; if empty, flag as P1.
-
-**Also check (not in the matrix):**
-- Required page limits not exceeded (vs. `page_target` in `proposal-type.md`)
-- **Convention compliance** — if `reference/proposal-conventions/<vehicle-id>.md` exists for this proposal type, validate the draft against its calibrated norms. For `full-proposal` (FAR RFP / IDIQ TO / CSO full / BAA), the conventions to check against are in [`reference/proposal-conventions/far-rfp.md`](../../../reference/proposal-conventions/far-rfp.md):
-  - Every body-section heading carries a bracketed solicitation reference
-  - Heading hierarchy mirrors PWS/SOW where applicable
-  - Mean sentence length in body sections is 22-28 words (run `python scripts/extract-pdf-patterns.py` post-export to verify)
-  - Customer's framework terminology is used verbatim, consistently
-  - Every figure has at least one in-text reference
-  - Front-matter ≤ 15% of total page count
-  - Five-Commitment opener present at the start of Technical Approach (or equivalent)
-  - Section H / General Information present if solicitation requires
-- **Graphics convention compliance** — for every body page with figures, validate against [`reference/graphic-templates/illustrator-conventions.md`](../../../reference/graphic-templates/illustrator-conventions.md):
-  - Header strip and footer strip identical to other body pages (logo, program ID, sol#, page #, distribution restriction)
-  - Each figure carries a two-part action caption (`Figure N: [Title]. [Assertion of what it proves.]`)
-  - First in-text reference to figure precedes the figure (no orphan floats)
-  - Every graphic matches one of the 7 documented patterns (3-tier band, callout sidebar, N-column tiles, hub-and-spoke, maturity curve, compliance table, process flow) — flag invented patterns
-  - No "everything-page" — pages with 3+ heavy elements (callout + figure + table + multi-paragraph new content) are split or simplified
-  - Brand palette discipline: one accent color used across all accents; tile-palette colors reserved for N-column tile graphics only
-- Required attachments present (resumes, past performance forms, reps & certs as applicable to the type)
-- Required formatting (fonts, margins, page numbers, headers/footers)
-- Required section titles match solicitation language exactly
-- For OTA: milestone-payment schedule present; follow-on production language present
-- For SBIR: commercialization plan present; data rights assertions correct
-- For CSO: commercial-item justification present
-- For FAR RFP: reps & certs addressed
-
-**Write to:** `reviews/pink-team.md` — consolidated Pink findings (referencing, not duplicating, `reviews/compliance-gaps.md`).
-
-**Pink Team is complete when:** Zero P0 findings. All P1 items are either resolved or accepted risks with documented rationale.
-
-**Activity trail:** Append to `working/activity.md`:
-```
-## <timestamp> — red-team-review [pink] — <P0 count> P0, <P1 count> P1 findings → reviews/pink-team.md
-```
 
 ---
 
@@ -422,12 +375,13 @@ After every submission once corpus entry is complete. Even one entry generates u
 ---
 
 ## Output Files (by mode)
-- Pink Team → `reviews/pink-team.md` (references `reviews/compliance-gaps.md` from `/compliance-check`)
 - Red Team → `reviews/red-team-notes.md`
 - Gold Team → `reviews/gold-team-scorecard.md`
 - White Glove → `reviews/white-glove-checklist.md`
 - Lessons Learned → `reviews/lessons-learned-<slug>.md`
-- Full Review → all four scoring files (lessons-learned not included in `--mode=full`)
+- Full Review → red, gold, white-glove (lessons-learned not included in `--mode=full`)
+
+Compliance coverage is validated using `/compliance-check` (writes `reviews/compliance-gaps.md`).
 
 **Critical Rule: Always write to files — never just display in chat.**
 
