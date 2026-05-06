@@ -1,9 +1,22 @@
 ---
 name: technical-review
-description: Use this skill after proposal-writer or proposal-editor to validate technical credibility, architectural consistency, execution realism, integration assumptions, and truthfulness of technical claims before red-team scoring.
+description: Use this skill in two phases — `--phase=approach` BEFORE writing (validates architecture/storyboard feasibility) and `--phase=drafts` AFTER writing (validates claim truthfulness, integration realism, ATO/cyber realism). Catches technical risk where it's cheapest to fix.
 ---
 
 # Technical Review Skill
+
+## Two-Phase Operation (mandatory dispatch)
+
+This skill runs at two distinct points in the workflow. **The phase determines inputs, scope, and output filename.** If no phase is given, ask the user before proceeding.
+
+| Mode | Position in workflow | Scope | Output |
+|---|---|---|---|
+| `--phase=approach` | After `/proposal-storyboard`, BEFORE `/proposal-writer` | Validate architectural feasibility, integration realism, schedule/staffing realism, ATO plausibility, hidden assumptions — *before tokens are spent on prose for a flawed approach* | `reviews/technical-review-approach.md` |
+| `--phase=drafts` | After `/proposal-writer` and `/proposal-editor`, before `/red-team-review` | Validate claim truthfulness, technical-depth calibration, prose-level architecture consistency, hidden contradictions introduced during drafting | `reviews/technical-review-drafts.md` |
+
+**Critical rule:** `--phase=approach` does NOT read `drafts/`. Drafts don't exist yet at that workflow position. Reading them invalidates the gate's purpose (the gate exists to prevent flawed approaches from becoming flawed prose).
+
+`--phase=drafts` re-reads architecture and storyboard inputs because draft prose can introduce inconsistencies with the approved architecture (over-specified components, undefined interfaces, magical integrations) that need cross-checking.
 
 ## Purpose
 
@@ -41,21 +54,29 @@ The goal is to ensure the proposal would survive contact with:
 
 ## When to Use
 
-Run after `/proposal-writer` or `/proposal-editor` and before `/red-team-review`.
+Run twice:
+1. **Approach phase** — after `/proposal-storyboard`, before `/proposal-writer`. Catches feasibility issues at the cheapest possible point.
+2. **Drafts phase** — after `/proposal-editor`, before `/red-team-review`. Catches claim-truthfulness issues introduced during prose generation.
 
 Recommended workflow:
 
 ```
+/proposal-solution-architect
+/past-performance
 /proposal-storyboard
+/technical-review --phase=approach     ← gate before writing
+/proposal-graphics
 /proposal-writer
 /proposal-editor
-/technical-review
+/technical-review --phase=drafts       ← gate before red team
 /compliance-check
 /red-team-review --mode=red
 /red-team-review --mode=gold
 ```
 
 ## Inputs
+
+### `--phase=approach` (pre-write feasibility gate)
 
 Read in this order:
 
@@ -66,14 +87,24 @@ Read in this order:
 5. `working/solution-strategy.md`
 6. `working/architecture-concept.md`
 7. `working/assumptions-and-risks.md`
-8. `working/storyboard.md` if present
-9. `working/graphics-brief.md` if present
+8. `working/storyboard.md` (mandatory at this phase — if absent, exit and recommend running `/proposal-storyboard` first)
+9. `working/capture-intent.md` if present
 10. `working/competitor-assessment.md` if present
 11. `working/compliance-matrix.md` if present
-12. All files in `drafts/`
-13. All files in `drafts/edited/` if present
-14. `my-company/evidence-ledger.json` if present
-15. `reviews/editorial-changes.md` if present
+12. `my-company/evidence-ledger.json` if present
+
+Do NOT read `drafts/` at this phase. They don't exist yet.
+
+### `--phase=drafts` (post-write claim-truthfulness review)
+
+Read in this order:
+
+1. All approach-phase inputs (1-12 above)
+2. `working/graphics-brief.md` if present
+3. All files in `drafts/`
+4. All files in `drafts/edited/` if present
+5. `reviews/editorial-changes.md` if present
+6. `reviews/technical-review-approach.md` (the prior approach-phase report — flag any approach-phase findings that should have been addressed but weren't)
 
 ## Review Philosophy
 
@@ -95,18 +126,21 @@ This skill should behave like someone trying to break the proposal before the Go
 
 ## Output Files
 
-Write:
+**Phase-specific output filename:**
 
-```
-reviews/technical-review.md
-```
+| Phase | Output |
+|---|---|
+| `--phase=approach` | `reviews/technical-review-approach.md` |
+| `--phase=drafts` | `reviews/technical-review-drafts.md` |
 
-Optional:
+Optional supplementary output for either phase:
 
 ```
 reviews/technical-risks.md
 reviews/architecture-conflicts.md
 ```
+
+The drafts-phase review should explicitly cite the approach-phase report and flag any pre-write findings that became prose-level issues. Approach-phase issues that the writer ignored are higher severity than first-time-found drafts-phase issues.
 
 ## Core Review Areas
 
@@ -455,11 +489,11 @@ If not, flag it.
 Append to `working/activity.md`:
 
 ```
-## <timestamp> — technical-review — identified <N findings>, <H high-risk>, reviewed architecture/integration/ATO realism → reviews/technical-review.md
+## <timestamp> — technical-review [<phase>] — identified <N findings>, <H high-risk>, reviewed architecture/integration/ATO realism → reviews/technical-review-<phase>.md
 ```
 
-Append to `working/ai-runs.jsonl`:
+Append to `working/ai-runs.jsonl` (note `phase` in `notes`):
 
 ```json
-{"schema_version":"ai-run.v1","timestamp":"<timestamp>","skill":"technical-review","proposal_id":"<proposal>","job_type":"technical-review","provider":"anthropic","model":"claude-opus-4-7","input_tokens_estimate":null,"output_tokens_estimate":null,"cost_estimate_usd":null,"notes":"architecture and execution realism review"}
+{"schema_version":"ai-run.v1","timestamp":"<timestamp>","skill":"technical-review","proposal_id":"<proposal>","job_type":"technical-review","provider":"anthropic","model":"claude-opus-4-7","input_tokens_estimate":null,"output_tokens_estimate":null,"cost_estimate_usd":null,"notes":"phase=<approach|drafts> — architecture and execution realism review"}
 ```

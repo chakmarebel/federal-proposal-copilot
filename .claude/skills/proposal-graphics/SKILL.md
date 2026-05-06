@@ -10,10 +10,13 @@ Translate the solution into clear visuals that strengthen evaluator understandin
 
 ## Inputs
 Read from:
+- `working/storyboard.md` (if it exists) — **primary driver.** Each section storyboard names a "Graphic Argument" stating what the figure must prove. Build graphics from those arguments, not from architecture alone.
 - `working/solution-strategy.md`
 - `working/architecture-concept.md`
-- `drafts/technical-approach.md`
+- `drafts/technical-approach.md` (if drafting has begun)
 - Any existing visual standards, brand templates, or reference graphics in `inputs/05_graphic_standards/`
+
+**Workflow position:** runs after `/proposal-storyboard`, not before. If `working/storyboard.md` is absent, warn and recommend running storyboard first — graphics built without knowing the section arguments tend to decorate rather than prove.
 
 ## Output
 Write to `working/graphics-brief.md` with one section per graphic containing:

@@ -5,7 +5,7 @@ solicitation_vehicle: FAR
 page_target: per Section L (often 25-75 per volume)
 pricing_artifact: far-cost-volume
 pp_required: true
-required_skills: [opportunity-quick-look, proposal-manager, customer-intel, competitor-assessment, capture-scorecard, proposal-solution-architect, proposal-graphics, past-performance, pricing-analyst, proposal-writer, compliance-check, evidence-check, red-team-review]
+required_skills: [opportunity-quick-look, proposal-manager, customer-intel, competitor-assessment, capture-scorecard, capture-intent, proposal-solution-architect, past-performance, proposal-storyboard, proposal-graphics, technical-review, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
 skipped_skills: []
 section_patterns: full-proposal
 compliance_sources: [L, M, PWS, SOW, EvaluationCriteria, CDRLs, Reps&Certs]

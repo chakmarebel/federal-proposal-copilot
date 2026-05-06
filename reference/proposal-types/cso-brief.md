@@ -5,8 +5,8 @@ solicitation_vehicle: CSO
 page_target: 5-10 (often strict)
 pricing_artifact: rom
 pp_required: false
-required_skills: [opportunity-quick-look, proposal-manager, customer-intel, proposal-solution-architect, proposal-graphics, pricing-analyst, proposal-writer, compliance-check, evidence-check, red-team-review]
-skipped_skills: [competitor-assessment, capture-scorecard, past-performance]
+required_skills: [opportunity-quick-look, proposal-manager, customer-intel, capture-intent, proposal-solution-architect, proposal-storyboard, proposal-graphics, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
+skipped_skills: [competitor-assessment, capture-scorecard, past-performance, technical-review]
 section_patterns: white-paper
 compliance_sources: [EvaluationCriteria, AreasOfInterest]
 evaluator_framing: Technical screener scanning for commercial-item fit against stated areas of interest — lead with the "so what"

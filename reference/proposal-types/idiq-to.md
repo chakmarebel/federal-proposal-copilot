@@ -5,7 +5,7 @@ solicitation_vehicle: IDIQ
 page_target: typically 10-30, short turn (5-15 business days)
 pricing_artifact: far-cost-volume
 pp_required: relevant-experience
-required_skills: [opportunity-quick-look, proposal-manager, customer-intel, proposal-solution-architect, proposal-graphics, past-performance, pricing-analyst, proposal-writer, compliance-check, evidence-check, red-team-review]
+required_skills: [opportunity-quick-look, proposal-manager, customer-intel, capture-intent, proposal-solution-architect, past-performance, proposal-storyboard, proposal-graphics, technical-review, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
 skipped_skills: [competitor-assessment, capture-scorecard]
 section_patterns: full-proposal
 compliance_sources: [L, M, PWS, EvaluationCriteria]

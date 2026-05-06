@@ -25,6 +25,8 @@ Read in this order:
     - `section_patterns: sbir` → `reference/proposal-conventions/sbir.md`
     - `section_patterns: gsa-mas-task-order` → `reference/proposal-conventions/gsa-mas.md` (also produces a separate Security Volume per `reference/section-patterns/security-volume.md` when the solicitation requires cleared work)
     - Other patterns: fall through to section-patterns alone if no convention file exists yet.
+12. **`reference/editorial-voice-guide.md` (mandatory).** Voice discipline applies to first drafts, not just to `/proposal-editor`. Read before drafting and during compression: avoid marketing adjectives, avoid template voice, prefer observable facts over claims. Apply at draft time so the editor's job is polish — not rescue.
+13. **`working/capture-intent.md` (if it exists).** Strategic guidance from `/capture-intent`: customer beliefs to create, prohibited claims, posture, ghosting direction, desired customer action. Use it to constrain claim aggressiveness and prevent contradictions across sections.
 
 ## Outputs
 

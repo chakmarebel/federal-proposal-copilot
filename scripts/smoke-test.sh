@@ -350,6 +350,60 @@ else
 fi
 
 # ────────────────────────────────────────────────────────────────
+section "Process-vocabulary leakage in shipped examples and drafts"
+# ────────────────────────────────────────────────────────────────
+# Drafts are evaluator-facing. They must not contain process labels — Shipley
+# vocabulary, color-team words, pattern-annotation labels, or rubric jargon.
+# Scope: examples/**/drafts/, examples/**/drafts/edited/, drafts/, drafts/edited/.
+# (Skips reviews/, working/, reference/, my-company/, proposals/ — those are
+# internal artifacts, process vocabulary is appropriate there.)
+
+LEAK_PATTERNS=(
+  '\[Pattern [0-9]'
+  'Pink Team'
+  'Gold Team'
+  'White Glove'
+  'Black Hat'
+  '\bpWin\b'
+  'Significant Strength'
+  'Significant Weakness'
+  'Shipley'
+  'discriminator proof point'
+  'compliance matrix'
+  'win theme'
+  'storyboard-pink'
+)
+
+leak_scan_dirs=()
+[ -d "drafts" ] && leak_scan_dirs+=("drafts")
+while IFS= read -r d; do leak_scan_dirs+=("$d"); done < <(find examples -type d -name drafts 2>/dev/null)
+
+if [ ${#leak_scan_dirs[@]} -eq 0 ]; then
+  warn "No drafts directories found to scan"
+else
+  total_leaks=0
+  for d in "${leak_scan_dirs[@]}"; do
+    while IFS= read -r f; do
+      [ -z "$f" ] && continue
+      file_leaks=0
+      for pat in "${LEAK_PATTERNS[@]}"; do
+        # -i case-insensitive; skip HTML comments (used legitimately for evidence markers)
+        matches=$(grep -inE "$pat" "$f" 2>/dev/null | grep -v '<!--' || true)
+        if [ -n "$matches" ]; then
+          file_leaks=$((file_leaks + $(echo "$matches" | wc -l)))
+        fi
+      done
+      if [ $file_leaks -gt 0 ]; then
+        fail "Process-vocabulary leak in $f ($file_leaks match(es) — run: grep -inE '$(IFS='|'; echo "${LEAK_PATTERNS[*]}")' '$f')"
+        total_leaks=$((total_leaks + file_leaks))
+      else
+        pass "$f: no process-vocabulary leakage"
+      fi
+    done < <(find "$d" -name "*.md" -type f 2>/dev/null)
+  done
+fi
+
+# ────────────────────────────────────────────────────────────────
 section "Summary"
 # ────────────────────────────────────────────────────────────────
 echo ""
