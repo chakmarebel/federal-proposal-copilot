@@ -61,6 +61,7 @@ drafts/<section-id>.md
 - Reduce perceived execution risk
 - **Apply the four writing patterns** per `reference/proposal-writing-patterns.md` (see next section)
 - Do not label or reference writing patterns explicitly in the output. Patterns are applied implicitly and must not appear in the text.
+- Write for completeness and clarity. Do not optimize for brevity or tone polish; that is handled by `/proposal-editor`. The writer's job is to land every required point with traceable evidence; the editor's job is to tighten the prose.
 
 ## Winning Patterns (mandatory, type-gated)
 

@@ -204,6 +204,22 @@ Focus:
 Goal:
 - reduce length without losing scoreable content
 
+### Mode 4 — Technical Preservation
+
+Use when prose is bloated but technical depth is non-negotiable (SBIR Phase II, BAA, FAR technical volumes, OTA prototype proposals).
+
+Focus:
+- preserve every technical specification, interface, parameter, and constraint
+- preserve every benchmark, measurement, and named architecture component
+- cut explanatory throat-clearing and architectural over-narration
+- cut marketing framing around technical content
+- collapse redundant restatements of the same technical fact
+
+Goal:
+- reduce length while keeping the technical surface area intact
+
+Anti-pattern: do NOT use this mode to "simplify" technical content for a non-technical reader. If the proposal type calls for technical evaluators, technical depth is a feature.
+
 ## Section-Level Guidance
 
 ### Executive Summary
