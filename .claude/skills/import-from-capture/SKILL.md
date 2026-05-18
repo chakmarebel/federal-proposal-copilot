@@ -44,7 +44,7 @@ has capture intel without re-deriving anything.
 One of the three above. The skill accepts:
 
 - A local file path: `./downloads/capture-ai-edge-124.json`,
-  `C:\Users\...\Downloads\capture-...\.json`, etc.
+  `%USERPROFILE%\Downloads\capture-....json`, etc.
 - A URL to the export endpoint: `https://bd.example-pipeline.com/opportunity/124/export`
 - A JSON payload pasted directly into the chat
 

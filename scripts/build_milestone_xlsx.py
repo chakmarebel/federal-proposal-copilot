@@ -1,10 +1,21 @@
-"""Build milestone-schedule.xlsx for digital-guardian-sim OTA proposal."""
+"""Build a sample milestone-schedule.xlsx for an OTA-style proposal."""
+import argparse
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from pathlib import Path
 
-out_path = Path("proposals/digital-guardian-sim/final/xlsx/milestone-schedule.xlsx")
+parser = argparse.ArgumentParser(description="Build a formatted milestone-schedule workbook.")
+parser.add_argument(
+    "output",
+    type=Path,
+    nargs="?",
+    default=Path("templates/final/xlsx/milestone-schedule.xlsx"),
+    help="Output .xlsx path.",
+)
+args = parser.parse_args()
+
+out_path = args.output
 out_path.parent.mkdir(parents=True, exist_ok=True)
 
 wb = openpyxl.Workbook()

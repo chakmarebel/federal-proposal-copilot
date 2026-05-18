@@ -1,8 +1,5 @@
-"""
-build_dgs_capability_matrix_xlsx.py
-Converts proposals/digital-guardian-sim/working/capability-matrix.md
-into a formatted Excel workbook for engineering review.
-"""
+"""Build a formatted engineering-review workbook from a capability matrix."""
+import argparse
 
 import re
 from pathlib import Path
@@ -296,16 +293,28 @@ def add_summary_sheet(wb, meta, sections):
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
-BASE = Path(r"C:\Users\wbal9\Claude Code Projects\federal-proposal-assistant\proposals\digital-guardian-sim")
-MD_PATH  = BASE / "working" / "capability-matrix.md"
-OUT_PATH = BASE / "final" / "xlsx" / "capability-matrix.xlsx"
-
 def main():
-    text = MD_PATH.read_text(encoding="utf-8")
+    parser = argparse.ArgumentParser(
+        description="Build a specialized capability-matrix workbook from markdown."
+    )
+    parser.add_argument("input", type=Path, help="Path to working/capability-matrix.md")
+    parser.add_argument(
+        "output",
+        type=Path,
+        nargs="?",
+        help="Output .xlsx path. Defaults to final/xlsx/capability-matrix.xlsx next to the proposal.",
+    )
+    args = parser.parse_args()
+
+    md_path = args.input
+    proposal_root = md_path.parent.parent if md_path.parent.name == "working" else md_path.parent
+    out_path = args.output or proposal_root / "final" / "xlsx" / "capability-matrix.xlsx"
+
+    text = md_path.read_text(encoding="utf-8")
     sections = split_sections(text)
 
     meta = {
-        "slug":     "digital-guardian-sim",
+        "slug":     proposal_root.name,
         "generated":"2026-05-14",
         "coverage": "96% (24/25 requirements; 1 gap = Why visualization UI)",
     }
@@ -332,9 +341,9 @@ def main():
         if headers:
             add_table_sheet(wb, sheet_name, headers, rows, coverage_col_names=cov_names)
 
-    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    wb.save(str(OUT_PATH))
-    print(f"Saved: {OUT_PATH}")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    wb.save(str(out_path))
+    print(f"Saved: {out_path}")
 
 if __name__ == "__main__":
     main()
