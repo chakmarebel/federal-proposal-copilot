@@ -1,6 +1,9 @@
 ---
 name: new-proposal
 description: Scaffold a new proposal directory from the standard template. Use when starting a new white paper, proposal, or response. Creates the directory structure, copies boilerplate, and guides initial setup.
+phase: setup
+composes: [setup-company]
+conflicts_with: [import-from-capture]  # if you have a capture-pipeline JSON export, use import-from-capture instead
 ---
 
 # New Proposal Skill
@@ -16,9 +19,9 @@ Create a clean, ready-to-use proposal workspace for a new effort.
 
 ### Step 1: Gather Basic Info
 Ask the user for:
-1. **Short name** (used as directory name, e.g., "white-paper-fy26", "agency-rfi", "sbir-phase-i")
-2. **Full title** (e.g., "[Your Company] Response to [Customer Program]")
-3. **Customer/program** (e.g., "[Customer Office], [Decision Maker Title]")
+1. **Short name** (used as directory name, e.g., "socpac", "mystic-depot", "idx26")
+2. **Full title** (e.g., "[Your Company] Support to SOCPAC")
+3. **Customer/program** (e.g., "SOCPAC CTO Bala Selvam")
 4. **Due date** (if known)
 
 ### Step 1b: Select Proposal Type from Registry

@@ -1,6 +1,9 @@
 ---
 name: import-from-capture
 description: Import a fully-qualified opportunity from the capture-pipeline and scaffold a proposal workspace pre-populated with solicitation facts, Go/No-Go assessment, customer POCs, and competitive intel. Use when a Prospects → Pursuing decision has been made in capture-pipeline and you want to start the proposal without re-typing the context.
+phase: setup
+composes: [setup-company]
+conflicts_with: [new-proposal]  # if no capture-pipeline export exists, use new-proposal instead
 ---
 
 # Import from Capture
@@ -42,7 +45,7 @@ One of the three above. The skill accepts:
 
 - A local file path: `./downloads/capture-ai-edge-124.json`,
   `C:\Users\...\Downloads\capture-...\.json`, etc.
-- A URL to the export endpoint: `https://your-bd-tool.example.com/opportunity/124/export`
+- A URL to the export endpoint: `https://bd.example-pipeline.com/opportunity/124/export`
 - A JSON payload pasted directly into the chat
 
 ## Workflow

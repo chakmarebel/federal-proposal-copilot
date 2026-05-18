@@ -1,6 +1,9 @@
 ---
 name: customer-intel
 description: Use this skill to research and profile the customer before writing begins. Searches open source for agency mission, key personnel, budget priorities, buying history, and hot buttons. Produces a structured customer profile combining AI-found intel with a user-fillable template for relationship knowledge. Writes to working/customer-profile.md and inputs/01_customer/.
+phase: capture
+composes: [proposal-manager]
+conflicts_with: []  # unique research role; capture-intent uses customer beliefs but doesn't produce them
 ---
 
 # Customer Intelligence Skill

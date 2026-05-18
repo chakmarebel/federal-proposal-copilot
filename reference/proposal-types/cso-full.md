@@ -5,7 +5,7 @@ solicitation_vehicle: CSO
 page_target: 15-30
 pricing_artifact: cso-commercial
 pp_required: relevant-experience
-required_skills: [proposal-manager, customer-intel, capture-intent, proposal-solution-architect, past-performance, proposal-storyboard, proposal-graphics, technical-review, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
+required_skills: [submission-summary, proposal-manager, customer-intel, capture-intent, proposal-solution-architect, past-performance, narrative-spine, proposal-storyboard, proposal-graphics, technical-review, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
 skipped_skills: [opportunity-quick-look, competitor-assessment, capture-scorecard]
 section_patterns: full-proposal
 compliance_sources: [EvaluationCriteria, AreasOfInterest, NegotiatedTerms]

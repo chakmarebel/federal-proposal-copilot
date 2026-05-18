@@ -1,6 +1,9 @@
 ---
 name: past-performance
 description: Use this skill to map your company's past performance repository to current evaluation criteria, identify the most relevant entries, draft PPQ-style narratives, and produce a past performance volume or section. Reads from my-company/past-performance.md (or inputs/02_yourCompany/past-performance.md if seeded there by /new-proposal) and writes to drafts/past-performance.md.
+phase: drafting
+composes: [proposal-manager]
+conflicts_with: []  # unique drafting role
 ---
 
 # Past Performance Skill

@@ -1,6 +1,9 @@
 ---
 name: proposal-manager
 description: Use this skill to analyze a solicitation and build a proposal plan before solution design begins. Extracts response type, page limits, section structure, evaluation criteria, win themes, and bid/no-bid assessment. Reads from inputs/ and writes to working/proposal-plan.md.
+phase: planning
+composes: [opportunity-quick-look, capture-portal-structure]
+conflicts_with: []  # central planning hub; sole producer of proposal-plan.md + compliance-matrix seed
 ---
 
 # Proposal Manager Skill
@@ -15,10 +18,16 @@ Bridge the gap between a blank proposal workspace and the technical solution des
 
 ## Inputs
 Read in this order:
-1. `working/proposal-type.md` — **read first.** Declares `compliance_sources` (which parts of the solicitation drive the compliance matrix), `pricing_artifact`, `evaluator_framing`. If missing, instruct user to run `/new-proposal` and stop.
-2. All files in `inputs/00_priority/` — solicitation, evaluation criteria, instructions to offerors
-3. All files in `inputs/01_customer/` — customer context, mission, constraints
-4. `working/proposal-brief.md` — created by `/new-proposal`
+1. `working/proposal-type.md` — **read first.** Declares `compliance_sources` (which parts of the solicitation drive the compliance matrix), `pricing_artifact`, `evaluator_framing`, and `submission_mechanism`. If missing, instruct user to run `/new-proposal` and stop.
+2. **Portal format gate.** If `working/proposal-type.md` declares `submission_mechanism: web-form`:
+   - Check for `inputs/00_priority/portal-format.md`. If absent, exit immediately with: "Submission is to a web-form portal but no portal format has been captured. Run `/capture-portal-structure` first — it either inherits a known portal from `reference/portal-formats/` or guides you through a first-time capture after you register on the portal. Without this, I cannot produce a valid proposal plan because the real section structure and character limits are unknown."
+   - If present, read it. The portal's section labels and character limits become the authoritative structure for this proposal plan; they override whatever section list the solicitation PDF implies.
+   - Also read `working/section-budgets.md` (produced by `/capture-portal-structure`) if present — this is what `/proposal-writer` will use for per-section budget-first drafting.
+3. `working/submission-summary.md` — **the confirmed deliverable spec (produced by `/submission-summary`).** Authoritative source for response format, volume/section structure, page limits, pricing artifact, and due date. Use it for Step 2 instead of re-extracting. If it is missing, recommend the user run `/submission-summary` first.
+4. All files in `inputs/00_priority/` — solicitation, evaluation criteria, instructions to offerors (excluding `portal-format.md`, already read above if applicable)
+5. All files in `inputs/01_customer/` — customer context, mission, constraints
+6. `working/proposal-brief.md` — created by `/new-proposal`
+7. `reference/narrative-operating-modes.md` — use `page_target`, `submission_mechanism`, and `evaluator_framing` to recommend the proposal's prose mode.
 
 If `inputs/00_priority/` is empty, tell the user to drop the solicitation there first and stop.
 
@@ -36,7 +45,19 @@ Determine:
 - **Page/volume constraints:** Hard limits, if any
 
 ### Step 2: Extract Response Requirements
-Pull directly from the solicitation:
+
+**If `working/submission-summary.md` exists, it is authoritative.** Copy its submission profile and volume/section breakdown into the proposal plan rather than re-extracting. The extraction guidance below applies only when the summary is absent — and in that case, recommend the user run `/submission-summary` first.
+
+**If `submission_mechanism: web-form`** (and `inputs/00_priority/portal-format.md` has been read): pull section structure, labels, and character/word limits from the portal format file — NOT from the solicitation PDF. The solicitation describes the opportunity; the portal format describes the actual submission mechanics. Where they conflict, the portal format wins.
+
+Pull from the portal format:
+- Portal section list with labels and hard character/word limits (the `working/section-budgets.md` table)
+- Required metadata fields (title length, TRL selector, system type enum, etc.)
+- Image/attachment rules
+- Agreements and opt-outs requiring human decisions
+- Submission mechanics (save-and-resume, edit-after-submit, confirmation)
+
+**If `submission_mechanism: document-upload` or `email`**: pull from the solicitation:
 - Required sections/volumes and their page limits
 - Required fonts, margins, file formats
 - Required attachments (past performance forms, resumes, certifications)
@@ -182,6 +203,7 @@ Write all findings to `working/proposal-plan.md` using this structure:
 [list of ambiguities to resolve before writing]
 
 ## Recommended Proposal Structure
+[include the recommended narrative operating mode and why it fits this opportunity]
 [proposed outline with section owners and page budget]
 ```
 
@@ -202,6 +224,7 @@ When writing `working/proposal-plan.json`, include:
 - `generated_by: "proposal-manager"`
 - `generated_at`: current ISO-8601 timestamp
 - `proposal_name`, `type_id` (from `working/proposal-type.md`)
+- `narrative_operating_mode` with `mode`, `rationale`, and `primary_reader_need` from `reference/narrative-operating-modes.md`
 - `classification`, `response_requirements`, `evaluation_factors`, `win_themes`, `discriminators`, `ghosting_targets`, `bid_nobid`, `assumptions`, `open_questions`, `due_date`, `customer_name`, `agency`
 
 Every `evaluation_factor`, `win_theme`, and `discriminator` gets a stable `id` (e.g., `EF-1`, `WT-1`, `DS-1`) so other skills and the dashboard can reference them.
@@ -235,7 +258,7 @@ Tell the user:
 ## Lessons Learned
 
 ### On White Papers
-- White papers rarely state explicit evaluation criteria — infer from the office, the stated problem, and the decision maker's known priorities. For combatant-command-type submissions, operational utility and DDIL compatibility are often the implied discriminators even when never stated.
+- White papers rarely state explicit evaluation criteria — infer from the office, the stated problem, and the decision maker's known priorities. For SOCPAC-type submissions, operational utility and DDIL compatibility were the implied discriminators even though never stated.
 - For CDAO/DIU-type solicitations, evaluation innovation and mission-representative benchmarking matter more than past performance volume.
 
 ### On Win Themes

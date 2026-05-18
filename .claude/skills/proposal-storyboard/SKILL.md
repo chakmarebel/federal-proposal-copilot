@@ -1,15 +1,18 @@
 ---
 name: proposal-storyboard
 description: Use this skill after proposal-solution-architect and before proposal-writer to create section-by-section storyboards that define evaluator questions, required answers, proof points, graphics, target length, and prohibited claims before prose drafting begins.
+phase: drafting
+composes: [proposal-solution-architect, capture-intent, competitor-assessment]
+conflicts_with: []  # unique pre-prose planning role
 ---
 
 # Proposal Storyboard Skill
 
 ## Purpose
 
-Create the proposal's narrative spine before drafting prose.
+Decompose the approved narrative spine into a section-by-section writing plan before drafting prose.
 
-The storyboard translates the approved capture strategy, compliance matrix, solution architecture, and section pattern into a section-by-section writing plan. It prevents the proposal-writer from rambling, over-marketing, diving too deep technically, or forcing Shipley patterns where they do not improve the response.
+The narrative spine (`working/narrative-spine.md`, produced by `/narrative-spine`) is the *lengthwise* argument — the case the whole proposal makes. The storyboard is the *crosswise* plan — what each section must do to advance that argument. It translates the approved spine, capture strategy, compliance matrix, solution architecture, and section pattern into a section-by-section writing plan, and prevents the proposal-writer from rambling, over-marketing, diving too deep technically, or forcing Shipley patterns where they do not improve the response.
 
 The storyboard answers one question for every section:
 
@@ -37,11 +40,13 @@ Recommended workflow:
 
 ### Always read
 1. `working/proposal-type.md` — proposal type, page target, evaluator framing, section pattern.
-2. `working/compliance-matrix.md` — requirement traceability and coverage targets.
-3. `working/proposal-plan.md` — evaluation criteria, win themes, bid strategy, discriminator candidates.
-4. `working/solution-strategy.md`
-5. `working/architecture-concept.md`
-6. `reference/section-patterns/<section_patterns>.md` — derived from `working/proposal-type.md`.
+2. `working/narrative-spine.md` — **the approved one-page argument (produced by `/narrative-spine`).** This is the primary input. The storyboard *decomposes* the spine: each section storyboard should advance one movement of the argument, and a section that advances no movement is a candidate for cutting. If `working/narrative-spine.md` does not exist, recommend the user run `/narrative-spine` first.
+3. `working/compliance-matrix.md` — requirement traceability and coverage targets.
+4. `working/proposal-plan.md` — evaluation criteria, win themes, bid strategy, discriminator candidates.
+5. `working/solution-strategy.md`
+6. `working/architecture-concept.md`
+7. `reference/section-patterns/<section_patterns>.md` — derived from `working/proposal-type.md`.
+8. `reference/narrative-operating-modes.md` — select the prose mode that matches `page_target`, `submission_mechanism`, and `evaluator_framing`. Record that mode in the storyboard header and apply it to section length, depth, and transition planning.
 
 ### Read if relevant
 - `working/requirement-matrix.md` — for traceability columns in coverage map.
@@ -87,6 +92,12 @@ For each required section, produce:
 
 **Primary Takeaway:** <one sentence the evaluator should remember>
 
+**Reader Movement:** <what the reader believes before this section -> what they should believe after it>
+
+**Narrative Mode:** <compressed-brief | solution-brief | scored-volume | technical-merit | market-research | pricing-artifact>
+
+**Transition Job:** <consequence | selection | proof | decision | none/formal response>
+
 **Requirements Covered:** <Req IDs from compliance matrix, or "None/formal compliance not applicable">
 
 **Evaluation Factor / Scoring Tie:** <Section M factor, AOI, CSO criterion, SBIR merit factor, or reader concern>
@@ -118,6 +129,8 @@ For each required section, produce:
 > *Figure X. <Title>.* <action caption asserting what the figure proves>.
 
 **Target Length:** <word count or page fraction>
+
+**Compression Rule:** <what to cut first if the section runs long, and what must survive>
 
 **Do Not Say:**
 - <phrase, claim, or rabbit hole to avoid>
@@ -186,6 +199,32 @@ Examples:
 - technical but not academic
 - factual and non-salesy
 
+### Plan Reader Movement
+
+Every section must move the evaluator somewhere. Do not merely list the artifacts the writer should include.
+
+For each section, answer:
+
+- What does the reader believe before this section?
+- What should the reader believe after this section?
+- What proof, mechanism, or commitment creates that shift?
+- What transition connects this section to the prior movement of the narrative spine?
+
+If the answer is "the reader learns more about our capability," the section is not planned tightly enough. Reframe it as a decision, scoring, risk, or mission-value movement.
+
+### Select the Narrative Operating Mode
+
+Use `reference/narrative-operating-modes.md` to choose one mode for the whole response and, if needed, a section-specific override:
+
+- `compressed-brief` for 1-5 page white papers, short directed briefs, and tight web-form fields.
+- `solution-brief` for 5-10 page CSO/OTA/white-paper responses.
+- `scored-volume` for FAR, IDIQ, OTA full, and CSO full proposals.
+- `technical-merit` for SBIR and BAA technical merit responses.
+- `market-research` for RFI and sources-sought.
+- `pricing-artifact` for ROM and price narratives.
+
+The mode controls depth. A compressed brief should not spend paragraphs teaching the market. A scored volume should not hide compliance structure in elegant prose. A technical-merit response should not replace mechanism with sales language.
+
 ## Coverage Map
 
 Create `working/storyboard-coverage-map.md` with a table:
@@ -235,6 +274,8 @@ The storyboard must prevent:
 - generic capability summaries
 - executive summaries that read like company brochures
 - technical sections that bury the answer under implementation detail
+- sections that are individually compliant but do not advance the narrative spine
+- transitions that announce structure instead of carrying the argument
 - management sections filled with agile boilerplate
 - repeated DDIL/cloud/edge explanations across every section
 - proof points appearing after the evaluator needs them

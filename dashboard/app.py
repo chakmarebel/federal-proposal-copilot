@@ -4,11 +4,11 @@ Federal Proposal Assistant — Dashboard entrypoint.
 Run from the repo root:
     streamlit run dashboard/app.py
 
-The app has a sidebar selector for four views:
-    - Portfolio       — all proposals at a glance
-    - Proposal        — detail view for the selected proposal
-    - Spend           — AI cost aggregated across all proposals
-    - Evidence Ledger — browse the evidence library
+Views:
+    Triage        — all proposals sorted by urgency, health badges, next-action commands
+    Proposal      — detail view for the selected proposal (tabbed, with command bar)
+    Spend         — AI cost aggregated across all proposals
+    Evidence Ledger — browse the evidence library
 """
 from __future__ import annotations
 
@@ -17,14 +17,13 @@ from pathlib import Path
 
 import streamlit as st
 
-# Ensure repo root is on sys.path so `from dashboard.xxx import yyy` works
-# regardless of the cwd Streamlit is launched from.
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from dashboard.config import APP_ICON, APP_TITLE  # noqa: E402
-from dashboard.views import ledger, portfolio, proposal, spend  # noqa: E402
+from dashboard.views import ledger, spend, triage  # noqa: E402
+from dashboard.views import proposal  # noqa: E402
 
 
 def main() -> None:
@@ -35,43 +34,40 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
 
-    # Sidebar navigation
     with st.sidebar:
         st.markdown(f"### {APP_TITLE}")
         st.caption("v1.5 Phase B — read-only dashboard")
 
         view = st.radio(
             "View",
-            options=["Portfolio", "Proposal", "Spend", "Evidence Ledger"],
+            options=["Triage", "Proposal", "Spend", "Evidence Ledger"],
             key="view_selector",
             label_visibility="collapsed",
         )
 
         st.divider()
-        st.caption(
-            "Paths:\n"
-            f"- Proposals: `{(REPO_ROOT / 'proposals').relative_to(REPO_ROOT)}/`\n"
-            f"- Company:   `{(REPO_ROOT / 'my-company').relative_to(REPO_ROOT)}/`\n"
-        )
-        st.caption(
-            "This dashboard is **read-only**. To change proposal state, "
-            "edit the markdown or run a skill in Claude Code."
-        )
 
-        # Quick-jump if a proposal is in session
         if "selected_proposal" in st.session_state:
+            st.caption(f"Selected: **{st.session_state['selected_proposal']}**")
+            if st.button("← Back to Triage", key="sidebar_back"):
+                st.session_state["view"] = "Triage"
+                st.rerun()
             st.divider()
-            st.caption(f"Selected proposal: **{st.session_state['selected_proposal']}**")
 
-    # Dispatch by view choice
-    # Allow programmatic navigation from portfolio → proposal by setting session_state['view']
-    current_view = st.session_state.get("view") or view
-    # clear the override after using it once
-    if "view" in st.session_state:
-        del st.session_state["view"]
+        st.caption(
+            "**Read-only.** Edit proposal files or run skills in Claude Code; "
+            "the dashboard reflects changes on next load."
+        )
+        st.caption(
+            f"Proposals: `{(REPO_ROOT / 'proposals').relative_to(REPO_ROOT)}/`\n\n"
+            f"Company:   `{(REPO_ROOT / 'my-company').relative_to(REPO_ROOT)}/`"
+        )
 
-    if current_view == "Portfolio":
-        portfolio.render()
+    # Programmatic navigation (e.g. Triage "Open →" button sets session_state["view"])
+    current_view = st.session_state.pop("view", None) or view
+
+    if current_view == "Triage":
+        triage.render()
     elif current_view == "Proposal":
         proposal.render()
     elif current_view == "Spend":

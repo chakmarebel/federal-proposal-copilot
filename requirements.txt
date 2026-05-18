@@ -1,0 +1,14 @@
+# federal-proposal-assistant — Python dependencies
+# Install with: pip install -r requirements.txt
+
+# DOCX conversion (tools/md_to_docx.py, export-proposal skill)
+python-docx>=1.1.0
+
+# XLSX conversion (tools/compliance_to_xlsx.py, export-proposal skill)
+openpyxl>=3.1.0
+
+# PPTX (optional — used only if anthropic-skills:pptx is not available)
+python-pptx>=0.6.23
+
+# HTML → PNG graphics rendering (scripts/render-graphic.py)
+# Requires Chrome/Chromium installed separately — see scripts/render-graphic.py for path

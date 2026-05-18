@@ -1,6 +1,9 @@
 ---
 name: capture-scorecard
 description: Use this skill to assess capture readiness across 9 dimensions before committing proposal resources. Produces a stoplight scorecard (Red/Yellow/Green), identifies the top risks, and gives a go/no-go recommendation. Reads from working/ files and writes to working/capture-scorecard.md.
+phase: capture
+composes: [proposal-manager, competitor-assessment, customer-intel]
+conflicts_with: [opportunity-quick-look]  # requires proposal-plan.md and competitor-assessment; use opportunity-quick-look for fresh-solicitation triage
 ---
 
 # Capture Scorecard Skill

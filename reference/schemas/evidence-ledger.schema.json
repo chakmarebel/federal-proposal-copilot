@@ -17,7 +17,7 @@
     },
     "owner": {
       "type": "string",
-      "description": "Company name (e.g., 'Your Company, Inc.'). Optional but recommended."
+      "description": "Company name (e.g., 'Acme Defense'). Optional but recommended."
     },
     "items": {
       "type": "array",
@@ -67,7 +67,7 @@
           },
           "source_file": {
             "type": ["string", "null"],
-            "description": "Path (relative to repo root) to the authoritative source document for this evidence, e.g., 'my-company/past-performance.md' or 'my-company/artifacts/product-datasheet.pdf'."
+            "description": "Path (relative to repo root) to the authoritative source document for this evidence, e.g., 'my-company/past-performance.md' or 'my-company/artifacts/company-model-spec.pdf'."
           },
           "source_anchor": {
             "type": ["string", "null"],

@@ -5,7 +5,7 @@ solicitation_vehicle: OTA
 page_target: 20-40
 pricing_artifact: ota-milestones
 pp_required: relevant-experience
-required_skills: [proposal-manager, customer-intel, capture-intent, proposal-solution-architect, past-performance, proposal-storyboard, proposal-graphics, technical-review, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
+required_skills: [submission-summary, proposal-manager, customer-intel, capture-intent, proposal-solution-architect, past-performance, narrative-spine, proposal-storyboard, proposal-graphics, technical-review, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
 skipped_skills: [opportunity-quick-look, competitor-assessment, capture-scorecard]
 section_patterns: ota
 compliance_sources: [EvaluationCriteria, StatementOfObjectives, MilestoneSchedule]

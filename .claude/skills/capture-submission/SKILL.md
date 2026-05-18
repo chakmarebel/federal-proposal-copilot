@@ -1,6 +1,9 @@
 ---
 name: capture-submission
 description: Use this skill to snapshot a proposal's auto-generated draft and final submitted version into the calibration corpus, with edit notes. Run twice per proposal — once before manual editing (snapshot the AI's output) and once after submission (capture the final + notes). Builds the data the framework needs to learn from real edits and close the gap between auto-generation and submission-ready.
+phase: submission
+composes: [proposal-writer, export-proposal]
+conflicts_with: []  # unique post-submit calibration capture
 ---
 
 # Capture Submission Skill

@@ -84,7 +84,7 @@ What Phase II covers and what it explicitly excludes (~half page). Bullets accep
 
 ~1 page. Establishes the technical and operational context the topic addresses. For Direct-to-Phase-II, this section also briefly summarizes prior commercial work that substitutes for Phase I feasibility.
 
-**Pattern:** open with a problem statement, then bridge to "[Your Company] is uniquely positioned because..."
+**Pattern:** open with a problem statement, then bridge to "[Company] is uniquely positioned because..."
 
 ## phase-ii-technical-objectives (required)
 

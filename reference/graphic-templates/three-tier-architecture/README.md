@@ -1,14 +1,14 @@
 # three-tier-architecture
 
-Parametric graphic template for three-band architecture diagrams. One of the most common proposal graphic patterns in federal AI / edge-compute / cloud-architecture proposals.
+Parametric graphic template for three-band architecture diagrams. A common proposal graphic pattern in federal AI / edge-compute proposals generally.
 
 ## Visual
 
-- **Dark canvas** (1200 × 612 logical), red accent.
+- **Dark canvas** (1200 × 612 logical), single accent color from the configured brand palette.
 - **Three horizontal tiers**, top to bottom: `tiers[0]`, `tiers[1]`, `tiers[2]`.
 - Each tier has a name, subtitle, 4 component labels (4 columns), and a "registry pill" callout at the bottom.
 - **Two boundaries** between tiers. Each has a badge label, a downward arrow (flow from upper → lower) with a label, and an upward arrow (lower → upper) with its own label.
-- The **bottom tier gets accent treatment** — red border, red fill tint, red component lines. Place your core capability in this tier; the accent draws the evaluator's eye to where you want their attention.
+- The **bottom tier gets accent treatment** — accent border, accent fill tint, accent component lines. This is where your own capability lives; the accent draws the evaluator's eye.
 - **Footer strip** with brand, tagline, and optional website.
 
 Preview: open [example.html](example.html) in a browser. It renders without any external resources.
@@ -35,7 +35,7 @@ See `schema.json` for the full contract. Summary:
 - `tiers` (array of exactly 3) — each with `name`, `subtitle`, 4 `components`, `pill`
 - `boundaries` (array of exactly 2) — each with `label`, `down_arrow_label`, `up_arrow_label`
 - `footer` — `brand`, `tagline`, optional `website`
-- `theme` (optional) — color overrides; defaults to a neutral dark canvas with red accent
+- `theme` (optional) — color overrides; defaults to a neutral dark canvas with a single accent (override via the configured brand palette)
 
 ## How `/proposal-graphics` uses this
 
@@ -69,7 +69,7 @@ To override the color palette, pass a `theme` object in the data JSON. Example f
 }
 ```
 
-Framework defaults: bg `#191c20`, accent `#ee2929`, panel `#2a2d31`. Override per-graphic via `theme` in the data JSON, or globally by copying the template to `my-company/graphic-templates/three-tier-architecture/` and editing the defaults there.
+Defaults: bg `#191c20`, accent `#2f5d8a`, panel `#2a2d31`. Override these via your `my-company/branding/` palette.
 
 ## Rendering
 

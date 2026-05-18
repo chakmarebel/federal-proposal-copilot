@@ -1,4 +1,4 @@
-# Federal Proposal Copilot
+# Federal Proposal Assistant
 ### An AI-powered workflow for small defense contractors writing government proposals
 
 ---
@@ -15,17 +15,17 @@ This tool changes that.
 
 ## What It Is
 
-**Federal Proposal Copilot** is an AI workflow built on [Claude Code](https://claude.ai/claude-code) that automates the intellectual work of capture and proposal development — from first look at an opportunity through final submission review.
+**Federal Proposal Assistant** is an AI workflow built on [Claude Code](https://claude.ai/claude-code) that automates the intellectual work of capture and proposal development — from first look at an opportunity through final submission review.
 
 It's not a template library. It's not a document generator that produces generic text. It's a structured, step-by-step process where AI does the analytical and writing work while you provide the judgment, the relationship knowledge, and the company context.
 
-Built on the Shipley methodology, adapted for small teams that can't run a full BD machine but still need to win competitive work.
+Built on the Shipley methodology — with a full reference library (`reference/methodology/`) covering the BD lifecycle, capture planning, color-team review protocols, and Shipley alignment — adapted for small teams that can't run a full BD machine but still need to win competitive work.
 
 ---
 
 ## What It Does
 
-The workflow covers 11 steps, each handled by a dedicated skill:
+The workflow covers 14 steps, each handled by a dedicated skill:
 
 | Step | Skill | What It Produces |
 |------|-------|-----------------|
@@ -40,7 +40,9 @@ The workflow covers 11 steps, each handled by a dedicated skill:
 | 9 | **Pricing Analyst** | Cost model, BOE narratives, cost volume — or lightweight SBIR/OTA/CSO pricing |
 | 10 | **Proposal Graphics** | Proposal-ready HTML/SVG graphics — architecture diagrams, timelines, matrices |
 | 11 | **Proposal Writer** | Full draft of every section, written to score |
-| 12 | **Red Team Review** | Pink (compliance) → Red (narrative) → Gold (mock eval) → White Glove (final QA) |
+| 12 | **Evidence Check** | Audits proof-point citations in drafts — flags unsupported claims before Gold Team |
+| 13 | **Red Team Review** | Pink (compliance) → Red (narrative) → Gold (mock eval) → White Glove (final QA) |
+| 14 | **Capture Submission** | Snapshots AI draft + final submission for framework calibration and continuous improvement |
 
 ---
 
@@ -54,10 +56,12 @@ Small and mid-sized defense contractors who:
 
 The workflow supports two modes:
 
-- **Full Capture** — for competitive RFPs, IDIQ task orders, and recompetes. Complete Shipley-style competitive analysis, formal pricing, PPQ-format past performance.
+- **Full Capture** — for competitive RFPs, IDIQ task orders, GSA MAS task orders, and recompetes. Complete Shipley-style competitive analysis, formal pricing, PPQ-format past performance.
 - **Responsive** — for SBIR, CSO, OTA, BAA, and white papers. Lighter-weight process calibrated to the vehicle, with SBIR budget templates, OTA milestone schedules, and relevant experience narratives instead of formal PPQs.
 
 You set your company's default. You override it per proposal when needed.
+
+Over time, the `/capture-submission` skill feeds a calibration corpus with your real edits — letting the framework continuously close the gap between AI first-draft and submission-ready.
 
 ---
 
@@ -82,11 +86,9 @@ Architecture diagrams, execution timelines, capability matrices, objectives grap
 ## Getting Started
 
 1. Install [Claude Code](https://claude.ai/claude-code) (requires a Claude subscription)
-2. Clone the repo: `git clone https://github.com/chakmarebel/federal-proposal-copilot.git`
+2. Clone the repo: `github.com/[your-github-handle]/federal-proposal-assistant`
 3. Run `/setup-company` to create your company profile (one time, ~10 minutes)
 4. Drop in a solicitation, run `/new-proposal`, follow the workflow
-
-See [QUICKSTART.md](QUICKSTART.md) for a step-by-step walkthrough.
 
 The first time through takes an hour or two. Once your company profile exists and you've run it once, each subsequent proposal moves faster.
 

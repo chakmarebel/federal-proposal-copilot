@@ -16,6 +16,19 @@ The editor's job is not to make the proposal more exciting. The editor's job is 
 - Customer-first, not company-first
 - Written for a busy Government evaluator, not a marketing audience
 
+## Narrative Mode Calibration
+
+Before editing, read `reference/narrative-operating-modes.md` and identify the draft's mode from `working/proposal-type.md`.
+
+- `compressed-brief`: cut setup, concept teaching, and secondary proof. The recommendation or offer must be clear on the first page.
+- `solution-brief`: keep problem -> approach -> proof -> next action visible. Preserve only the technical detail that proves feasibility or transition value.
+- `scored-volume`: preserve traceability and evaluator signposts, but make section openings and closings carry the narrative spine.
+- `technical-merit`: preserve mechanism, hypothesis, work plan, and risk controls. Remove product brochure voice.
+- `market-research`: answer directly and avoid proposal theatrics.
+- `pricing-artifact`: keep assumptions, ranges, and exclusions visible; remove sales prose.
+
+If the prose sounds polished but mismatched to its mode, it is not done.
+
 ## What Good Sounds Like
 
 Good proposal prose usually does four things in order:
@@ -54,6 +67,7 @@ Apply these in order:
 | Marketing stack | Sounds like a brochure | Replace adjectives with functions, constraints, and evidence |
 | Process theater | Talks about methodology instead of answer | Lead with the customer's outcome, then describe the process only if needed |
 | Template voice | Reads like Shipley guidance pasted into prose | Convert pattern language into normal sentences |
+| Artifact stitching | Moves from matrix to matrix instead of idea to idea | Restore the narrative spine and use transitions that show consequence, proof, selection, or decision |
 | Over-technical dive | Loses evaluator before the point lands | State the conclusion first, then technical details |
 | Unsupported superiority | Creates weakness in evaluation | Add proof, soften, or remove |
 | Passive delivery commitments | Hides accountability | Use active voice for what the offeror will deliver |
@@ -91,6 +105,7 @@ Avoid or replace unless the solicitation uses the term or the phrase is technica
 | leverage | use, apply, extend |
 | robust | describe the failure mode it withstands |
 | innovative | describe what is new or different |
+| §3.2 / §§3–4 (section-sign glyph) | Section 3.2 / Sections 3–4 — spell it out; refer to the section by name where possible. The § glyph never appears in proposal prose. |
 | seamless | describe the interface or workflow |
 | scalable | describe the scale path |
 | solution | system, approach, architecture, workflow, capability — whichever is precise |
@@ -105,6 +120,9 @@ Avoid or replace unless the solicitation uses the term or the phrase is technica
 - Split paragraphs when they mix problem, approach, proof, and management details.
 - Do not open every section with the same formula.
 - Do not force a theme statement when a plain topic sentence is stronger.
+- Vary section openings; repeated "Our approach..." or "This section..." rhythms create AI smell.
+- Make transitions explain why the next idea follows, not merely that another section has begun.
+- **Open concern-first, never cinematic.** Lead with the customer's mission problem or the evaluator's question — the concern itself. Do not stage a dramatized scene ("Picture the demonstration room...", "In August, four personas will..."). Cinematic openings read as cheesy and undercut the impression that the offeror truly understands the mission. The human element belongs in visible command of the problem and plain, engaged language — not in theatrics.
 
 ## Section-Level Editing Rules
 

@@ -150,7 +150,7 @@ A discriminator's proof point should escalate through three levels of customer r
 |---|---|---|
 | **Feature** | What is it? | "Our platform performs all inference on-device." |
 | **Advantage** | How does it help? | "On-device inference eliminates the cloud round-trip latency that affects responsive operator workflows." |
-| **Benefit** | How does it solve a problem the customer has acknowledged? | "On-device inference enables analyst workflows in DDIL operational tempos that have caused mission-effectiveness degradation in cloud-dependent solutions, addressing the operational pain the customer documented in [reference to their stated problem]." |
+| **Benefit** | How does it solve a problem the customer has acknowledged? | "On-device inference enables analyst workflows in DDIL operational tempos that have caused mission-effectiveness degradation in cloud-dependent solutions, addressing the operational pain SOCPAC documented in <reference>." |
 
 **Rule:** weak discriminators stop at Feature ("we have X"). Mediocre discriminators reach Advantage ("X helps you"). Strong discriminators reach Benefit ("X solves a problem you've stated"). Aim for Benefit-level discriminator statements.
 
@@ -312,14 +312,31 @@ Assume competitor-assessment says the likely lead competitor requires cloud conn
 
 ---
 
+## Self-Positioning Discipline (applies to all types, critical for white papers)
+
+**Rule:** Company-specific rows, claims, or paragraphs go in the dedicated Company Position section — not inside evidence tables or audits.
+
+Evidence tables document the *problem*. Self-positioning sections document the *answer*. Mixing the two reads as self-dealing and weakens both.
+
+**Violation pattern to avoid:** Adding your own company's row to a vendor provenance audit table that is intended to indict the field (e.g., "19 of 20 vendors build on PRC-origin models"). Including your company in that table as evidence that your company doesn't do this co-mingles the indictment with the sales pitch. Instead: run the table as pure evidence, then assert the company position in a dedicated, clearly labeled section that comes *after* the policy argument lands.
+
+**For white papers specifically:**
+- Maximum evidence table dimensions: 5 rows × 4 columns. Larger evidence sets are summarized in prose with the strongest 3-5 examples cited inline.
+- Self-positioning section goes *last* (after the policy considerations or recommendations), not early.
+
+---
+
 ## How `proposal-writer` applies these patterns
 
 For every major section, the writer should:
 
-1. **Open with a theme statement** (Pattern 1) that previews the section's main point
+1. **Open with a theme statement** (Pattern 1) that previews the section's main point when the type requires it; for brief formats where Pattern 1 is only recommended, use a plain first sentence if a formal theme statement sounds mechanical
 2. **Include at least one discriminator proof point** (Pattern 2) in sections that map to evaluation criteria
 3. **Write action captions** (Pattern 3) for every graphic referenced from the section
 4. **Ghost** (Pattern 4) in sections where a known competitor weakness is in play — but only when applicable per the table above
+5. **Keep self-positioning in self-positioning sections** — evidence sections stay evidentiary
+
+Pattern discipline should improve the prose, not expose the scaffolding. If applying a pattern makes a short white paper or web-form answer sound like a proposal template, compress the pattern into normal prose while preserving the claim, proof, and evaluator value.
 
 For every section, the writer should also check:
 

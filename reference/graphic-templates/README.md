@@ -55,12 +55,26 @@ When positions are SVG-coordinate-dependent (each item must go at a different x/
 7. Fill the template (string substitution) → write to `graphics/fig<N>-<pattern>.html`
 8. Render to PNG via headless Chrome → `graphics/rendered/fig<N>-<pattern>.png`
 
-## Templates shipped in Phase D.1
+## Templates shipped in Phase D.1 (framework defaults — `reference/graphic-templates/`)
 
 | Pattern | Status | Typical use |
 |---|---|---|
 | [three-tier-architecture/](three-tier-architecture/) | ✅ shipped | Enterprise / GCC / Tactical Edge diagrams; three-band architectures with boundaries between bands |
 | [capability-matrix/](capability-matrix/) | ✅ shipped | Products × services / capabilities × customer-needs comparisons; two-column accented header layout |
+
+## Branded templates (company overrides — `my-company/graphic-templates/`)
+
+These live in `my-company/graphic-templates/` and take precedence over the framework defaults per the resolution order above. They import `my-company/branding/colors_and_type.css` and are pre-styled to your company's federal proposal surface.
+
+| Pattern | Status | Typical use |
+|---|---|---|
+| `differentiator-comparison` | ✅ deployed | 3-column ghosted competitor comparison (✗ / ~ / ✓); never name competitors |
+| `deployment-spectrum` | ✅ deployed | 4-column connectivity spectrum: Connected → Degraded → Denied → Autonomous |
+| `platform-architecture` | ✅ deployed | Left-to-right 5-layer pipeline diagram (Inputs → Engine → Outputs) |
+| `human-machine-teaming` | ✅ deployed | 5-step operator ↔ AI workflow with feedback loop |
+| `customer-map` | ✅ deployed | Customer table with status pills + summary stats cards |
+
+Each branded template contains `template.html`, `schema.json`, `example-data.json`, and `README.md`. Open any `template.html` in a browser to verify rendering; `example-data.json` shows the required data shape.
 
 ## Templates deferred to on-demand
 
@@ -71,7 +85,6 @@ Built next time a real proposal needs that pattern:
 | `swim-lane-timeline` | Execution timeline with parallel workstreams + go/no-go gates |
 | `lifecycle-loop` | Four-node diamond with circular arrows and a center concept label |
 | `objectives-split` | Technical vs. operational objectives side-by-side with numbered items |
-| `differentiator-comparison` | Us vs. generic competitor pattern (ghosted — never name competitors) |
 
 Deferred ≠ unimportant. The framework supports them; they just aren't built yet. When a real proposal calls for one, build it, use it, ship it. Each takes ~3-4 hours once the framework pattern is familiar.
 
@@ -85,7 +98,7 @@ Deferred ≠ unimportant. The framework supports them; they just aren't built ye
 ## Design conventions (for new templates)
 
 - **Half-page print is the target.** Word embed at ~5" wide. Minimum font sizes: titles 28px, headings 22px, body 17-19px, captions 14px.
-- **Dark canvas is the framework default** — works well for technical proposal graphics and prints with strong contrast. User overrides in `my-company/graphic-templates/` may use light canvas or any palette that matches your brand.
+- **Dark canvas is the default** for the framework templates — override it via your own `my-company/branding/` palette. User overrides in `my-company/graphic-templates/` may use different palettes.
 - **Action captions live OUTSIDE the graphic** — in the Word doc text, not inside the HTML. See `reference/proposal-writing-patterns.md` Pattern 3.
 - **SVG for any vector content** (arrows, boundaries, flow lines). Inline CSS in `<style>` blocks. No external dependencies.
 - **Self-contained file** — no external images, no CDN fonts, no network requests. Renders identically on every machine.

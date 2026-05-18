@@ -1,5 +1,5 @@
 {
-  "_comment": "Example data for capability-matrix template. Fictional 'edge AI capability → proof point' matrix, 6 rows, 2 columns. Replace with your actual capabilities and evidence citations when authoring a real proposal graphic.",
+  "_comment": "Example data for capability-matrix template. Fictional 'capability -> proof point' matrix, 6 rows, 2 columns. Replace with your actual capabilities and evidence citations when authoring a real proposal graphic.",
   "title": "Capability → Proof Point Map",
   "subtitle": "Every commitment in this proposal traces to deployed evidence or peer-reviewed research",
   "columns": [
@@ -9,16 +9,16 @@
   "rows": [
     {
       "cells": [
-        "On-device inference in DDIL environments",
-        "Deployed at 1st, 7th, and 10th Special Forces Groups under the SOF AI Pilot — operational today"
+        "On-device inference in disconnected environments",
+        "Deployed across three operational units under a government pilot — operational today"
       ],
       "row_class": "",
       "highlight": false
     },
     {
       "cells": [
-        "Military task performance matching cloud-class models",
-        "Published research: small on-device model matches or exceeds GPT-5 on military benchmarks at 95%+ statistical significance"
+        "Task performance matching cloud-class models",
+        "Published research: small on-device model matches or exceeds a leading cloud model on domain benchmarks at 95%+ statistical significance"
       ],
       "row_class": "alt",
       "highlight": false
@@ -26,23 +26,23 @@
     {
       "cells": [
         "Rapid mission-specific specialization (LoRA)",
-        "Five production MOS/AFSC adapters shipped (Logistics, Combat Medic, Combat Arms, Acquisitions, Cyber)"
+        "Five production role-specific adapters shipped across distinct operational domains"
       ],
       "row_class": "",
       "highlight": false
     },
     {
       "cells": [
-        "Multi-platform deployment (laptops, edge servers, TAK, fly-away kits)",
-        "Active deployments spanning SOF schoolhouse (SWCS) and conventional force (4th ID NGC2)"
+        "Multi-platform deployment (laptops, edge servers, fly-away kits)",
+        "Active deployments spanning a training schoolhouse and a conventional force command"
       ],
       "row_class": "alt",
       "highlight": false
     },
     {
       "cells": [
-        "Research credibility in military AI domain",
-        "First-of-its-kind military LLM refusal benchmark (MilDeflect) — peer-reviewed, established baseline for the field"
+        "Research credibility in the domain",
+        "First-of-its-kind domain benchmark — peer-reviewed, established baseline for the field"
       ],
       "row_class": "",
       "highlight": true
@@ -50,20 +50,20 @@
     {
       "cells": [
         "Direct procurement path",
-        "CDAO Tradewinds 'Awardable' status + SAM.gov active (CAGE 9Z176 / UEI SLZTJUA8DBD3)"
+        "Marketplace 'Awardable' status + SAM.gov active (CAGE [CAGE code] / UEI [UEI])"
       ],
       "row_class": "alt",
       "highlight": false
     }
   ],
   "footer": {
-    "brand": "EDGE AI",
+    "brand": "ACME DEFENSE",
     "tagline": "Every capability cited, every claim backed by deployed evidence or peer-reviewed research",
     "website": "example.com"
   },
   "theme": {
     "bg": "#191c20",
-    "accent": "#ee2929",
+    "accent": "#2f5d8a",
     "panel": "#2a2d31",
     "panel_alt": "#23262a",
     "panel_border": "#393939",

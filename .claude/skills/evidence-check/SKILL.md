@@ -1,6 +1,9 @@
 ---
 name: evidence-check
 description: Audit draft evidence citations against my-company/evidence-ledger.json — flag CLAIM-UNSUPPORTED, typos, retired/restricted IDs. Run after proposal-writer, before red-team-review --mode=gold.
+phase: review
+composes: [proposal-writer]
+conflicts_with: []  # complementary to compliance-check; both feed red-team-review
 ---
 
 # /evidence-check

@@ -8,7 +8,7 @@
   "properties": {
     "title": {
       "type": "string",
-      "description": "Title bar (e.g., '[Your Company] Capability -> Proof Point Map'). All caps applied by CSS.",
+      "description": "Title bar (e.g., 'Capability → Proof Point Map'). All caps applied by CSS.",
       "maxLength": 120
     },
     "subtitle": {
@@ -63,10 +63,10 @@
     },
     "theme": {
       "type": "object",
-      "description": "Optional color overrides. Framework defaults are a neutral dark canvas with red accent — override these to match your brand by passing your own values, or copy the template to my-company/graphic-templates/ for a permanent override.",
+      "description": "Optional color overrides. Defaults are a neutral dark canvas with a single accent — override these via the configured brand palette in my-company/branding/.",
       "properties": {
         "bg": {"type": "string", "default": "#191c20"},
-        "accent": {"type": "string", "default": "#ee2929"},
+        "accent": {"type": "string", "default": "#2f5d8a"},
         "panel": {"type": "string", "default": "#2a2d31"},
         "panel_alt": {"type": "string", "default": "#23262a"},
         "panel_border": {"type": "string", "default": "#393939"},

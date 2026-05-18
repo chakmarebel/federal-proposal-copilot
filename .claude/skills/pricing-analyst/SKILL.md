@@ -1,6 +1,9 @@
 ---
 name: pricing-analyst
 description: Develop the pricing artifact appropriate to the proposal type (ROM, SBIR budget, OTA milestones, CSO commercial pricing, or FAR cost volume). Reads working/proposal-type.md first and dispatches to the matching template in reference/pricing-artifacts/. Do NOT produce a generic cost volume for every type.
+phase: drafting
+composes: [proposal-solution-architect, proposal-manager]
+conflicts_with: []  # dispatch on pricing_artifact yields one artifact per type; no peer
 ---
 
 # Pricing Analyst Skill

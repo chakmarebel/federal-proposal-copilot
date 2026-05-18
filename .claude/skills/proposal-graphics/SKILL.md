@@ -1,6 +1,9 @@
 ---
 name: proposal-graphics
 description: Use this skill to create proposal-ready architecture graphics, anchor graphics, and figure concepts with PowerPoint/Figma-ready structure. Reads from working/ files and writes graphic specs to working/graphics-brief.md.
+phase: drafting
+composes: [proposal-storyboard, proposal-solution-architect]
+conflicts_with: []  # unique visual role
 ---
 
 # Proposal Graphics Skill
@@ -64,27 +67,29 @@ If you can't write an action caption for a graphic, the graphic has no evaluativ
   - External systems/data
 
 ## Default Color Logic — Brand Palette
-Use your company's brand palette unless the customer specifies otherwise. Update these values to match your brand:
+The values below are neutral placeholder defaults. On first run, set your company's
+palette in `my-company/branding/` (run `/setup-company`); skills pick it up automatically.
+Until then, these defaults apply:
 - **Background:** `#191c20` (near-black)
-- **Primary accent:** `#ee2929` (brand red) — titles, accent bars, pills, hero elements, glow effects
+- **Primary accent:** `#2f5d8a` (accent) — titles, accent bars, pills, hero elements, glow effects
 - **Dark grey:** `#393939` — borders, dividers, secondary structure
 - **Medium grey:** `#9f9f9f` — secondary text, subtitles, captions
 - **Light grey:** `#c8c8c8` — body text, descriptions
 - **White:** `#ffffff` — headings, primary labels
-- **Red tint backgrounds:** `rgba(238,41,41,.08)` to `rgba(238,41,41,.15)` — hero tier fills, callout backgrounds
-- **Red accent borders:** `rgba(238,41,41,.4)` — commitment callouts, emphasis boxes
+- **Red tint backgrounds:** `rgba(47,93,138,.08)` to `rgba(47,93,138,.15)` — hero tier fills, callout backgrounds
+- **Red accent borders:** `rgba(47,93,138,.4)` — commitment callouts, emphasis boxes
 
 ### Tier Treatment (for architecture graphics)
 - **Enterprise tier:** `#2a2d31` fill, `#393939` stroke
 - **GCC tier:** `#2a2d31` fill, `#393939` stroke
-- **Edge/Tactical tier (hero):** `rgba(238,41,41,.08)` fill, `#ee2929` stroke — visually emphasized
+- **Edge/Tactical tier (hero):** `rgba(47,93,138,.08)` fill, `#2f5d8a` stroke — visually emphasized
 
 ### Element Patterns
-- Title bars: white text, `border-bottom: 2px solid #ee2929`
-- Registry/badge pills: `#ee2929` fill, dark text
-- Commitment callouts: `rgba(238,41,41,.08)` fill, `#ee2929` border
-- Glow filters: `flood-color: #ee2929`
-- Row accent bars: 4px wide, `#ee2929`
+- Title bars: white text, `border-bottom: 2px solid #2f5d8a`
+- Registry/badge pills: `#2f5d8a` fill, dark text
+- Commitment callouts: `rgba(47,93,138,.08)` fill, `#2f5d8a` border
+- Glow filters: `flood-color: #2f5d8a`
+- Row accent bars: 4px wide, `#2f5d8a`
 
 ## Template Dispatch (v1.5 Phase D — mandatory first step)
 
@@ -137,7 +142,7 @@ When a template matches:
 
 ### When to override in `my-company/graphic-templates/`
 
-If your brand palette differs materially from the framework default (dark canvas with red accent), or you want a different visual treatment for a pattern, copy the framework template to `my-company/graphic-templates/<pattern>/` and modify freely. The skill picks up your override automatically. Framework updates to the reference version won't touch your override.
+If your brand palette differs materially from the default (a dark canvas with a single accent), or you want a different visual treatment for a pattern, copy the framework template to `my-company/graphic-templates/<pattern>/` and modify freely. The skill picks up your override automatically. Framework updates to the reference version won't touch your override.
 
 ## Output Formats
 
@@ -213,7 +218,7 @@ These minimums are non-negotiable for federal proposal embedding. Anything below
 
 After PNG render, open the PNG at 100% in an image viewer sized so the image fills ~6.5 inches of screen width (or print a test page). If body text isn't readable from arm's length, the graphic fails — increase font sizes in the HTML and re-render before declaring graphics done.
 
-## Lessons Learned (Calibration Session — White Paper Graphics)
+## Lessons Learned (SOCPAC Session)
 
 ### Sizing & Legibility
 - **8.5×11 print is the target.** See the "Legibility for 8.5×11 proposal embedding" section above for the binding rule. Body text below ~10pt rendered (24px logical at the default canvas/embed) is unreadable on paper.

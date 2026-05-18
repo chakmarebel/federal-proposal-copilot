@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "decision-card.schema.json",
+  "title": "Decision Card",
+  "description": "A compact, high-leverage human-gate prompt. When a skill reaches a point that genuinely needs a human decision, it emits a decision card instead of handing the user a long artifact to synthesize alone. The card states the decision, the assistant's recommendation, the risk of getting it wrong, and the one action to approve — so the intervention is short and concrete. The card SUMMARIZES the artifact; it does not replace reading it when review_required is true.",
+  "type": "object",
+  "required": ["schema_version", "gate_id", "decision", "recommendation", "confidence", "risk_if_wrong", "approve_action"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "decision-card.v1"
+    },
+    "gate_id": {
+      "type": "string",
+      "description": "Stable identifier for this gate, e.g. 'narrative-spine-approval' or 'submission-summary-confirmation'."
+    },
+    "proposal_id": {
+      "type": "string",
+      "description": "The proposals/<slug>/ directory name."
+    },
+    "generated_by": {
+      "type": "string",
+      "description": "The skill that emitted the card."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "decision": {
+      "type": "string",
+      "description": "The decision the human must make, in one sentence."
+    },
+    "artifact": {
+      "type": "string",
+      "description": "Path to the full artifact this card summarizes — the thing the human should open when review_required is true."
+    },
+    "recommendation": {
+      "type": "string",
+      "description": "The assistant's recommended answer to the decision."
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["High", "Medium", "Low"],
+      "description": "The assistant's confidence in the recommendation. Low confidence means the human should not rubber-stamp."
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Why the recommendation, in one or two sentences."
+    },
+    "risk_if_wrong": {
+      "type": "string",
+      "description": "What goes wrong downstream if the human approves a bad answer. The most important field — it tells the human how hard to look."
+    },
+    "on_approval": {
+      "type": "string",
+      "description": "What happens next if the card is approved."
+    },
+    "human_time_estimate": {
+      "type": "string",
+      "description": "Honest estimate of the human time the gate needs, e.g. '3 minutes'."
+    },
+    "approve_action": {
+      "type": "string",
+      "description": "The single command or action that approves and continues, e.g. '/proposal-storyboard'."
+    },
+    "review_required": {
+      "type": "boolean",
+      "description": "TRUE when the human must actually read the artifact before approving, not merely glance at the card. The narrative-spine gate is always review_required:true — the one-page spine decides the whole proposal's argument and is the cheapest, highest-leverage point to correct course. The card frames that read; it never invites skipping it."
+    }
+  }
+}

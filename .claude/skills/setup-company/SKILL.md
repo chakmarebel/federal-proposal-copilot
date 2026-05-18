@@ -1,4 +1,12 @@
-﻿# /setup-company
+---
+name: setup-company
+description: One-time setup that creates the my-company/ directory with company-specific boilerplate files (company description, capabilities, contract vehicles, past performance, capture profile, brand palette). Run once when first cloning the repository, or again to update company information.
+phase: setup
+composes: []  # one-time setup; no upstream
+conflicts_with: []  # one-time setup; no peer skills
+---
+
+# /setup-company
 
 One-time setup skill that creates the `my-company/` directory with company-specific boilerplate files. Run this once when first cloning the repository, or again to update company information.
 

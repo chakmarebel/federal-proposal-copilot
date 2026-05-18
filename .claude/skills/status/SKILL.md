@@ -1,6 +1,9 @@
 ---
 name: status
 description: Show the current state of the active proposal — proposal type, stages completed, open compliance gaps, and the next recommended command. Reads working/proposal-type.md, working/activity.md, working/compliance-matrix.md, and working/proposal-plan.md. Writes nothing. Use when returning to a proposal after time away, deciding what to do next, or checking progress before a review.
+phase: inspection
+composes: [proposal-manager, compliance-check]
+conflicts_with: [dashboard]  # per-proposal CLI summary; use dashboard for portfolio-wide view
 ---
 
 # /status — Proposal state at a glance
@@ -67,7 +70,7 @@ Mode:       <Full Capture | Responsive>
 
 ## How to run
 
-1. Confirm a proposal is active. Current proposal is the working directory, or the one matching `$ARGUMENTS` if provided (e.g., `/status sbir-phase-i`).
+1. Confirm a proposal is active. Current proposal is the working directory, or the one matching `$ARGUMENTS` if provided (e.g., `/status mystic-depot`).
 2. Read the files listed above. Any missing file → mark that stage as not started; do not fail.
 3. Build the pipeline table by matching `required_skills` from `working/proposal-type.md` against entries in `working/activity.md`. Skills in `skipped_skills` render as `SKIPPED for this type`.
 4. Count compliance rows by status column (`Covered` / `Drafted` / empty).

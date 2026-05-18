@@ -10,6 +10,12 @@ my-company/
 # drafts, reviews, pricing, teaming strategy — all sensitive.
 proposals/
 
+# In-flight proposal workspaces (e.g., working/ussf-sda-rfi/) — same
+# rationale as proposals/: drafts, customer-specific content, audit notes.
+# (Use working/* + negation so the scaffold .gitkeep can be tracked.)
+working/*
+!working/.gitkeep
+
 # Calibration corpus per-proposal content — auto-drafts, final submissions,
 # edit notes contain real proposal text, customer info, and IP. Keep the
 # structure (README + _template) committed but never the per-slug content.
@@ -18,6 +24,13 @@ corpus/calibration/*/
 
 # Personal Claude Code settings (may contain paths, tokens, allow-lists)
 .claude/settings.local.json
+
+# Claude Code agent worktrees — created on demand by the bridge, contain
+# throwaway branches and per-instance scratch. Never push.
+.claude/worktrees/
+
+# Personal editor launch config — contains hardcoded local paths
+.claude/launch.json
 
 # ─────────────────────────────────────────────────────────────────
 # Local build artifacts — not source
@@ -29,6 +42,14 @@ corpus/calibration/*/
 # Python bytecode
 __pycache__/
 *.pyc
+
+# .docx renders of review/reference/index markdown — derived artifacts,
+# regenerated on demand by scripts/render-md-to-docx.py. Source of truth
+# is the .md sibling; don't track the rendered Word doc.
+/reference/*.docx
+/SKILLS.docx
+/SKILL-MERGE-PROPOSAL.docx
+/SKILLS-IMPLEMENTATION-*.docx
 
 # ─────────────────────────────────────────────────────────────────
 # OS / editor noise

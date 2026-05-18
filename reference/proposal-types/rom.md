@@ -5,7 +5,7 @@ solicitation_vehicle: unsolicited
 page_target: 1-3
 pricing_artifact: rom
 pp_required: false
-required_skills: [proposal-solution-architect, pricing-analyst, proposal-writer]
+required_skills: [submission-summary, proposal-solution-architect, pricing-analyst, proposal-writer]
 skipped_skills: [opportunity-quick-look, proposal-manager, customer-intel, competitor-assessment, capture-scorecard, proposal-graphics, past-performance, compliance-check, red-team-review]
 section_patterns: rom
 compliance_sources: []

@@ -50,13 +50,13 @@
     }
   ],
   "footer": {
-    "brand": "EDGE AI",
+    "brand": "ACME DEFENSE",
     "tagline": "Edge AI closes the gap between enterprise investment and operational use — in any environment",
     "website": "example.com"
   },
   "theme": {
     "bg": "#191c20",
-    "accent": "#ee2929",
+    "accent": "#2f5d8a",
     "panel": "#2a2d31",
     "panel_border": "#393939",
     "text": "#ffffff",

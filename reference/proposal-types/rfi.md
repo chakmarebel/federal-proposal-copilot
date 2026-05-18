@@ -5,7 +5,7 @@ solicitation_vehicle: RFI
 page_target: 5-15
 pricing_artifact: none
 pp_required: false
-required_skills: [proposal-manager, customer-intel, proposal-solution-architect, proposal-writer, red-team-review]
+required_skills: [submission-summary, proposal-manager, customer-intel, proposal-solution-architect, proposal-writer, red-team-review]
 skipped_skills: [opportunity-quick-look, competitor-assessment, capture-scorecard, past-performance, pricing-analyst, proposal-graphics, compliance-check]
 section_patterns: rfi
 compliance_sources: [RFIQuestions]

@@ -5,7 +5,7 @@ solicitation_vehicle: SBIR
 page_target: per topic (typically 15-20)
 pricing_artifact: sbir-budget
 pp_required: false
-required_skills: [proposal-manager, customer-intel, capture-intent, proposal-solution-architect, proposal-storyboard, proposal-graphics, technical-review, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
+required_skills: [submission-summary, proposal-manager, customer-intel, capture-intent, proposal-solution-architect, narrative-spine, proposal-storyboard, proposal-graphics, technical-review, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
 skipped_skills: [opportunity-quick-look, competitor-assessment, capture-scorecard, past-performance]
 section_patterns: sbir
 compliance_sources: [TopicDescription, EvaluationCriteria]

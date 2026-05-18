@@ -1,6 +1,9 @@
 ---
 name: export-proposal
-description: Package proposal deliverables into native Microsoft Office formats (Word, Excel, PowerPoint) for review cycles and final submission. Reads working/proposal-type.md to determine which formats this type needs, converts .md drafts to .docx, pricing/compliance data to .xlsx, and optional briefings to .pptx. Uses the anthropic-skills docx/xlsx/pptx skills for conversion. Writes to the final/ directory. Use after drafting is stable and Gold Team has been run — export is the submission-prep step, not the authoring step.
+description: Package proposal deliverables into native Microsoft Office formats (Word, Excel, PowerPoint) for review cycles and final submission. Reads working/proposal-type.md to determine which formats this type needs, converts .md drafts to .docx, pricing/compliance data to .xlsx, and optional briefings to .pptx. Uses the workspace's shared Python converters (tools/md_to_docx.py, tools/compliance_to_xlsx.py) for .docx/.xlsx and anthropic-skills:pptx for briefings. Writes to the final/ directory. Use after drafting is stable and Gold Team has been run — export is the submission-prep step, not the authoring step.
+phase: submission
+composes: [proposal-editor, red-team-review, proposal-graphics]
+conflicts_with: []  # unique submission-packaging role
 ---
 
 # /export-proposal
@@ -76,48 +79,88 @@ For each `graphics/*.html`:
 
 ### Step 4: Convert drafts to Word (.docx)
 
-For each Word document in the Format Dispatch table:
+**Use the shared Python conversion script — do NOT delegate to anthropic-skills:docx.**
 
-1. Determine which `drafts/*.md` files belong to this document (per type's section_patterns and the proposal-plan's recommended structure)
-2. Concatenate in order, applying section heading hierarchy
-3. Insert graphics: where the draft says `See Figure N` or references `graphics/figN-*.html`, replace with embedded `final/graphics-png/figN-*.png` + the action caption from `working/graphics-brief.md` as Word caption-styled text below the image
-4. Delegate to `anthropic-skills:docx` for the actual conversion, passing:
-   - The concatenated markdown
-   - The base template path (from `my-company/templates/` or default)
-   - Figure→PNG mapping
-   - Style overrides for proposal-specific needs (CAGE/UEI in header, page numbering, etc.)
-5. Write to `final/docx/<document-name>.docx`
+The workspace ships a tested, proposal-agnostic converter at `tools/md_to_docx.py` (uses `python-docx`). Invoke it via Bash:
 
-**Do NOT auto-convert to PDF.** Instruct the user: "Open `final/docx/<name>.docx` in Word and use File → Save As → PDF. Word's native PDF export preserves styling, fonts, and embedded graphics in a way markdown-to-PDF converters do not."
+```bash
+cd "C:/Users/wbal9/Claude Code Projects/federal-proposal-assistant"
+python tools/md_to_docx.py --proposal <slug>
+```
+
+This produces:
+- `final/docx/<stem>.docx` for every `.md` file in `drafts/` (individual files)
+- `final/docx/full-proposal-combined.docx` — all sections in alphabetical order, page-break separated
+
+**Common overrides:**
+
+```bash
+# Explicit file order (when alpha sort is wrong):
+python tools/md_to_docx.py --proposal <slug> \
+  --files sec1-technical-approach.md sec2-management.md sec3-past-performance.md
+
+# Combined only, custom name:
+python tools/md_to_docx.py --proposal <slug> \
+  --mode combined --combined-name "technical-volume"
+
+# Individual files only (skip combined):
+python tools/md_to_docx.py --proposal <slug> --mode individual
+```
+
+**White paper heading normalization.** When `proposal_type: white-paper`, the converter applies a heading demotion pass before the standard mapping:
+- `# H1` (title) → Word Body Text (paragraph style, not Heading 1)
+- `## H2` → Word Heading 3
+- `### H3` → Word Heading 4
+- `#### H4` → Word Heading 4 (same level — white papers rarely go deeper)
+
+This matches the expected white-paper docx output without requiring manual heading demotion in Word.
+
+**Standard markdown → Word mapping (all other types):**
+- `# H1` through `###### H6` → Word heading styles 1–6
+- `**bold**`, `*italic*`, `***bold-italic***`, `` `code` `` → inline runs
+- `- bullet` / `1. numbered` with leading spaces for nesting → List Bullet / List Number
+- `| table |` pipe tables → Table Grid style, bold first row, auto column widths
+- ` ``` ` fenced code blocks → verbatim monospace, auto-sized to fit the column
+- `> blockquote` → indented italic (used for action captions)
+- `<!-- figure: NAME -->` → embeds `graphics/rendered/NAME.png`, centered, fit to column
+- other `<!-- comments -->` stripped; `---` separators and `*Note:` lines skipped
+
+**After the script runs:** Tell the user to open the `.docx` in Word, review formatting, then use **File → Save As → PDF**. Do NOT produce PDF directly — Word's PDF export preserves styling; markdown-to-PDF tools do not.
+
+**Optional HTML preview.** `python scripts/render-md-to-html.py --proposal <slug>` renders the narrative drafts to self-contained HTML in `final/html/` — a screen-review format that keeps graphics as crisp vector (HTML/SVG) rather than rasterized PNG. It is a review aid, not a submission format; the submission deliverable remains the `.docx`.
 
 ### Step 5: Produce Excel artifacts (.xlsx)
 
 **5a. Compliance Matrix → xlsx (always, when matrix exists)**
 
-Delegate to `anthropic-skills:xlsx`. Convert the 7-column table in `working/compliance-matrix.md` to a workbook with:
-- Sheet 1: "Matrix" — all rows, with filter dropdowns on Source, Status, Section
-- Sheet 2: "Summary" — the counter block as a small dashboard
-- Sheet 3: "Gaps" — filtered view of any Gap/Partial/Exception rows
-- Conditional formatting: Covered = green, Drafted = blue, Planned = yellow, Partial = orange, Gap = red
-- Write to `final/xlsx/compliance-matrix.xlsx`
+**Use the shared Python script — do NOT delegate to anthropic-skills:xlsx.**
+
+```bash
+cd "C:/Users/wbal9/Claude Code Projects/federal-proposal-assistant"
+python tools/compliance_to_xlsx.py --proposal <slug>
+```
+
+This reads `working/compliance-matrix.md` and produces `final/xlsx/compliance-matrix.xlsx` with:
+- Sheet 1 "Matrix" — all rows, auto-filter dropdowns, color-coded Status column
+  (Covered = green, Drafted = blue, Planned = yellow, Partial = orange, Gap = red)
+- Sheet 2 "Summary" — counts by status
+- Sheet 3 "Gaps" — filtered view of Gap / Partial / Exception rows
 
 **5b. Pricing artifact → xlsx (when `pricing_artifact` in proposal-type is `sbir-budget` or `far-cost-volume`)**
 
 For `sbir-budget`:
-- Use `reference/office-templates/sbir-budget-template.md` as the spec (or `my-company/templates/sbir-budget-template.xlsx` if present)
-- Populate with values from `working/pricing-inputs.md`
-- Agencies often provide their own required spreadsheet — if `inputs/00_priority/` contains an agency budget template (any `.xlsx`), use that as the base instead
-- Write to `final/xlsx/sbir-budget.xlsx`
+- Check if an agency-provided budget template exists in `inputs/00_priority/` (any `.xlsx`). If yes, populate that template with values from `working/pricing-inputs.md` using openpyxl.
+- If no agency template, build from scratch using the line items in `working/pricing-inputs.md`.
+- Write to `final/xlsx/sbir-budget.xlsx`.
 
 For `far-cost-volume`:
-- Use `reference/office-templates/cost-volume-appendix-template.md` as the spec
-- Populate the CLIN × Period × Cost Element cube from `working/pricing-inputs.md`
-- Include BOE hour tables as additional sheets
-- Write to `final/xlsx/cost-volume-appendix.xlsx`
+- Build a CLIN × Period × Cost Element workbook from `working/pricing-inputs.md`.
+- Include BOE hour tables as additional sheets.
+- Write to `final/xlsx/cost-volume-appendix.xlsx`.
 
 For `ota-milestones`:
-- Milestone schedule renders fine in Word (it's small), but also produce an xlsx companion for PMO tracking
-- Write to `final/xlsx/milestone-schedule.xlsx`
+- Produce an xlsx milestone schedule companion for PMO tracking.
+- Write to `final/xlsx/milestone-schedule.xlsx`.
 
 For `rom`, `cso-commercial`, `none`: skip xlsx pricing export.
 
@@ -162,6 +205,24 @@ Write `final/PACKAGE.md`:
 - [ ] Cover page + CAGE/UEI/NAICS populated
 - [ ] File naming matches agency submission requirements
 ```
+
+### Step 7b: Edit-readiness flag file (white paper only)
+
+When `proposal_type: white-paper`, write `final/edit-readiness.md` after the package manifest. This gives the user a single checklist of items that require human confirmation before submission:
+
+```markdown
+# Edit Readiness — [Proposal Name]
+
+The following items require human confirmation before submitting. Export is complete; these are the things the tool cannot verify.
+
+- [ ] **POC** — Is the point-of-contact name and email correct? (Current: [name from draft])
+- [ ] **Distribution statement** — Is the classification / distribution statement appropriate for this audience?
+- [ ] **Version of record** — Is this the version you intend to submit? (Exported: [timestamp])
+- [ ] **Headline numbers** — Are the key statistics (cost figures, benchmark percentages) verified against primary sources?
+- [ ] **Recipient** — Is the submission address / recipient confirmed?
+```
+
+Populate the bracketed fields from the draft content where available.
 
 ### Step 8: Activity trail
 

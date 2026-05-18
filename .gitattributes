@@ -1,0 +1,4 @@
+# Shell scripts MUST be checked out with LF. CRLF line endings make bash fail
+# with errors like `$'\r': command not found` on Windows checkouts — which is
+# exactly what broke scripts/smoke-test.sh. This pins *.sh to LF everywhere.
+*.sh    text eol=lf

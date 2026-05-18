@@ -1,6 +1,9 @@
 ---
 name: compliance-check
 description: Diff requirements against draft coverage and update the compliance matrix. Run after proposal-writer, before red-team-review. Reads working/compliance-matrix.md + drafts/; writes reviews/compliance-gaps.md.
+phase: review
+composes: [proposal-manager, proposal-writer]
+conflicts_with: [red-team-review]  # don't score proposal quality; that's red-team-review's job
 ---
 
 # /compliance-check

@@ -5,7 +5,7 @@ solicitation_vehicle: unsolicited
 page_target: 3-10
 pricing_artifact: none
 pp_required: false
-required_skills: [customer-intel, proposal-solution-architect, proposal-graphics, proposal-writer, evidence-check, red-team-review]
+required_skills: [submission-summary, customer-intel, proposal-solution-architect, narrative-spine, proposal-graphics, proposal-writer, proposal-editor, evidence-check, red-team-review]
 skipped_skills: [opportunity-quick-look, proposal-manager, competitor-assessment, capture-scorecard, past-performance, pricing-analyst, compliance-check]
 section_patterns: white-paper
 compliance_sources: []

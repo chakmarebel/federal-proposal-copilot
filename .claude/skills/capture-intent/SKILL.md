@@ -1,6 +1,9 @@
 ---
 name: capture-intent
 description: Use this skill early in the proposal lifecycle to define the strategic intent behind the bid, including customer belief objectives, discriminator strategy, competitive posture, acceptable risk, and narrative direction.
+phase: capture
+composes: [proposal-manager, customer-intel, competitor-assessment]
+conflicts_with: []  # unique strategic layer; complements competitor-assessment, doesn't duplicate
 ---
 
 # Capture Intent Skill

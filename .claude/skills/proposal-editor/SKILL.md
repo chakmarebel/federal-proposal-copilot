@@ -1,6 +1,9 @@
 ---
 name: proposal-editor
 description: Polish proposal-writer drafts into evaluator-friendly prose without breaking compliance or evidence traceability. Run after proposal-writer, before compliance-check. Reads + rewrites drafts/.
+phase: drafting
+composes: [proposal-writer]
+conflicts_with: [proposal-writer]  # don't re-derive claims or invent proof points; that's proposal-writer's job
 ---
 
 # Proposal Editor Skill
@@ -21,6 +24,8 @@ The editor's mission is to:
 - tighten narrative flow
 - reduce redundancy
 - sharpen scoreable takeaways
+- preserve the narrative spine's through-line
+- make transitions carry meaning instead of announcing structure
 
 The editor is intentionally optimized for prose quality, not process generation.
 
@@ -44,11 +49,14 @@ Read in this order:
 
 1. `working/proposal-type.md`
 2. `reference/editorial-voice-guide.md` (mandatory)
-3. `working/proposal-plan.md`
-4. `working/compliance-matrix.md` (if exists)
-5. `working/competitor-assessment.md` (if exists)
-6. All files in `drafts/`
-7. Relevant proposal conventions file:
+3. `reference/narrative-operating-modes.md` (mandatory)
+4. `working/narrative-spine.md` (if exists)
+5. `working/storyboard.md` (if exists)
+6. `working/proposal-plan.md`
+7. `working/compliance-matrix.md` (if exists)
+8. `working/competitor-assessment.md` (if exists)
+9. All files in `drafts/` — the **bound** section drafts (`drafts/<section-id>.md`). Do NOT edit `drafts/loose/` — those are the pre-verification Pass 1 drafts and are not the editing target.
+10. Relevant proposal conventions file:
    - `reference/proposal-conventions/far-rfp.md`
    - `reference/proposal-conventions/sbir.md`
    - `reference/proposal-conventions/gsa-mas.md`
@@ -107,11 +115,13 @@ Apply these in order:
 1. Preserve compliance
 2. Preserve technical accuracy
 3. Preserve evidence
-4. Improve naturalness
-5. Remove marketing language
-6. Reduce redundancy
-7. Improve evaluator readability
-8. Tighten for page count
+4. Preserve the narrative spine
+5. Match the narrative operating mode
+6. Improve naturalness
+7. Remove marketing language
+8. Reduce redundancy
+9. Improve evaluator readability
+10. Tighten for page count
 
 ## What to Edit Aggressively
 
@@ -154,6 +164,12 @@ Cut phrases like:
 - at this point in time
 - it is important to note
 - as previously mentioned
+
+Replace them with transitions that do real work:
+- consequence: "That constraint changes the architecture..."
+- selection: "For that reason, we propose..."
+- proof: "This is not a paper design..."
+- decision: "The practical next step is..."
 
 ### 6. Unsupported Claims
 
@@ -220,6 +236,30 @@ Goal:
 
 Anti-pattern: do NOT use this mode to "simplify" technical content for a non-technical reader. If the proposal type calls for technical evaluators, technical depth is a feature.
 
+### Mode 5 — Narrative Naturalization
+
+Use when drafts are compliant and factually sound but sound robotic, stitched together, or over-optimized for scoring artifacts.
+
+Focus:
+- restore the narrative spine's through-line across section openings and closings
+- vary section-opening rhythm without hiding the scoreable point
+- replace process announcements with consequence, selection, proof, or decision transitions
+- collapse "capability tour" paragraphs into problem -> answer -> proof movements
+- keep the evaluator oriented without repeating the same win theme in every section
+
+Allowed actions:
+- rewrite topic sentences
+- combine or split paragraphs
+- move a proof point earlier when the reader needs it
+- replace abstract setup with the customer's concrete problem language
+
+Do NOT:
+- invent new claims
+- soften a required compliance commitment
+- delete evidence markers
+- make a FAR volume sound like a thought piece
+- make a white paper sound like a FAR volume
+
 ## Section-Level Guidance
 
 ### Executive Summary
@@ -265,26 +305,17 @@ Every reference should answer:
 
 ## Output Rules
 
-Edited files are written to:
+**Edit the bound drafts in place.** Each edited section is written back to `drafts/<section-id>.md` — the same file `/export-proposal` reads. There is one authoritative draft location; the editor improves it, it does not fork it. (An earlier version wrote to a separate `drafts/edited/` directory, which meant the export step could silently ship the pre-edit draft. That split is retired.)
 
-```
-drafts/edited/
-```
+**The pre-edit version is preserved automatically.** The proposal-writer's Pass 1 leaves the loose draft at `drafts/loose/<section-id>.md` — that is the pre-edit record, and it survives this skill untouched. Before editing a section, confirm `drafts/loose/<section-id>.md` exists; if it does not (the draft was not produced by the two-pass writer), copy `drafts/<section-id>.md` to `drafts/loose/<section-id>.md` first, so a preimage always exists.
 
-Preserve original drafts.
-
-Example:
-
-```
-drafts/technical-approach.md
-drafts/edited/technical-approach.md
-```
+Never edit files under `drafts/loose/` — those are the preimage.
 
 ## Required Deliverables
 
 ### 1. Edited Draft Files
 
-Create edited versions of every modified section.
+Edit every modified section in place at `drafts/<section-id>.md`.
 
 ### 2. Editorial Change Log
 
@@ -321,11 +352,15 @@ A successful edit should:
 - read faster
 - feel calmer and more confident
 - reduce "AI smell"
+- match the selected narrative operating mode
+- make the proposal feel like one argument, not a stack of artifacts
 
 ## Anti-Patterns the Editor Must Catch
 
 - every section opening with the same formula
 - repetitive theme statements
+- transitions that only announce the next section
+- paragraphs that read like notes from the storyboard copied into prose
 - excessive use of "will"
 - architecture paragraphs with no operational meaning
 - paragraphs that only restate the solicitation
@@ -361,7 +396,7 @@ If the answer is no, revise again.
 Append to `working/activity.md`:
 
 ```
-## <timestamp> — proposal-editor — edited <N sections>, reduced redundancy, tightened narrative flow → drafts/edited/
+## <timestamp> — proposal-editor — edited <N sections> in place, reduced redundancy, tightened narrative flow → drafts/
 ```
 
 Append to `working/ai-runs.jsonl`:

@@ -1,6 +1,9 @@
 ---
 name: red-team-review
 description: Score drafts against evaluator rubrics from a GS-14 perspective — narrative quality (red), mock S/W/D rating (gold), final QA (white-glove). Run after compliance-check + technical-review.
+phase: review
+composes: [compliance-check, evidence-check, technical-review]
+conflicts_with: [compliance-check, technical-review]  # don't re-run compliance coverage or engineering feasibility; consume their outputs
 ---
 
 # Red Team Review Skill
@@ -60,7 +63,7 @@ If no mode is specified, ask before proceeding.
 
 **Purpose:** Read like a GS-14 evaluator with 15 minutes and a scoring rubric. Find everything that will cost points.
 
-**Inputs:** All files in `drafts/`, `working/proposal-plan.md` (win themes, evaluation criteria), `working/competitor-assessment.md`
+**Inputs:** All files in `drafts/`, `working/proposal-plan.md` (win themes, evaluation criteria), `working/narrative-spine.md` (if present), `working/storyboard.md` (if present), `reference/narrative-operating-modes.md`, `working/competitor-assessment.md`
 
 **Review categories:**
 1. **Technical credibility** — is the architecture real and defensible?
@@ -71,6 +74,9 @@ If no mode is specified, ask before proceeding.
 6. **Redundancy** — same content in multiple sections?
 7. **Win themes** — are the 3-5 win themes woven through every section?
 8. **Graphics alignment** — do visuals reinforce the narrative, or just decorate it?
+9. **Narrative spine preservation** — does the draft still carry the approved through-line, or did it collapse into a capability tour?
+10. **Narrative mode fit** — does the prose match the proposal type and page target, or does it over-explain / under-explain for the reader?
+11. **Transition quality** — do transitions show consequence, proof, selection, or decision, or merely announce structure?
 
 **Output table:**
 | Issue | Severity | Section | Why It Hurts Score | Recommended Fix |
@@ -384,37 +390,3 @@ After every submission once corpus entry is complete. Even one entry generates u
 Compliance coverage is validated using `/compliance-check` (writes `reviews/compliance-gaps.md`).
 
 **Critical Rule: Always write to files — never just display in chat.**
-
-## Lessons Learned (Calibration Session — White Paper Review)
-
-### Structural Issues to Catch
-- **Section duplication is the #1 problem.** Overview sections (e.g., "What is [Your Company]") and detail sections (e.g., "Addressing the Execution Gap") almost always repeat the same capabilities. Flag every instance and recommend which section should own which content.
-- **Closing paragraphs that restate the section.** Section 2 closing ("These challenges are interconnected...") should pivot to the solution, not summarize the section. Flag circular closings.
-- **Tables already in graphics.** If a capabilities table appears as both a graphic and inline text, flag the duplication and recommend removing one.
-
-### Editorial Issues to Catch
-- Double spaces after periods
-- Inconsistent section numbering ("5.0" vs "5.")
-- Informal language in formal documents ("Govt" → "Government", "ours" → "[Your Company]")
-- Run-on sentences — especially when incorporating reviewer feedback (e.g., eval sentence with missing punctuation)
-- Grammar breaks when mixing verb forms ("tasks integrating tools, reference local data" — inconsistent tense)
-- Manual bold on Normal paragraphs instead of proper Heading styles
-
-### Formatting Issues to Catch
-- Missing figure captions/numbering
-- Font mismatch between body (Times New Roman) and headers/footers (default Aptos)
-- Floating images (anchored positioning) that may shift when document is opened on different systems
-- Missing UNCLASSIFIED/distribution marking
-- Missing header/footer document identification
-- Blank spacer paragraphs instead of proper paragraph spacing
-
-### Tone Issues to Catch
-- Data capture framed as mandatory when it should be optional
-- Commitments that imply customer obligations
-- Hardware-specific claims (e.g., "16GB VRAM") when model selection isn't finalized
-- Overpromising on timelines without qualifying assumptions
-
-### Review Delivery Format
-Present findings in two parts:
-1. **Priority fixes table** — numbered, with severity (High/Medium/Low), location, and effort estimate
-2. **Recommended rewrites** — for the top 3-5 issues, provide the specific rewritten text, not just a description of what to fix. The author should be able to copy-paste the fix.

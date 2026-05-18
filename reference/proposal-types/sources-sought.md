@@ -5,7 +5,7 @@ solicitation_vehicle: SourcesSought
 page_target: 2-5
 pricing_artifact: none
 pp_required: relevant-experience
-required_skills: [proposal-manager, proposal-writer]
+required_skills: [submission-summary, proposal-manager, proposal-writer]
 skipped_skills: [opportunity-quick-look, customer-intel, competitor-assessment, capture-scorecard, proposal-solution-architect, past-performance, pricing-analyst, proposal-graphics, compliance-check, red-team-review]
 section_patterns: sources-sought
 compliance_sources: [SourcesSoughtQuestions, NAICS, SizeStandard]

@@ -1,10 +1,10 @@
-# Federal Proposal Copilot
+# Federal Proposal Assistant
 
 An AI-powered workflow for writing winning federal defense and IC proposals using [Claude Code](https://claude.ai/claude-code).
 
 Drop your solicitation, describe your company, and let AI handle requirements analysis, solution architecture, graphics, drafting, and red-team review.
 
-> **New here?** Start with the [Overview](OVERVIEW.md) for a plain-language introduction, then walk through the [Quickstart](QUICKSTART.md) to get set up.
+> **New here?** Start with the [Overview](OVERVIEW.md) — a plain-language introduction to what this tool does and who it's for.
 
 ## Quick Start
 
@@ -32,8 +32,8 @@ Drop your solicitation, describe your company, and let AI handle requirements an
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/chakmarebel/federal-proposal-copilot.git
-cd federal-proposal-copilot
+git clone https://github.com/YOUR-ORG/federal-proposal-assistant.git
+cd federal-proposal-assistant
 
 # 2. Open in Claude Code
 claude
@@ -100,9 +100,11 @@ Customer Intel → Proposal Plan → Competitor Assessment → Solution Architec
 | `/proposal-graphics` | Creates proposal-ready HTML graphics (architecture diagrams, timelines, matrices) |
 | `/proposal-writer` | Drafts all proposal sections from the approved architecture, **applies the four winning patterns** (theme statements, discriminator proof points, action captions, ghosting — see [`reference/proposal-writing-patterns.md`](reference/proposal-writing-patterns.md), gated by proposal type), **updates the compliance matrix** as sections land |
 | `/compliance-check` | Diffs required vs. covered requirements, recomputes coverage counters, writes `reviews/compliance-gaps.md`. Run after each writer pass. |
+| `/evidence-check` | Audits evidence citations in drafts against `my-company/evidence-ledger.json` — flags unsupported claims (`CLAIM-UNSUPPORTED` markers), typo'd IDs, retired evidence, and unused proof points. Run after `/proposal-writer`, before Gold Team. Writes `reviews/evidence-check.md`. |
 | `/red-team-review` | Pink (compliance, delegates to `/compliance-check`) → Red (narrative) → **Gold (rubric-driven scoring using [`reference/evaluator-rubrics/`](reference/evaluator-rubrics/) — adjectival ratings, Strengths/Weaknesses/Deficiencies with cited evidence, pWin estimate)** → White Glove |
 | `/status` | Read-only: shows proposal type, pipeline progress, compliance coverage, and next recommended command. Use any time. |
 | `/export-proposal` | **Converts markdown drafts to native Office formats.** Produces .docx (Word narratives), .xlsx (compliance matrix, pricing artifacts), .pptx (optional briefings), + graphics rendered to PNG. Writes to `final/`. User opens Word and saves as PDF for submission. Uses `anthropic-skills:docx/xlsx/pptx` and supports branded base templates at `my-company/templates/`. |
+| `/capture-submission` | Snapshots the AI-generated draft and your final submitted version into `corpus/calibration/` for framework learning. Run twice: once after `/proposal-writer` (before editing) to capture the AI baseline, and again after submission to record your edits and improvement notes. |
 | `/import-from-capture` | Imports a qualified opportunity from the capture-pipeline with solicitation facts and Go/No-Go pre-populated |
 
 ### Directory Structure
@@ -110,17 +112,35 @@ Customer Intel → Proposal Plan → Competitor Assessment → Solution Architec
 ```
 federal-proposal-assistant/
 ├── CLAUDE.md                        ← AI operating instructions
-├── .claude/skills/                  ← The 6 skills listed above
-├── reference/                       ← Reusable standards
-│   ├── style-guide.md               ← Federal proposal writing conventions
+├── .claude/skills/                  ← Skill catalog (one directory per skill)
+├── reference/                       ← Reusable standards and libraries
+│   ├── methodology/                 ← Shipley-aligned BD process: bd-process, capture-planning,
+│   │                                   color-teams, shipley-alignment
+│   ├── proposal-conventions/        ← Vehicle-specific structural conventions (far-rfp, sbir,
+│   │                                   gsa-mas, …) calibrated from real submissions
+│   ├── proposal-types/              ← One file per proposal type — registry used by /new-proposal
+│   ├── proposal-writing-patterns.md ← Four winning patterns: theme statements, discriminator
+│   │                                   proof points, action captions, ghosting
+│   ├── evaluator-rubrics/           ← Gold Team scoring rubrics per vehicle
+│   ├── section-patterns/            ← Reusable section templates with placeholders
+│   ├── graphic-templates/           ← Parametric HTML/SVG templates (three-tier-architecture,
+│   │                                   capability-matrix, pitch-deck-conventions, …)
+│   ├── pricing-artifacts/           ← Vehicle-specific pricing templates
 │   ├── distribution-statements.md   ← Classification & distribution markings
-│   └── section-patterns.md          ← Reusable section templates with placeholders
+│   └── style-guide.md               ← Federal proposal writing conventions
+├── corpus/                          ← Calibration corpus (gitignored except structure)
+│   └── calibration/                 ← (AI draft, final submission, edit notes) tuples per proposal
+│                                       populated by /capture-submission; used by /red-team-review
+│                                       --mode=lessons-learned to improve framework conventions
+├── dashboard/                       ← Local Streamlit dashboard (`streamlit run dashboard/app.py`)
+│                                       reads JSON sidecars to show portfolio state at a glance
 ├── templates/                       ← Empty proposal scaffold (copied by /new-proposal)
 ├── my-company/                      ← YOUR company profile (generated by /setup-company)
 │   ├── company-description.md
 │   ├── capabilities.md
 │   ├── contract-vehicles.md
 │   ├── past-performance.md
+│   ├── evidence-ledger.json         ← Approved proof points, citations, metrics (used by /evidence-check)
 │   └── brand-palette.md             ← Optional brand colors for graphics
 └── proposals/                       ← Your proposals live here
     └── [proposal-name]/
@@ -196,7 +216,7 @@ Claude doesn't generate images like DALL-E or Midjourney. It writes **HTML and S
 
 3. **Instant iteration.** "Make the font bigger" is a CSS change. "Move the labels above the arrows" is an SVG coordinate adjustment. "Switch to our brand colors" is a hex value replacement. Each revision takes seconds, not a designer's calendar day.
 
-4. **Encoded design knowledge.** The graphics skill contains hard-won lessons: minimum font sizes for half-page print (titles 28px, body 17px+), anti-patterns to avoid (emoji icons, text overlapping arrows, classification badges cluttering boxes), and proven layout patterns. Every graphic starts from a professional foundation.
+4. **Encoded design knowledge.** The graphics skill contains hard-won lessons: minimum font sizes for print legibility (≥10pt body, ≥12pt headings, ≥18pt titles when embedded at standard column widths — enforced and checked in White Glove review), anti-patterns to avoid (emoji icons, text overlapping arrows, classification badges cluttering boxes), and proven layout patterns. Every graphic starts from a professional foundation.
 
 5. **One person, full capability.** A proposal manager who can't draw a straight line in PowerPoint can now produce architecture diagrams, execution timelines, and capability matrices by describing what they need in plain English.
 
@@ -235,7 +255,10 @@ If no brand palette is provided, a professional default palette (dark background
 - **Iterate on graphics in HTML.** The HTML files are the primary deliverable — edit them directly for refinements rather than regenerating from specs.
 - **Red team early.** Run `/red-team-review` on a partial draft to catch structural issues before writing all sections.
 - **Captions go in the document, not the graphic.** Keep figure numbers and captions in your Word doc text, not embedded in the HTML graphic.
-- **Check the section patterns.** `reference/section-patterns.md` has fill-in-the-blank templates for every standard proposal section.
+- **Check the section patterns.** `reference/section-patterns/` has fill-in-the-blank templates for every standard proposal section, organized by vehicle.
+- **Run `/evidence-check` before Gold Team.** Resolving `CLAIM-UNSUPPORTED` markers before the Gold Team pass saves a round of rework — Gold Team automatically converts them to Weakness findings.
+- **Capture every submission.** Run `/capture-submission` after writing (before you edit) and again after submission. This is how the framework learns from your real edits over time.
+- **Portfolio visibility.** `streamlit run dashboard/app.py` gives a read-only view of all active proposals, compliance coverage, and AI run costs — useful when working multiple opportunities in parallel.
 
 ## Supported Proposal Types
 
@@ -245,6 +268,7 @@ Each type has a dedicated file in [`reference/proposal-types/`](reference/propos
 |---|---|---|---|
 | `far-rfp` | FAR Part 15 RFP | FAR cost volume | per Section L |
 | `idiq-to` | IDIQ / GWAC task order | FAR cost volume | 10-30 |
+| `gsa-mas-task-order` | GSA MAS BPA / task order | FAR cost volume | per PWS |
 | `cso-brief` | CSO Solution Brief (Phase 1) | ROM | 5-10 |
 | `cso-full` | CSO Full Proposal (Phase 2) | Commercial-item | 15-30 |
 | `baa` | Broad Agency Announcement | FAR cost volume | 15-30 |
@@ -316,7 +340,7 @@ After cloning (or after making framework changes), run the smoke test to verify 
 bash scripts/smoke-test.sh
 ```
 
-163+ checks run in under a second. Exits 0 on pass, 1 on fail with specific issues listed. Run this before any PR that touches skills, type registry, or reference files.
+273+ checks run in under a second. Exits 0 on pass, 1 on fail with specific issues listed. Run this before any PR that touches skills, type registry, or reference files.
 
 ## Worked Examples
 

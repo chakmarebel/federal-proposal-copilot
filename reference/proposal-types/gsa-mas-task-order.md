@@ -5,7 +5,7 @@ solicitation_vehicle: GSA-MAS-BPA
 page_target: 13-25 pp Technical + 2-3 pp Price + 5-8 pp Security + xlsx pricing workbook
 pricing_artifact: gsa-mas-pricing
 pp_required: true
-required_skills: [opportunity-quick-look, proposal-manager, customer-intel, competitor-assessment, capture-intent, proposal-solution-architect, past-performance, proposal-storyboard, proposal-graphics, technical-review, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
+required_skills: [opportunity-quick-look, submission-summary, proposal-manager, customer-intel, competitor-assessment, capture-intent, proposal-solution-architect, past-performance, narrative-spine, proposal-storyboard, proposal-graphics, technical-review, pricing-analyst, proposal-writer, proposal-editor, compliance-check, evidence-check, red-team-review]
 skipped_skills: [capture-scorecard]
 section_patterns: gsa-mas-task-order
 compliance_sources: [EvaluationFactors, EvaluationSubFactors, SOW]

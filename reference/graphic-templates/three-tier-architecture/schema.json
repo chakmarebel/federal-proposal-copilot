@@ -69,17 +69,17 @@
       "type": "object",
       "required": ["brand", "tagline"],
       "properties": {
-        "brand": {"type": "string", "description": "Company brand shorthand in footer-left (e.g., 'YOUR COMPANY').", "maxLength": 40},
+        "brand": {"type": "string", "description": "Company brand shorthand in footer-left (e.g., 'ACME DEFENSE').", "maxLength": 40},
         "tagline": {"type": "string", "description": "One-sentence positioning line in footer-center.", "maxLength": 160},
         "website": {"type": "string", "description": "Optional website in footer-right.", "maxLength": 60}
       }
     },
     "theme": {
       "type": "object",
-      "description": "Optional color overrides. Framework defaults are a neutral dark canvas with red accent.",
+      "description": "Optional color overrides. Defaults are a neutral dark canvas with a single accent — override these via the configured brand palette in my-company/branding/.",
       "properties": {
         "bg": {"type": "string", "default": "#191c20"},
-        "accent": {"type": "string", "default": "#ee2929"},
+        "accent": {"type": "string", "default": "#2f5d8a"},
         "panel": {"type": "string", "default": "#2a2d31"},
         "panel_border": {"type": "string", "default": "#393939"},
         "text": {"type": "string", "default": "#ffffff"},

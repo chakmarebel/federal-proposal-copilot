@@ -1,0 +1,23 @@
+# Active proposal working directories — keep off public repo
+ITDX26-AI-Analyst/
+clara/
+mystic-depot/
+socpac/
+
+# Root-level working artifacts
+inputs/
+working/
+
+# Company-specific reference content — keep off public repo
+reference/proposals/
+reference/boilerplate/
+reference/graphics/
+reference/*-palette.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp

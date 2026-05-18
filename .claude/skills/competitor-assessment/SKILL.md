@@ -1,6 +1,9 @@
 ---
 name: competitor-assessment
 description: Use this skill to identify likely competitors, profile each one, build a weighted Bidder Comparison Chart, identify teaming gaps, and generate win strategy statements. Uses open source web research plus inputs from the proposal workspace. Writes to working/competitor-assessment.md.
+phase: capture
+composes: [proposal-manager]
+conflicts_with: []  # ghosting language; complements capture-intent's strategic posture
 ---
 
 # Competitor Assessment Skill

@@ -97,7 +97,7 @@ def render():
     slug = st.selectbox("Select", options=[s.slug for s in summaries], key="portfolio_selector")
     if st.button("Open", type="primary"):
         st.session_state["selected_proposal"] = slug
-        st.session_state["view"] = "proposal"
+        st.session_state["view"] = "Proposal"  # must match app.py's view dispatch (capitalized)
         st.rerun()
 
     with st.expander("Legend"):

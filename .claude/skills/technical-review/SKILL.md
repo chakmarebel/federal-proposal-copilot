@@ -1,6 +1,9 @@
 ---
 name: technical-review
 description: Validate technical feasibility and claim realism (architecture, integration, ATO/cyber). Run --phase=approach after solution-architect; --phase=drafts after proposal-editor, before red-team.
+phase: review
+composes: [proposal-storyboard, proposal-solution-architect, proposal-editor]
+conflicts_with: [red-team-review]  # don't produce adjectival ratings or pWin; that's red-team-review --mode=gold
 ---
 
 # Technical Review Skill
@@ -101,10 +104,9 @@ Read in this order:
 
 1. All approach-phase inputs (1-12 above)
 2. `working/graphics-brief.md` if present
-3. All files in `drafts/`
-4. All files in `drafts/edited/` if present
-5. `reviews/editorial-changes.md` if present
-6. `reviews/technical-review-approach.md` (the prior approach-phase report — flag any approach-phase findings that should have been addressed but weren't)
+3. All files in `drafts/` — the bound, editor-polished section drafts (the editor edits these in place; there is no separate `drafts/edited/`)
+4. `reviews/editorial-changes.md` if present
+5. `reviews/technical-review-approach.md` (the prior approach-phase report — flag any approach-phase findings that should have been addressed but weren't)
 
 ## Review Philosophy
 

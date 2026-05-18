@@ -1,6 +1,9 @@
 ---
 name: opportunity-quick-look
 description: Use this skill to rapidly vet a new opportunity before committing to full proposal analysis. Produces a one-page triage report covering opportunity fit, funded/unfunded status, size/scope, customer alignment, and go/no-go signal. Reads from inputs/00_priority/ and inputs/01_customer/. Writes to working/quick-look.md.
+phase: capture
+composes: []  # entry point; runs cold on a fresh solicitation
+conflicts_with: [capture-scorecard]  # this is raw-solicitation triage; once proposal-manager has run, use capture-scorecard
 ---
 
 # Opportunity Quick Look Skill
@@ -35,7 +38,7 @@ If neither folder has content, ask the user to paste or describe the opportunity
 
 ---
 
-## The 7 Quick Look Factors
+## The 8 Quick Look Factors
 
 Assess each factor on a **GREEN / YELLOW / RED** basis. Keep each assessment to 1–2 sentences. This is judgment, not deep research.
 
@@ -112,6 +115,26 @@ Examples to check:
 | 🟡 | One barrier exists but is resolvable (e.g., clearance can be sponsored, facility can be leased) |
 | 🔴 | Hard barrier that cannot be resolved in time — disqualifying |
 
+### 8. Submission Mechanism
+Where does the proposal physically go, and is the submission format fully knowable right now?
+
+This factor exists to catch the failure mode we learned the expensive way on NATO DIANA: the *opportunity* is visible on the public site, but the *submission format* (section labels, hard character/word limits, metadata fields) is hidden behind portal registration. Drafting starts on assumptions; the real limits surface late; 40% of the token/time budget goes to compression and restructure.
+
+Identify the submission mechanism and act accordingly:
+
+| Mechanism | Signal | What it means |
+|--------|-----------|---------|
+| **Email to CO / POC** | 🟢 | Attach what the solicitation asks for. Format authority = the solicitation. Proceed normally. |
+| **SAM.gov or agency PDF upload** | 🟢 | Format authority = Section L of the solicitation. `/proposal-manager` extracts it reliably. Proceed normally. |
+| **Portal you already have an account on, format viewable** | 🟢 | Note the portal name and any surprising limits; proceed. |
+| **Agency portal requiring registration before format is visible** | 🟡 | **STOP drafting.** Register first, then run `/capture-portal-structure`. |
+| **Third-party challenge platform (DIANA, Challenge.gov, Valid Evaluation, AFWERX Open Topic, xTech, NSIN)** | 🟡 | **STOP drafting.** Register first, then run `/capture-portal-structure`. If the portal already has an entry in `reference/portal-formats/`, that skill inherits it — fast. |
+| **Unknown — can't tell from the solicitation where it goes** | 🔴 | Do not start any drafting work until resolved. Email the POC if needed. |
+
+**Why 🟡 (not 🔴) for registration-gated portals:** these are often the highest-pWin opportunities (DIU, DIANA, AFWERX), so they are *worth pursuing* — the issue is sequencing, not fit. The yellow signals the user to register and capture format *before* `/proposal-manager`, not to pass on the opportunity.
+
+A 🔴 here is reserved for genuinely unknowable submission mechanics (rare — usually a POC call resolves it in 5 minutes).
+
 ---
 
 ## Output Format
@@ -141,6 +164,7 @@ Write the following to `working/quick-look.md`. Always write to disk — do not 
 | 5 | Schedule Fit | 🟢/🟡/🔴 | [1–2 sentences] |
 | 6 | Competitive Position | 🟢/🟡/🔴 | [1–2 sentences] |
 | 7 | Common Sense Barriers | 🟢/🟡/🔴 | [1–2 sentences] |
+| 8 | Submission Mechanism | 🟢/🟡/🔴 | [email / document-upload / web-form + portal name if known + whether registration required] |
 
 **Score:** X Green / X Yellow / X Red
 
@@ -152,9 +176,9 @@ Write the following to `working/quick-look.md`. Always write to disk — do not 
 ## Recommendation
 **[PURSUE / PASS / HOLD]**
 
-- **PURSUE** — Fits well enough to invest in `/proposal-manager` and downstream analysis. At least 5 Green, no Red in Mission Fit, Customer Fit, or Common Sense Barriers.
+- **PURSUE** — Fits well enough to invest in `/proposal-manager` and downstream analysis. At least 5 Green, no Red in Mission Fit, Customer Fit, or Common Sense Barriers. If Factor 8 is 🟡 (registration-gated portal), PURSUE still applies — but the first action is `/capture-portal-structure`, not `/proposal-manager`.
 - **PASS** — Does not fit. Do not invest further unless circumstances change.
-- **HOLD** — Interesting but missing information or a resolvable barrier. Identify what needs to happen before re-evaluating.
+- **HOLD** — Interesting but missing information or a resolvable barrier. Identify what needs to happen before re-evaluating. Also use HOLD when Factor 8 is 🔴 (submission mechanism genuinely unknown) — hold until a POC call or portal page resolves the question.
 
 [1–2 sentence rationale]
 
@@ -184,7 +208,9 @@ Write the following to `working/quick-look.md`. Always write to disk — do not 
 Tell the user:
 1. Score (X Green / X Yellow / X Red)
 2. Recommendation (PURSUE / PASS / HOLD) with one-sentence rationale
-3. If PURSUE: confirm they want to proceed to `/proposal-manager` before starting
+3. If PURSUE with Factor 8 🟢: confirm they want to proceed to `/proposal-manager` before starting
+4. If PURSUE with Factor 8 🟡 (registration-gated web-form portal): tell them to register for the portal first, then run `/capture-portal-structure` — `/proposal-manager` comes after portal format is captured
+5. If HOLD with Factor 8 🔴: tell them what needs to resolve (POC call, portal page visit, etc.) before the mechanism is knowable
 
 ---
 

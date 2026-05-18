@@ -1,6 +1,9 @@
 ---
 name: dashboard
 description: Launch the local read-only Streamlit dashboard that shows portfolio-wide proposal state (compliance coverage, evidence coverage, Gold Team pWin, AI spend) by reading the v1.5 JSON sidecars produced by proposal-manager, compliance-check, and evidence-check. Use when the user wants a wide-angle view of all proposals at once, wants to spot-check token spend, or wants to browse the evidence ledger. The dashboard is read-only — it never modifies proposal files.
+phase: inspection
+composes: [proposal-manager, compliance-check, evidence-check]
+conflicts_with: [status]  # portfolio-wide Streamlit; use status for per-proposal CLI summary
 ---
 
 # /dashboard
