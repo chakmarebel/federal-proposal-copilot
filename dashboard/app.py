@@ -1,5 +1,5 @@
 """
-Federal Proposal Assistant — Dashboard entrypoint.
+Federal Proposal Copilot — Dashboard entrypoint.
 
 Run from the repo root:
     streamlit run dashboard/app.py

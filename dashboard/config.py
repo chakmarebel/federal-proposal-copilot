@@ -26,5 +26,5 @@ EVIDENCE_CHECK_MD = "reviews/evidence-check.md"
 EVIDENCE_LEDGER_JSON = MY_COMPANY_DIR / "evidence-ledger.json"
 
 # UI
-APP_TITLE = "Federal Proposal Assistant — Dashboard"
+APP_TITLE = "Federal Proposal Copilot — Dashboard"
 APP_ICON = ":briefcase:"

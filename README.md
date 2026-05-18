@@ -1,4 +1,4 @@
-# Federal Proposal Assistant
+# Federal Proposal Copilot
 
 An AI-powered workflow for writing winning federal defense and IC proposals using [Claude Code](https://claude.ai/claude-code).
 
@@ -32,8 +32,8 @@ Drop your solicitation, describe your company, and let AI handle requirements an
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/YOUR-ORG/federal-proposal-assistant.git
-cd federal-proposal-assistant
+git clone https://github.com/chakmarebel/federal-proposal-copilot.git
+cd federal-proposal-copilot
 
 # 2. Open in Claude Code
 claude
@@ -110,7 +110,7 @@ Customer Intel → Proposal Plan → Competitor Assessment → Solution Architec
 ### Directory Structure
 
 ```
-federal-proposal-assistant/
+federal-proposal-copilot/
 ├── CLAUDE.md                        ← AI operating instructions
 ├── .claude/skills/                  ← Skill catalog (one directory per skill)
 ├── reference/                       ← Reusable standards and libraries
@@ -291,7 +291,7 @@ When you paste a proposal into ChatGPT or upload documents to a web-based AI, yo
 
 This tool is different:
 
-| | ChatGPT / Web AI | Federal Proposal Assistant |
+| | ChatGPT / Web AI | Federal Proposal Copilot |
 |--|---|---|
 | **Where files live** | Uploaded to cloud servers you don't control | On your local machine, in folders you own |
 | **What you upload** | Entire documents, pasted wholesale | Only the content Claude needs to process for a specific task |

@@ -1,4 +1,4 @@
-# federal-proposal-assistant — Python dependencies
+# federal-proposal-copilot — Python dependencies
 # Install with: pip install -r requirements.txt
 
 # DOCX conversion (tools/md_to_docx.py, export-proposal skill)

@@ -1,4 +1,4 @@
-# Federal Proposal Assistant — Dashboard
+# Federal Proposal Copilot — Dashboard
 
 Local read-only Streamlit dashboard. Reads JSON sidecars produced by Phase A (`working/compliance-matrix.json`, `working/proposal-plan.json`, `working/ai-runs.jsonl`) and Phase C (`my-company/evidence-ledger.json`), plus `working/activity.md`, to show portfolio-wide proposal state at a glance.
 

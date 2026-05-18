@@ -1,4 +1,4 @@
-# Federal Proposal Assistant
+# Federal Proposal Copilot
 ### An AI-powered workflow for small defense contractors writing government proposals
 
 ---
@@ -15,7 +15,7 @@ This tool changes that.
 
 ## What It Is
 
-**Federal Proposal Assistant** is an AI workflow built on [Claude Code](https://claude.ai/claude-code) that automates the intellectual work of capture and proposal development — from first look at an opportunity through final submission review.
+**Federal Proposal Copilot** is an AI workflow built on [Claude Code](https://claude.ai/claude-code) that automates the intellectual work of capture and proposal development — from first look at an opportunity through final submission review.
 
 It's not a template library. It's not a document generator that produces generic text. It's a structured, step-by-step process where AI does the analytical and writing work while you provide the judgment, the relationship knowledge, and the company context.
 
@@ -86,7 +86,7 @@ Architecture diagrams, execution timelines, capability matrices, objectives grap
 ## Getting Started
 
 1. Install [Claude Code](https://claude.ai/claude-code) (requires a Claude subscription)
-2. Clone the repo: `github.com/[your-github-handle]/federal-proposal-assistant`
+2. Clone the repo: `github.com/chakmarebel/federal-proposal-copilot`
 3. Run `/setup-company` to create your company profile (one time, ~10 minutes)
 4. Drop in a solicitation, run `/new-proposal`, follow the workflow
 
