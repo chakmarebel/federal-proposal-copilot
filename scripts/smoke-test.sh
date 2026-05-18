@@ -28,6 +28,7 @@ fail() { CHECK=$((CHECK+1)); FAIL=$((FAIL+1)); echo "  ✗ FAIL: $1"; }
 warn() { CHECK=$((CHECK+1)); WARN=$((WARN+1)); echo "  ⚠ WARN: $1"; }
 
 section() { echo ""; echo "── $1 ──"; }
+clean_value() { printf '%s' "$1" | tr -d '\r' | xargs; }
 
 # ────────────────────────────────────────────────────────────────
 section "Proposal type registry integrity"
@@ -39,11 +40,11 @@ known_artifacts="reference/pricing-artifacts"
 
 for f in reference/proposal-types/*.md; do
   [ "$(basename "$f")" = "README.md" ] && continue
-  type_id=$(grep -E "^type_id:" "$f" | awk '{print $2}')
-  sp=$(grep -E "^section_patterns:" "$f" | awk '{print $2}')
-  pa=$(grep -E "^pricing_artifact:" "$f" | awk '{print $2}')
-  req=$(grep -E "^required_skills:" "$f" | sed 's/required_skills: *\[//; s/\]//')
-  skp=$(grep -E "^skipped_skills:" "$f" | sed 's/skipped_skills: *\[//; s/\]//')
+  type_id=$(clean_value "$(grep -E "^type_id:" "$f" | awk '{print $2}')")
+  sp=$(clean_value "$(grep -E "^section_patterns:" "$f" | awk '{print $2}')")
+  pa=$(clean_value "$(grep -E "^pricing_artifact:" "$f" | awk '{print $2}')")
+  req=$(grep -E "^required_skills:" "$f" | sed 's/required_skills: *\[//; s/\]//' | tr -d '\r')
+  skp=$(grep -E "^skipped_skills:" "$f" | sed 's/skipped_skills: *\[//; s/\]//' | tr -d '\r')
 
   # section_patterns → file must exist
   if [ -f "$known_patterns/$sp.md" ]; then
@@ -75,7 +76,7 @@ for f in reference/proposal-types/*.md; do
 
   # All required_skills must resolve to a skill dir
   for s in $(echo "$req" | tr ',' ' '); do
-    s=$(echo "$s" | xargs)  # trim
+    s=$(clean_value "$s")
     [ -z "$s" ] && continue
     if [ -f "$known_skills/$s/SKILL.md" ]; then
       pass "$type_id: required_skill $s exists"

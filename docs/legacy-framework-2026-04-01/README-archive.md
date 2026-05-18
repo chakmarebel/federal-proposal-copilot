@@ -1,7 +1,7 @@
 # Archived: Legacy Framework (2026-04-01)
 
 These files are the pre-P1-P8 version of the federal-proposal-assistant framework that
-lived at `C:\Users\wbal9\Claude Code Projects\proposals\` before consolidation on 2026-04-22.
+lived in an earlier local proposals workspace before consolidation on 2026-04-22.
 
 They are preserved here for historical reference and to document the evolution of the
 framework. They have been **superseded** by the current files at the repo root:

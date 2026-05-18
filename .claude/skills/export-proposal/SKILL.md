@@ -84,7 +84,7 @@ For each `graphics/*.html`:
 The workspace ships a tested, proposal-agnostic converter at `tools/md_to_docx.py` (uses `python-docx`). Invoke it via Bash:
 
 ```bash
-cd "C:/Users/wbal9/Claude Code Projects/federal-proposal-assistant"
+cd /path/to/federal-proposal-copilot
 python tools/md_to_docx.py --proposal <slug>
 ```
 
@@ -136,7 +136,7 @@ This matches the expected white-paper docx output without requiring manual headi
 **Use the shared Python script — do NOT delegate to anthropic-skills:xlsx.**
 
 ```bash
-cd "C:/Users/wbal9/Claude Code Projects/federal-proposal-assistant"
+cd /path/to/federal-proposal-copilot
 python tools/compliance_to_xlsx.py --proposal <slug>
 ```
 

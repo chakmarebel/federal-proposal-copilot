@@ -49,8 +49,7 @@ def render():
     if not summaries:
         st.info(
             "No proposals found under `proposals/`. Run `/new-proposal` inside Claude Code to scaffold one.\n\n"
-            "If you have proposals elsewhere, verify the framework is running from the repo root "
-            "(`C:\\Users\\wbal9\\Claude Code Projects\\federal-proposal-assistant`)."
+            "If you have proposals elsewhere, verify the dashboard is running from the repository root."
         )
         return
 

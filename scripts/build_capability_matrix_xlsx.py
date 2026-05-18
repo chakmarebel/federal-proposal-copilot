@@ -5,6 +5,7 @@ Creates 4 Excel spreadsheets from TES17 capability-matrix markdown files.
 
 import re
 import os
+import argparse
 from pathlib import Path
 import openpyxl
 from openpyxl.styles import (
@@ -449,29 +450,23 @@ def build_xlsx(md_path: Path, out_path: Path):
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
-BASE = Path(r"C:\Users\wbal9\Claude Code Projects\federal-proposal-assistant\proposals")
-
-TARGETS = [
-    (
-        BASE / "tes17-aa-cognitive-partner" / "working" / "capability-matrix.md",
-        BASE / "tes17-aa-cognitive-partner" / "final" / "xlsx" / "capability-matrix.xlsx",
-    ),
-    (
-        BASE / "tes17-edge-federated" / "working" / "capability-matrix.md",
-        BASE / "tes17-edge-federated" / "final" / "xlsx" / "capability-matrix.xlsx",
-    ),
-    (
-        BASE / "tes17-edge-data-curation" / "working" / "capability-matrix.md",
-        BASE / "tes17-edge-data-curation" / "final" / "xlsx" / "capability-matrix.xlsx",
-    ),
-    (
-        BASE / "tes17-aa-mesh-intel" / "working" / "capability-matrix.md",
-        BASE / "tes17-aa-mesh-intel" / "final" / "xlsx" / "capability-matrix.xlsx",
-    ),
-]
-
 if __name__ == "__main__":
-    for md_path, out_path in TARGETS:
-        print(f"\nBuilding: {md_path.parent.parent.name}")
-        build_xlsx(md_path, out_path)
+    parser = argparse.ArgumentParser(
+        description="Build a formatted capability-matrix workbook from markdown."
+    )
+    parser.add_argument("input", type=Path, help="Path to working/capability-matrix.md")
+    parser.add_argument(
+        "output",
+        type=Path,
+        nargs="?",
+        help="Output .xlsx path. Defaults to final/xlsx/capability-matrix.xlsx next to the proposal.",
+    )
+    args = parser.parse_args()
+
+    md_path = args.input
+    proposal_root = md_path.parent.parent if md_path.parent.name == "working" else md_path.parent
+    out_path = args.output or proposal_root / "final" / "xlsx" / "capability-matrix.xlsx"
+
+    print(f"\nBuilding: {proposal_root.name}")
+    build_xlsx(md_path, out_path)
     print("\nAll done.")

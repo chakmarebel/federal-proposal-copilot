@@ -21,7 +21,7 @@ Create a clean, ready-to-use proposal workspace for a new effort.
 Ask the user for:
 1. **Short name** (used as directory name, e.g., "socpac", "mystic-depot", "idx26")
 2. **Full title** (e.g., "[Your Company] Support to SOCPAC")
-3. **Customer/program** (e.g., "SOCPAC CTO Bala Selvam")
+3. **Customer/program** (e.g., "Agency innovation office")
 4. **Due date** (if known)
 
 ### Step 1b: Select Proposal Type from Registry
