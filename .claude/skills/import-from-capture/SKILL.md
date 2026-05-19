@@ -11,7 +11,7 @@ conflicts_with: [new-proposal]  # if no capture-pipeline export exists, use new-
 ## Purpose
 
 Bridge the handoff between the capture-pipeline (upstream: identify,
-qualify, decide to pursue) and the federal-proposal-assistant workspace
+qualify, decide to pursue) and the federal-proposal-copilot workspace
 (downstream: write the proposal). The capture side already knows the
 opportunity intimately — solicitation facts, NAICS, set-aside, scoring,
 Go/No-Go assessment, suggested teaming partners, customer POCs, next

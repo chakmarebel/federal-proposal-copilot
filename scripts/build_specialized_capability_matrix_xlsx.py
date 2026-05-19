@@ -196,7 +196,7 @@ def add_summary_sheet(wb, meta, sections):
     ws.row_dimensions[2].height = 22
 
     fields = [
-        ("Proposal Slug",       meta.get("slug", "digital-guardian-sim")),
+        ("Proposal Slug",       meta.get("slug", "example-proposal")),
         ("Customer",            "U.S. Space Force / Defense Acquisition University (DAU)"),
         ("Contract Vehicle",    "Example Marketplace OTA (Status: Awardable)"),
         ("Funding Range",       "$125k–$200k NTE (FFP prototype)"),

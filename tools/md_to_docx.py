@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-tools/md_to_docx.py — Shared markdown-to-Word converter for federal-proposal-assistant.
+tools/md_to_docx.py — Shared markdown-to-Word converter for federal-proposal-copilot.
 
 Converts proposal draft .md files → .docx in proposals/<slug>/final/docx/.
 
@@ -18,7 +18,7 @@ Usage:
     python tools/md_to_docx.py --proposal myproposal --files sec1.md sec2.md sec3.md
 
     # Explicit workspace root (if running from a different working directory):
-    python tools/md_to_docx.py --proposal myproposal --workspace "C:/path/to/federal-proposal-assistant"
+    python tools/md_to_docx.py --proposal myproposal --workspace "C:/path/to/federal-proposal-copilot"
 
 Supported markdown:
     # H1  ## H2  ### H3  #### H4  ##### H5  ###### H6
@@ -398,7 +398,7 @@ def main():
                         help="Explicit ordered file list (names relative to drafts/). "
                              "Overrides auto-discovery.")
     parser.add_argument("--workspace", default=None,
-                        help="Path to federal-proposal-assistant root. "
+                        help="Path to federal-proposal-copilot root. "
                              "Defaults to the parent of the tools/ directory.")
     args = parser.parse_args()
 

@@ -82,7 +82,7 @@ Architecture diagrams, execution timelines, capability matrices, objectives grap
 ## Getting Started
 
 1. Install [Claude Code](https://claude.ai/claude-code) (requires a Claude subscription)
-2. Clone the repo: `github.com/[your-github-handle]/federal-proposal-assistant`
+2. Clone the repo: `github.com/chakmarebel/federal-proposal-copilot`
 3. Run `/setup-company` to create your company profile (one time, ~10 minutes)
 4. Drop in a solicitation, run `/new-proposal`, follow the workflow
 

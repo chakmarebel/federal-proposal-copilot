@@ -1069,7 +1069,7 @@ This removes the current drift between:
 ## Suggested Repository Layout for V2
 
 ```text
-federal-proposal-assistant/
+federal-proposal-copilot/
   app/
     desktop/                  # Tauri shell + frontend app
     ui/                       # Shared React UI components

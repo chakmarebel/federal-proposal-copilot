@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://federal-proposal-assistant.local/schemas/evidence-ledger.v1.json",
+  "$id": "https://federal-proposal-copilot.local/schemas/evidence-ledger.v1.json",
   "title": "Evidence Ledger",
   "description": "Per-company library of approved proof points available for citation in any proposal. Each entry gets a stable ID (EV-###) that drafts reference via inline HTML comments. Location: my-company/evidence-ledger.json (user-local, gitignored). Consumed by proposal-writer (picks citations), /evidence-check (diffs citations vs. ledger), and red-team-review Gold Team (scores unsupported claims).",
   "type": "object",

@@ -1,6 +1,6 @@
 # Archived: Legacy Framework (2026-04-01)
 
-These files are the pre-P1-P8 version of the federal-proposal-assistant framework that
+These files are the pre-P1-P8 version of the federal-proposal-copilot framework that
 lived in an earlier local proposals workspace before consolidation on 2026-04-22.
 
 They are preserved here for historical reference and to document the evolution of the

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://federal-proposal-assistant.local/graphic-templates/capability-matrix.v1.json",
+  "$id": "https://federal-proposal-copilot.local/graphic-templates/capability-matrix.v1.json",
   "title": "Capability Matrix Graphic — Data Schema",
   "description": "Input data for reference/graphic-templates/capability-matrix/template.html. Produces a two-column capability table: left column lists capabilities (what we do), right column lists corresponding proof points or evidence (how we prove it). Optionally supports a 3-column layout (Capability / Requirement / Evidence). Dark canvas with accent header row; rows alternate subtle panel backgrounds for readability.",
   "type": "object",

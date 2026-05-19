@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://federal-proposal-assistant.local/schemas/proposal-plan.v1.json",
+  "$id": "https://federal-proposal-copilot.local/schemas/proposal-plan.v1.json",
   "title": "Proposal Plan",
   "description": "Structured sidecar for working/proposal-plan.md. Produced by /proposal-manager. Captures opportunity classification, evaluation factors, win themes, discriminators, ghosting targets, bid/no-bid assessment, and open questions as machine-readable data.",
   "type": "object",

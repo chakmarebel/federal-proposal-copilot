@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://federal-proposal-assistant.local/schemas/compliance-matrix.v1.json",
+  "$id": "https://federal-proposal-copilot.local/schemas/compliance-matrix.v1.json",
   "title": "Compliance Matrix",
   "description": "Structured sidecar for working/compliance-matrix.md. Produced by /compliance-check. Tracks every requirement from the solicitation's compliance sources through section assignment and draft status.",
   "type": "object",

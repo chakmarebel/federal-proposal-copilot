@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://federal-proposal-assistant.local/graphic-templates/three-tier-architecture.v1.json",
+  "$id": "https://federal-proposal-copilot.local/graphic-templates/three-tier-architecture.v1.json",
   "title": "Three-Tier Architecture Graphic — Data Schema",
   "description": "Input data for reference/graphic-templates/three-tier-architecture/template.html. Produces a dark-canvas, red-accent architecture diagram with three horizontal tiers (Enterprise → GCC/Theater → Tactical Edge), security/DDIL boundaries between tiers, and a footer strip. The bottom (Edge) tier gets accent treatment (red border, red fill tint) to emphasize it as the proposal's center of gravity.",
   "type": "object",

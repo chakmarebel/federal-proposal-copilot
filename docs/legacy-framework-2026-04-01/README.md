@@ -16,8 +16,8 @@ Drop your solicitation, describe your company, and let AI handle requirements an
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/YOUR-ORG/federal-proposal-assistant.git
-cd federal-proposal-assistant
+git clone https://github.com/chakmarebel/federal-proposal-copilot.git
+cd federal-proposal-copilot
 
 # 2. Open in Claude Code
 claude
@@ -86,7 +86,7 @@ Customer Intel → Proposal Plan → Competitor Assessment → Solution Architec
 ### Directory Structure
 
 ```
-federal-proposal-assistant/
+federal-proposal-copilot/
 ├── CLAUDE.md                        ← AI operating instructions
 ├── .claude/skills/                  ← The 6 skills listed above
 ├── reference/                       ← Reusable standards
