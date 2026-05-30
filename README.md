@@ -1,8 +1,10 @@
 # Federal Proposal Copilot
 
-An AI-powered workflow for writing winning federal defense and IC proposals using [Claude Code](https://claude.ai/claude-code).
+A Shipley-aligned capture and proposal workflow that enforces **requirement-first sequencing**. You follow the steps; the tool teaches the process by being used; the artifact at the end is Shipley-compliant — even if you've never taken Shipley training.
 
-Drop your solicitation, describe your company, and let AI handle requirements analysis, solution architecture, graphics, drafting, and red-team review.
+Built for senior engineers, SMEs, and small-team capture leads who write federal proposals without a formal BD machine behind them. The tool's job is to make requirement-first feel *less effortful* than the solution-first habit it exists to defeat.
+
+Built on [Claude Code](https://claude.ai/claude-code).
 
 > **New here?** Start with the [Overview](OVERVIEW.md) — a plain-language introduction to what this tool does and who it's for.
 
