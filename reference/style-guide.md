@@ -27,6 +27,7 @@
 - Cut rhetorical lead sentences, em-dash asides in body paragraphs, bold emphasis inside body paragraphs (white paper register), and superlatives that aren't immediately substantiated
 - Select the narrative operating mode from `reference/narrative-operating-modes.md` before drafting; length and vehicle determine how much explanation the prose can afford.
 - Use transitions that carry meaning (consequence, selection, proof, decision), not structural announcements.
+- Voice doctrine lives in `reference/PROSE-QUALITY-DOCTRINE.md`; operative drafting guidance is in `reference/editorial-voice-guide.md`.
 
 ## Register by Proposal Type
 
