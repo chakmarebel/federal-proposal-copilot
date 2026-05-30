@@ -1,5 +1,5 @@
 # Federal Proposal Copilot
-### An AI-powered workflow for small defense contractors writing government proposals
+### A Shipley-aligned capture and proposal workflow for small defense contractors — process discipline, operationalized
 
 ---
 
@@ -15,11 +15,13 @@ This tool changes that.
 
 ## What It Is
 
-**Federal Proposal Copilot** is an AI workflow built on [Claude Code](https://claude.ai/claude-code) that automates the intellectual work of capture and proposal development — from first look at an opportunity through final submission review.
+**Federal Proposal Copilot** operationalizes the Shipley capture and proposal process in software, built on [Claude Code](https://claude.ai/claude-code). Each step produces a structured artifact — submission summary, customer profile, competitor chart, requirements matrix, narrative spine, section drafts, compliance check, Gold Team review — and the sequence is what makes the final response compelling against the customer's actual problem.
 
-It's not a template library. It's not a document generator that produces generic text. It's a structured, step-by-step process where AI does the analytical and writing work while you provide the judgment, the relationship knowledge, and the company context.
+It is **not** an AI proposal writer. That's a different (crowded, undefendable) category. It is **not** an automation tool that replaces capture judgment — relationship work, customer empathy, and the unwritten things in the air stay with you. What it replaces is **missing process discipline**: the steps your team would do if you'd been trained at Shipley and had three more people to run them.
 
-Built on the Shipley methodology — with a full reference library (`reference/methodology/`) covering the BD lifecycle, capture planning, color-team review protocols, and Shipley alignment — adapted for small teams that can't run a full BD machine but still need to win competitive work.
+The single value proposition: **the tool allows a user to answer requirements with a solution.** That is the hardest part of writing federal proposals. Technically excellent engineers default to describing the thing they built and submitting that description for every request. The workbench exists to defeat that solution-first failure mode by forcing requirement-first sequencing — and making it easier to follow than to bypass.
+
+Built on the Shipley methodology — with a full reference library (`reference/methodology/`) covering the BD lifecycle, capture planning, color-team review protocols, and Shipley alignment — adapted for small teams that need to win competitive work without a full BD machine.
 
 ---
 

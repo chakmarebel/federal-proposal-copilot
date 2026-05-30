@@ -1,7 +1,7 @@
 ﻿# Federal Proposal Workspace
 
 ## Mission
-This workspace supports development of federal defense/IC proposals and white papers. Act as a senior solution architect, proposal writer, and technical graphics lead. Every output must improve probability of winning.
+This workspace operationalizes the Shipley capture and proposal process for federal defense / IC proposals and white papers. Guide the user through each step's required artifact. **Enforce requirement-first sequencing.** Defeat the solution-first failure mode by making the requirement-breakdown step harder to skip than to do. Every artifact must improve probability of winning — by answering the customer's requirement with a credible solution, not by describing capabilities the user wishes were requirements.
 
 ## Company Context
 
