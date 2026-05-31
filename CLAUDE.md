@@ -194,6 +194,7 @@ Both files are consumed by `/status`, the Phase B dashboard, and the smoke test.
 - Prefer concrete descriptions of components, functions, interfaces, workflows, outcomes
 - Write like an evaluator has 15 minutes and a red pen
 - **Apply the four winning patterns** (theme statements, discriminator proof points, action captions, ghosting) per `reference/proposal-writing-patterns.md`, gated by proposal type. These are enforced by `proposal-writer` and scored by `red-team-review` Gold Team.
+- **Voice doctrine.** See `reference/PROSE-QUALITY-DOCTRINE.md` (canonical, synced from `chakmarebel/proposal-workbench` via `tools/sync-voice-anchors.sh`).
 
 ## Default Positioning
 Positioning emphasis comes from `my-company/` (capabilities, differentiators,

@@ -2,6 +2,29 @@
 
 This guide calibrates proposal prose after the drafting pass. It is intentionally different from the Shipley/process guidance. The drafting workflow creates compliant raw material; the editorial pass turns that material into writing that sounds credible, natural, and submission-ready.
 
+## Voice doctrine -- reframe, then polish
+
+(Canonical source: `reference/PROSE-QUALITY-DOCTRINE.md` -- synced from proposal-workbench. The full doctrine lives there; the operative rules below are inlined for in-context reference while drafting.)
+
+The failure mode polish exists to catch has a name: *ventriloquism* -- declarative statements that position the author as speaking FOR the customer's internal state.
+
+Compelling prose is produced in two stages, in this order:
+
+1. **Reframe (perspective).** Adopt the customer's perspective when describing problems. Customer's frame, our voice. Lead with the customer's problem as we understand it; describe their challenge with empathy and demonstrated judgment. Solution comes AFTER problem framing, never instead of it.
+
+2. **Polish (tone-drift gate).** Scan the reframed prose for ventriloquism and downgrade declarative statements about the customer's unstated internal state to bounded epistemic phrasing:
+   - "The Navy's top challenge is X" -> "Based on our analysis, the Navy's challenges include X"
+   - "The customer needs Y" -> "Our review of the solicitation indicates the customer requires Y"
+   - "AFRL's strategic priority is Z" -> "AFRL's published priorities suggest Z is central to this opportunity"
+
+Preserve declarative voice for objective facts (statute, published policy, public solicitation language, EdgeRunner's own verified capabilities). Require bounded epistemic voice when the subject is the customer's *unstated* priorities, challenges, decisions, or internal posture.
+
+Polish is not decoration. It is a guard against author overreach. Skipping it because the reframe "sounds customer-centric" produces ventriloquism in nicer wrapping -- evaluators read that as the vendor presuming to speak for them.
+
+## Voice anchors -- imitation, not rules
+
+The canonical voice anchors live at `reference/voice-anchors/`. They are EXEMPLARS of cadence and confidence, not rules to be checked against. Models match cadence far better from examples than from prohibitions. Read them as opening orientation for any drafting pass; never paraphrase them into a checklist.
+
 ## Editorial Objective
 
 Write like a senior capture lead and solution architect who understands the customer's mission, the solicitation, and the offeror's actual delivery capacity. The prose should be clear, technically grounded, and evaluator-friendly without sounding like a brochure or a template.

@@ -1,0 +1,9 @@
+The proliferation of low-cost autonomous systems has shifted the balance of tactical advantage. Massed UAS, unattended sensors, and disposable edge devices now create a tempo problem that conventional command-and-control stacks were not designed to solve. The issue is not whether the force can acquire more data. The issue is whether operators can convert local data into trusted action before the window closes.
+
+That problem becomes sharper in contested environments. Cloud-first AI assumes bandwidth, persistence, and reachback. Those assumptions fail at the tactical edge, where teams operate through degraded links, intermittent power, denied spectrum, and adversary pressure. In those conditions, the winning architecture is not a larger model hosted farther away. It is a mission-controlled intelligence layer that keeps analysis close to the operator and accountable to the mission.
+
+EdgeRunner AI delivers that infrastructure. It packages AI capabilities so they can run locally, update safely, and support decisions without surrendering control of the mission data. The result is not another dashboard and not another experimental chatbot. It is a deployable operating layer for trusted AI at the edge.
+
+WarClaw and EVELYN form a two-layer adaptive intelligence stack. WarClaw provides the deployable runtime for local inference, model management, and mission packaging. EVELYN provides the operator-facing reasoning layer that turns tasking, context, and available evidence into usable recommendations. Together, they let a team move from raw signal to practical decision without waiting for a distant enterprise system to catch up.
+
+The value is operational rather than abstract. Operators do not need more screens, more feeds, or more disconnected pilots. They need AI that can work inside the constraints of the mission, preserve human control, and produce outputs that can be checked, challenged, and acted on. The operator sees decisions, not data exhaust.

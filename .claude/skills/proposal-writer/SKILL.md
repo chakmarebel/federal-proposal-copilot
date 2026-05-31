@@ -37,8 +37,9 @@ The writer runs in **two passes**, because composing a compelling argument and v
 5. `working/architecture-concept.md`
 6. **`reference/section-patterns/<section_patterns>.md`** — derived from `section_patterns` in `working/proposal-type.md`. Declares section order, required/optional sections, per-section purpose.
 7. **`reference/editorial-voice-guide.md`** — voice discipline applies in **both** passes. Loose is free in form and confidence; it is not free to be sloppy or to use marketing language.
-8. **`reference/narrative-operating-modes.md`** — the prose strategy for the response. Select the operating mode before `draft-loose` begins (see "Narrative Operating Mode" below).
-9. `working/compliance-matrix.md` — the traceability map. Required reading for `bind` (see "Compliance Matrix Maintenance"); not needed for `draft-loose`.
+8. **`reference/voice-anchors/*.md`** — voice cadence exemplars. Read these BEFORE composing the loose draft. Imitate their rhythm and clinical confidence; do NOT reuse their content. Anchors take precedence over a banned-words list when the two conflict. (Canonical source: `reference/PROSE-QUALITY-DOCTRINE.md`.)
+9. **`reference/narrative-operating-modes.md`** — the prose strategy for the response. Select the operating mode before `draft-loose` begins (see "Narrative Operating Mode" below).
+10. `working/compliance-matrix.md` — the traceability map. Required reading for `bind` (see "Compliance Matrix Maintenance"); not needed for `draft-loose`.
 
 ### Read if relevant
 - `working/storyboard.md` — if `/proposal-storyboard` was run; the section-by-section decomposition of the spine. Primary `draft-loose` planning input when present. Carries the per-section `Reader Movement`, `Narrative Mode`, `Transition Job`, and `Compression Rule` fields.

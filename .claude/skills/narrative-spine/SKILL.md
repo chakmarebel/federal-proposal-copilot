@@ -43,6 +43,7 @@ Recommended workflow:
 4. `working/proposal-plan.md` — evaluation criteria and win themes.
 5. `working/architecture-concept.md` and `working/solution-strategy.md` — what is actually being proposed.
 6. `reference/narrative-operating-modes.md` — use it to scale the argument to the response length and evaluator frame before writing the spine.
+7. **`reference/voice-anchors/*.md`** — voice cadence exemplars. Read these before drafting the spine. Imitate their rhythm and clinical confidence; do NOT reuse their content. The spine is the first place voice matters, and getting its cadence right carries forward through the writer. (Canonical source: `reference/PROSE-QUALITY-DOCTRINE.md`.)
 
 If a required input is missing, state it explicitly and proceed only if the argument can still be formed. If `capture-intent.md` is missing, recommend running `/capture-intent` first — without it the spine has no strategic posture to express.
 
