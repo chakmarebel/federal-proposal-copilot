@@ -27,9 +27,21 @@ FPA_REF="${FPA_REF:-main}"
 # Add as the canonical-sync surface grows; remove anything that ought to
 # diverge intentionally.
 SYNC_PATHS=(
+  # Top-level reference docs.
   "PROPOSAL-AGENT-DIAGNOSIS-2026-05-15.md"
   "PROPOSAL-AGENT-REDESIGN-2026-05-15.md"
+  # Skills that have NO intentional divergence from FPA. Added in WP-N5
+  # after a per-skill diff confirmed FPA and copilot are byte-identical
+  # (modulo line endings). Future drift on these auto-flows via the sync.
+  # Do NOT add any skill that has even one company-specific hunk in copilot
+  # -- syncing will overwrite the company-neutral framing. See
+  # docs/fpa-sync-model.md "Known divergence (intentional)" for skills
+  # that intentionally stay out.
   ".claude/skills/proposal-patcher"
+  ".claude/skills/proposal-writer"
+  ".claude/skills/proposal-manager"
+  ".claude/skills/proposal-storyboard"
+  ".claude/skills/red-team-review"
 )
 
 tmp="$(mktemp -d)"

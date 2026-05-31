@@ -42,16 +42,35 @@ Three canonical paths:
 - `PROPOSAL-AGENT-DIAGNOSIS-2026-05-15.md` — the empirical prose-quality diagnosis that `reference/PROSE-QUALITY-DOCTRINE.md` cites.
 - `PROPOSAL-AGENT-REDESIGN-2026-05-15.md` — the proposed redesign (Track A items A1–A6, Track B narrative-first tool) that the M-series operationalized in proposal-workbench and that FPA + copilot consume via the doctrine.
 - `.claude/skills/proposal-patcher/` — the Track B audit-driven patcher skill that replaces `/proposal-editor` for white papers.
+- `.claude/skills/proposal-writer/` — added WP-N5. No intentional divergence from FPA.
+- `.claude/skills/proposal-manager/` — added WP-N5. No intentional divergence from FPA.
+- `.claude/skills/proposal-storyboard/` — added WP-N5. No intentional divergence from FPA.
+- `.claude/skills/red-team-review/` — added WP-N5. No intentional divergence from FPA.
 
 Surface grows as more cross-repo-shared content is identified.
 
 ## Known divergence (intentional)
 
-- `CLAUDE.md` Company Context: FPA hard-codes EdgeRunner; copilot is company-neutral with a `/setup-company` first-run step.
-- SKILL.md files that reference company-specific examples (currently a small set; investigate one at a time before adding to the sync surface).
+These files differ between FPA and copilot for company-neutralization or distribution reasons. They MUST NOT be added to `SYNC_PATHS` — running the sync would overwrite the divergent framing with FPA's company-specific content.
+
+**Workspace contract / company context:**
+- `CLAUDE.md`: FPA hard-codes EdgeRunner; copilot is company-neutral with a `/setup-company` first-run step.
+
+**SKILL.md files with company-specific examples in FPA / generic copilot wording** (per WP-N5 diff inventory):
+- `.claude/skills/narrative-spine/SKILL.md`: FPA says "EdgeRunner capabilities," copilot says "company capabilities." One line.
+- `.claude/skills/new-proposal/SKILL.md`: FPA uses "SOCPAC CTO Bala Selvam" as the customer-program example; copilot uses "Agency innovation office." One line.
+- `.claude/skills/export-proposal/SKILL.md`: FPA hard-codes Bill's local Windows checkout path (`C:/Users/wbal9/.../federal-proposal-assistant`); copilot uses `/path/to/federal-proposal-copilot`. Two lines (appears twice in usage examples).
+- `.claude/skills/import-from-capture/SKILL.md`: FPA mentions the `federal-proposal-assistant` workspace name, Bill's Windows `Downloads` path, and the private `bd.edgerunner-pipeline.com` URL; copilot uses the `federal-proposal-copilot` workspace name, `%USERPROFILE%\Downloads`, and `bd.example-pipeline.com`. Three lines.
+
+**Distribution-only content (copilot only):**
 - `LICENSE`, `QUICKSTART.md`: copilot-only public-distribution content.
-- `dashboard/` and `scrubs/` and similar operational content: FPA-only working artifacts.
+
+**Working artifacts (FPA only):**
+- `dashboard/`, `scrubs/`, and similar operational content: FPA-only working artifacts.
+
+**Index / metadata files (regenerated from frontmatter):**
+- `SKILLS.md`: auto-generated from each SKILL.md's frontmatter via `scripts/build-skills-index.py`. Will naturally differ if either repo gains/removes a skill the other lacks. Don't sync directly; regenerate after a sync run if needed.
 
 ## Known divergence (drift — to be reconciled)
 
-This list grows when scout passes identify files that diverged accidentally and should be brought back into sync. Empty as of this commit.
+This list grows when scout passes identify files that diverged accidentally and should be brought back into sync. **Empty as of WP-N5** — the prior 4-skill scout-pass found that "drifting" SKILLs were either byte-identical (modulo line endings) or had purely intentional company-neutral hunks. Zero accidental drift remained.
