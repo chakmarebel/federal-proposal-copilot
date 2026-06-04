@@ -54,7 +54,16 @@ Different types need different export bundles. Read `working/proposal-type.md` a
 2. Check that drafts exist in `drafts/`. If empty, exit with: "No drafts to export. Run `/proposal-writer` first."
 3. Check Gold Team status. If `reviews/gold-team-scorecard.md` doesn't exist, warn but proceed: "Gold Team has not been run. Recommend `/red-team-review --mode=gold` before final export."
 4. Check compliance. If `reviews/compliance-gaps.md` shows `Gap` rows, warn: "N unresolved compliance gaps. Confirm Exceptions are documented before submission."
-5. Check for branded templates at `my-company/templates/`. If present, use them as base. If not, use professional defaults (documented below).
+5. **Pre-submit gate (blocking).** Run the prose and structural lints against the drafts before producing any Office output:
+
+   ```bash
+   python scripts/prose-lint.py --proposal <slug>
+   python scripts/lint-document-structure.py --proposal <slug>
+   ```
+
+   `prose-lint.py` exits 1 on a HIGH finding — the section-sign glyph, an em-/en-dash or `--` used as sentence punctuation, or internal process vocabulary (e.g. "storyboard", "gold team", "narrative spine") leaking into customer-facing prose. `lint-document-structure.py` exits 1 on duplicate section numbers, broken figure references, or a missing classification/distribution marking. **If either exits 1, stop and report the findings — do not render `final/` output.** Surface advisory prose-lint findings (marketing words, self-narration / performative-honesty commentary, prohibited-claim diction without a ledger cite, forbidden absolutes) to the user but do not block on them. After the Word docs are rendered (Step 4), re-run the structural lint and `check-strengths.py --target docx` against `final/docx/` per CLAUDE.md's pre-submit gate.
+
+6. Check for branded templates at `my-company/templates/`. If present, use them as base. If not, use professional defaults (documented below).
 
 ### Step 2: Scaffold `final/`
 
@@ -84,7 +93,7 @@ For each `graphics/*.html`:
 The workspace ships a tested, proposal-agnostic converter at `tools/md_to_docx.py` (uses `python-docx`). Invoke it via Bash:
 
 ```bash
-cd /path/to/federal-proposal-copilot
+cd "C:/Users/wbal9/Claude Code Projects/federal-proposal-assistant"
 python tools/md_to_docx.py --proposal <slug>
 ```
 
@@ -136,7 +145,7 @@ This matches the expected white-paper docx output without requiring manual headi
 **Use the shared Python script — do NOT delegate to anthropic-skills:xlsx.**
 
 ```bash
-cd /path/to/federal-proposal-copilot
+cd "C:/Users/wbal9/Claude Code Projects/federal-proposal-assistant"
 python tools/compliance_to_xlsx.py --proposal <slug>
 ```
 

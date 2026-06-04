@@ -48,7 +48,7 @@ Recommended workflow:
 Read in this order:
 
 1. `working/proposal-type.md`
-2. `reference/editorial-voice-guide.md` (mandatory)
+2. `reference/editorial-voice-guide.md` (mandatory) — enforce its "Dashes, Self-Narration, and Prohibited Claims" section: remove em-/en-dashes and `--` used as sentence punctuation (a HIGH `prose-lint` finding that blocks export), delete self-narration of the proposal's own honesty, and require an evidence-ledger cite for FedRAMP/ATO/"accredited"-style diction or move it to a `Gaps and Follow-Ups` note.
 3. `reference/narrative-operating-modes.md` (mandatory)
 4. `working/narrative-spine.md` (if exists)
 5. `working/storyboard.md` (if exists)

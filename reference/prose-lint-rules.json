@@ -1,0 +1,44 @@
+{
+  "schema_version": "prose-lint-rules.v1",
+  "_about": "Canonical shared rule set for prose-lint. The rule CONTENT lives here (data); the lint HARNESS reads it (backend/app/services/prose_lint.py in this app; scripts/prose-lint.py in federal-proposal-assistant and federal-proposal-copilot, which pull this file via their sync scripts). A rule added here propagates to every consumer with no per-app code edit. Keep the term lists in spirit-sync with knowledge/doctrine/prohibited-claims-doctrine.md and PROSE-QUALITY-DOCTRINE.md.",
+  "_severity_policy": "term_lists.process_terms and patterns.em_dash and the section-sign glyph are HIGH. Everything else is ADVISORY. (How each consumer maps HIGH/ADVISORY to blocking is the consumer's policy: the FPA/copilot CLI gate exits 1 on HIGH; this app emits high/medium ReviewFindings.)",
+  "term_lists": {
+    "process_terms": [
+      "narrative spine", "storyboard", "draft-loose", "bind pass", "gold team",
+      "red team", "red-team", "white glove", "white-glove", "compliance matrix",
+      "win theme", "win-theme", "ghosting", "discriminator proof point",
+      "narrative operating mode", "operating mode", "capture-intent",
+      "proposal-writer", "proposal-editor", "evidence ledger", "section pattern",
+      "claim-unsupported"
+    ],
+    "banned_words": [
+      "cutting-edge", "cutting edge", "innovative", "robust", "seamless",
+      "transformative", "best-in-class", "world-class", "next-generation",
+      "game-changing", "holistic", "synergy", "synergies", "utilize", "utilizes",
+      "utilizing", "scalable", "end-to-end"
+    ],
+    "meta_commentary": [
+      "saying so is itself", "is itself a signal", "itself a signal that we",
+      "rather than overselling", "rather than overclaiming", "a capability we do not hold",
+      "we do not hold", "signal that we understand", "shows we understand",
+      "demonstrates that we understand", "this honesty", "in the interest of candor",
+      "to be candid", "being honest about our"
+    ],
+    "prohibited_claim_terms": [
+      "fedramp", "soc 2", "iso 27001", "cmmc", "sprs",
+      "authorization to operate", "ato", "accredited", "accreditation"
+    ],
+    "forbidden_absolutes": [
+      "military-grade", "military grade", "battle-tested", "battle tested",
+      "unmatched", "most secure", "bank-grade"
+    ]
+  },
+  "patterns": {
+    "em_dash": "[—–]|\\s--\\s|\\w--\\w",
+    "leverage": "\\bleverag(?:e|es|ed|ing)\\b"
+  },
+  "thresholds": {
+    "we_will": 8,
+    "repeated_opening": 3
+  }
+}

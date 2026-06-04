@@ -54,15 +54,20 @@ python scripts/skill-graph.py --format mermaid      # render the dependency DAG
 
 **Activity tracking.** Each proposal's `working/activity.md` is the single source of truth for what skills ran when. There is no separate skill log. Aggregate across proposals with `python scripts/skill-stats.py` (supports `--since` and `--per-skill`).
 
-**Pre-submit gate (mandatory after team revisions).** Two scripts catch the failure modes that survive Red Team / Gold Team / White Glove when they're introduced *after* those reviews (team revisions, last-minute insertions, compression edits). Run both before `/export-proposal` produces the final submission package; either exits 1 on a blocking finding.
+**Pre-submit gate (mandatory after team revisions).** Three scripts catch the failure modes that survive Red Team / Gold Team / White Glove when they're introduced *after* those reviews (team revisions, last-minute insertions, compression edits). `/export-proposal` runs all three in its Preflight step before producing the final submission package; each exits 1 on a blocking finding (a prose-lint HIGH, a structural duplicate/broken ref, or a stripped Significant Strength).
 
 ```bash
+# Prose lint — dashes as punctuation, internal process vocab, self-narration, prohibited-claim diction
+python scripts/prose-lint.py --proposal <slug>
+
 # Structural lint — duplicate section numbers, broken figure refs, missing classification marking
 python scripts/lint-document-structure.py --proposal <slug>
 
 # Gold Team Significant Strength preservation — flags MOS-slate-style stripping
 python scripts/check-strengths.py --proposal <slug> --target docx
 ```
+
+`prose-lint.py` scans `drafts/*.md` (top-level only; `drafts/loose/` is exempt). HIGH findings — the section-sign glyph, em-/en-dashes or `--` as sentence punctuation, and internal process vocabulary leaking into customer-facing prose — block export (exit 1). Advisories (marketing words, self-narration / performative-honesty commentary, prohibited-claim diction without a ledger cite, forbidden absolutes, "we will" stacking, repeated openings) are informational. The rule lists live in `reference/prose-lint-rules.json` (shared, syncable; the script fails closed if absent) and mirror `reference/PROSE-QUALITY-DOCTRINE.md`, `reference/editorial-voice-guide.md`, and `reference/doctrine/prohibited-claims-doctrine.md`.
 
 `check-strengths.py` writes `reviews/strength-preservation.md` with the specific phrases preserved vs. missing for each Significant Strength. Use `--target docx` after `/export-proposal` to verify the rendered Word doc still carries the load-bearing claims; use `--target drafts` (default) for a pre-export sanity check.
 
@@ -194,7 +199,7 @@ Both files are consumed by `/status`, the Phase B dashboard, and the smoke test.
 - Prefer concrete descriptions of components, functions, interfaces, workflows, outcomes
 - Write like an evaluator has 15 minutes and a red pen
 - **Apply the four winning patterns** (theme statements, discriminator proof points, action captions, ghosting) per `reference/proposal-writing-patterns.md`, gated by proposal type. These are enforced by `proposal-writer` and scored by `red-team-review` Gold Team.
-- **Voice doctrine.** See `reference/PROSE-QUALITY-DOCTRINE.md` (canonical, synced from `chakmarebel/proposal-workbench` via `tools/sync-voice-anchors.sh`).
+- **Voice doctrine.** See `reference/PROSE-QUALITY-DOCTRINE.md` (canonical, synced from `chakmarebel/proposal-workbench` via `tools/sync-voice-anchors.sh`). The same sync now also pulls the universal doctrine knowledge files into `reference/doctrine/` (`prohibited-claims-doctrine.md`, `output-discipline.md`, `acronyms-federal.md`) and the shared `reference/prose-lint-rules.json` rule set. **Do not hand-edit synced files** — change them upstream in the workbench and re-sync. `reference/prose-lint-rules.json` is the single source for `scripts/prose-lint.py`'s rule lists (the script fails closed if it is missing).
 
 ## Default Positioning
 Positioning emphasis comes from `my-company/` (capabilities, differentiators,
