@@ -36,7 +36,7 @@ The writer runs in **two passes**, because composing a compelling argument and v
 4. `working/solution-strategy.md`
 5. `working/architecture-concept.md`
 6. **`reference/section-patterns/<section_patterns>.md`** — derived from `section_patterns` in `working/proposal-type.md`. Declares section order, required/optional sections, per-section purpose.
-7. **`reference/editorial-voice-guide.md`** — voice discipline applies in **both** passes. Loose is free in form and confidence; it is not free to be sloppy or to use marketing language.
+7. **`reference/editorial-voice-guide.md`** — voice discipline applies in **both** passes. Loose is free in form and confidence; it is not free to be sloppy or to use marketing language. In particular, even the loose pass must follow the guide's "Dashes, Self-Narration, and Prohibited Claims" rules: **no dashes as sentence punctuation** (em-/en-dash or `--` — this is a HIGH `prose-lint` finding that blocks export), no self-narration of the proposal's own honesty, and no FedRAMP/ATO/"accredited"-style claims without an evidence-ledger cite.
 8. **`reference/voice-anchors/*.md`** — voice cadence exemplars. Read these BEFORE composing the loose draft. Imitate their rhythm and clinical confidence; do NOT reuse their content. Anchors take precedence over a banned-words list when the two conflict. (Canonical source: `reference/PROSE-QUALITY-DOCTRINE.md`.)
 9. **`reference/narrative-operating-modes.md`** — the prose strategy for the response. Select the operating mode before `draft-loose` begins (see "Narrative Operating Mode" below).
 10. `working/compliance-matrix.md` — the traceability map. Required reading for `bind` (see "Compliance Matrix Maintenance"); not needed for `draft-loose`.

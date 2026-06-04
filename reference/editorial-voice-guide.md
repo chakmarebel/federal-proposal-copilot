@@ -135,6 +135,16 @@ Avoid or replace unless the solicitation uses the term or the phrase is technica
 | enables enhanced | enables, improves, reduces, supports |
 | designed to provide | provides, delivers, supports |
 
+## Dashes, Self-Narration, and Prohibited Claims
+
+These three rules are the generation-side mirror of the deterministic `prose-lint` gate. Apply them while drafting and editing, not just at the lint step — the gate catches what slips through, but the prose should never produce them in the first place. Canonical doctrine: [`PROSE-QUALITY-DOCTRINE.md`](PROSE-QUALITY-DOCTRINE.md) ("Self-narration and performative honesty", "Typography"); [`doctrine/prohibited-claims-doctrine.md`](doctrine/prohibited-claims-doctrine.md).
+
+1. **No dashes as sentence punctuation.** Do not use em-dashes (—), en-dashes (–), or double-hyphens (`--`) to join clauses. Models reach for them constantly; federal house style does not use them. Rewrite with a period, comma, colon, or parentheses. (Hyphenated compounds like "air-gapped" and numeric ranges like "10–20" written as ranges are fine; the rule is about dashes used as *punctuation between clauses*.) — **HIGH; blocks export.**
+
+2. **No self-narration or performative honesty.** Never describe the proposal's own honesty, candor, restraint, or insight. Prose like "saying so is itself a signal that we understand the real problem rather than overselling a capability we do not hold" praises the author instead of answering the evaluator, and often smuggles in the very overclaim it disavows. State the capability and its boundary plainly and let the precision carry the credibility: "EdgeRunner's agents run disconnected at the edge. Cross-domain networking is provided by the integrating program, not by EdgeRunner."
+
+3. **Prohibited-claim diction needs a ledger cite; absolutes need a number.** Categorical compliance terms — FedRAMP, SOC 2, ISO 27001, CMMC, SPRS, ATO/"authorization to operate", "accredited" — may appear only when a direct `evidence-ledger.json` citation backs the specific claim; otherwise state the actual posture or move it to a `Gaps and Follow-Ups` note. Drop implicit-superiority absolutes ("military-grade", "battle-tested", "unmatched", "most secure", "bank-grade"); replace with a quantified, sourced comparison or cut them. See [`doctrine/prohibited-claims-doctrine.md`](doctrine/prohibited-claims-doctrine.md) for the full universal list.
+
 ## Sentence Discipline
 
 - Use short opening sentences for important points.

@@ -6,9 +6,12 @@ proposal prose feel artificial or leak internal process vocabulary into
 customer-facing text. Run it before /export-proposal.
 
 Two severities:
-  HIGH     — must not ship: the section-sign glyph, internal process vocabulary
-             leaking into customer-facing prose. Exit code 1.
-  ADVISORY — worth a look: banned marketing words, "we will" stacking, repeated
+  HIGH     — must not ship: the section-sign glyph, dashes used as sentence
+             punctuation, internal process vocabulary leaking into
+             customer-facing prose. Exit code 1.
+  ADVISORY — worth a look: banned marketing words, self-narration /
+             performative-honesty commentary, prohibited-claim diction without a
+             ledger cite, forbidden absolutes, "we will" stacking, repeated
              paragraph openings. Exit code 0 (informational).
 
 Usage:
@@ -22,35 +25,59 @@ skipped — loose drafts are allowed to be rough.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# --- HIGH: internal process vocabulary that must never reach customer-facing prose.
-# Only unambiguously-internal terms; words like "evaluator" or "gate" are omitted
-# because they appear legitimately in federal proposal prose.
-PROCESS_TERMS = [
-    "narrative spine", "storyboard", "draft-loose", "bind pass", "gold team",
-    "red team", "red-team", "white glove", "white-glove", "compliance matrix",
-    "win theme", "win-theme", "ghosting", "discriminator proof point",
-    "narrative operating mode", "operating mode", "capture-intent",
-    "proposal-writer", "proposal-editor", "evidence ledger", "section pattern",
-    "CLAIM-UNSUPPORTED",
-]
+# --- Rule set. The rule CONTENT lives in reference/prose-lint-rules.json (a shared,
+# syncable data file — see tools/sync-voice-anchors.sh); this script is only the harness.
+# A rule added to the JSON propagates here with no code edit, and to the sibling apps
+# (federal-proposal-copilot, proposal-workbench) on their next sync.
+#
+# prose-lint is an export gate, so it FAILS CLOSED: if the rules file is missing or
+# malformed, error out (exit 2) rather than silently passing with no rules.
+RULES_PATH = REPO_ROOT / "reference" / "prose-lint-rules.json"
 
-# --- ADVISORY: marketing words. Kept in sync with reference/editorial-voice-guide.md.
-BANNED_WORDS = [
-    "cutting-edge", "cutting edge", "innovative", "robust", "seamless",
-    "transformative", "best-in-class", "world-class", "next-generation",
-    "game-changing", "holistic", "synergy", "synergies", "utilize", "utilizes",
-    "utilizing", "scalable", "end-to-end",
-]
-# "leverage" in any form — the editorial voice guide bans it; prefer use/apply/extend.
-LEVERAGE = re.compile(r"\bleverag(?:e|es|ed|ing)\b", re.IGNORECASE)
 
-WE_WILL_THRESHOLD = 8  # occurrences per file before it reads as a "we will" wall
+def _load_rules() -> dict:
+    try:
+        return json.loads(RULES_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        print(f"prose-lint: rules file not found: {RULES_PATH}", file=sys.stderr)
+        raise SystemExit(2)
+    except (OSError, ValueError) as exc:
+        print(f"prose-lint: could not parse rules file {RULES_PATH}: {exc}", file=sys.stderr)
+        raise SystemExit(2)
+
+
+_RULES = _load_rules()
+_TERMS = _RULES.get("term_lists", {})
+_PATTERNS = _RULES.get("patterns", {})
+_THRESHOLDS = _RULES.get("thresholds", {})
+
+# HIGH: internal process vocabulary that must never reach customer-facing prose.
+PROCESS_TERMS = _TERMS.get("process_terms", [])
+# ADVISORY: marketing words (mirrors reference/editorial-voice-guide.md).
+BANNED_WORDS = _TERMS.get("banned_words", [])
+# ADVISORY: self-referential / performative-honesty commentary.
+META_COMMENTARY = _TERMS.get("meta_commentary", [])
+# ADVISORY: prohibited-claim diction needing an evidence-ledger cite.
+PROHIBITED_CLAIM_TERMS = _TERMS.get("prohibited_claim_terms", [])
+# ADVISORY: implicit-superiority absolutes.
+FORBIDDEN_ABSOLUTES = _TERMS.get("forbidden_absolutes", [])
+
+# HIGH: em-/en-dash or "--" as sentence punctuation. "---" rules and "|---|" separators
+# do not match because the double-hyphen forms require surrounding whitespace/word chars.
+_NEVER = r"(?!x)x"  # never-matches, if a pattern is absent from the rules file
+EM_DASH = re.compile(_PATTERNS.get("em_dash", _NEVER))
+# ADVISORY: "leverage" in any form — prefer use/apply/extend.
+LEVERAGE = re.compile(_PATTERNS.get("leverage", _NEVER), re.IGNORECASE)
+
+WE_WILL_THRESHOLD = _THRESHOLDS.get("we_will", 8)  # occurrences before it reads as a wall
+REPEATED_OPENING_THRESHOLD = _THRESHOLDS.get("repeated_opening", 3)
 
 HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
 
@@ -83,6 +110,9 @@ def lint_file(path: Path) -> list[tuple[str, int, str]]:
         if "§" in line:
             findings.append(("HIGH", ln, "section-sign glyph (§) — spell out 'Section'"))
 
+        if EM_DASH.search(line):
+            findings.append(("HIGH", ln, "em-dash/en-dash/'--' as sentence punctuation — rewrite with a period, comma, colon, or parentheses"))
+
         for term in PROCESS_TERMS:
             if re.search(r"\b" + re.escape(term) + r"\b", low):
                 findings.append(("HIGH", ln, f"internal process vocabulary leaked: '{term}'"))
@@ -92,6 +122,18 @@ def lint_file(path: Path) -> list[tuple[str, int, str]]:
                 findings.append(("ADVISORY", ln, f"marketing word: '{w}'"))
         if LEVERAGE.search(line):
             findings.append(("ADVISORY", ln, "'leverage' — use 'use', 'apply', or 'extend'"))
+
+        meta_hit = next((phrase for phrase in META_COMMENTARY if phrase in low), None)
+        if meta_hit:
+            findings.append(("ADVISORY", ln, f"self-referential / performative-honesty commentary: '{meta_hit}' — state the capability and its boundary plainly"))
+
+        for term in PROHIBITED_CLAIM_TERMS:
+            if re.search(r"\b" + re.escape(term) + r"\b", low):
+                findings.append(("ADVISORY", ln, f"prohibited claim term without verified citation: '{term}' — confirm an evidence-ledger cite or move to a Gaps note"))
+
+        for phrase in FORBIDDEN_ABSOLUTES:
+            if phrase in low:
+                findings.append(("ADVISORY", ln, f"forbidden absolute: '{phrase}' — replace with a quantified, sourced comparison"))
 
         we_will += len(re.findall(r"\bwe will\b", low))
 
@@ -110,7 +152,7 @@ def lint_file(path: Path) -> list[tuple[str, int, str]]:
             key = " ".join(w.lower() for w in words[:3])
             openers[key] = openers.get(key, 0) + 1
     for key, count in openers.items():
-        if count >= 3:
+        if count >= REPEATED_OPENING_THRESHOLD:
             findings.append(("ADVISORY", 0, f"{count} paragraphs open with '{key}...' — vary openings"))
 
     return findings

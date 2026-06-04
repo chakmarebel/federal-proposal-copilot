@@ -38,7 +38,34 @@ Compelling prose is produced in two stages:
 
    Preserve declarative voice when the underlying fact is genuinely objective: statute, published policy, public solicitation language, EdgeRunner's own verified capabilities. Require bounded epistemic voice when the subject is the customer's *unstated* priorities, challenges, decisions, or internal posture.
 
-   Polish is not decoration. It is a guard against author overreach. Skipping it because the reframe "sounds customer-centric" produces ventriloquism in nicer wrapping — and evaluators read that as the vendor presuming to speak for them.
+   Polish is not decoration. It is a guard against author overreach. Skipping it because the reframe "sounds customer-centric" produces ventriloquism in nicer wrapping, and evaluators read that as the vendor presuming to speak for them.
+
+## Self-narration and performative honesty -- a second tone-drift failure
+
+Ventriloquism is overreach about the *customer's* internal state. Its mirror is overreach about
+*our own* virtue: prose that narrates the proposal's own honesty, candor, restraint, or insight
+instead of simply being precise. It shows up as self-congratulatory meta-commentary:
+
+> "The honest boundary is the network layer, and saying so is itself a signal that we understand the
+> actual problem rather than overselling a capability we do not hold."
+
+A busy, skeptical evaluator reads this as marketing and as filler. It spends word count praising the
+author instead of answering the requirement, and it frequently smuggles in the very overclaim it
+claims to disavow. The polish pass must delete it. State the capability and its boundary plainly and
+let the precision carry the credibility:
+
+> "EdgeRunner's agents run disconnected at the edge. Cross-domain networking is provided by the
+> integrating program, not by EdgeRunner."
+
+Rule: never describe the proposal's own honesty, restraint, or understanding. Assert the bounded
+fact; the boundary itself is the signal. Enforced deterministically by the prose-lint
+self-referential-commentary check.
+
+## Typography -- no dashes as sentence punctuation
+
+Do not use em-dashes, en-dashes, or double-hyphens as sentence punctuation in customer-facing
+proposal prose. Models reach for them constantly; federal proposal house style does not use them.
+Rewrite with a period, comma, colon, or parentheses. Enforced by the prose-lint em-dash check.
 
 ## Voice anchors -- imitation, not rules
 
