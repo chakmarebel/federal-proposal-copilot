@@ -59,16 +59,27 @@ You'll be asked for the proposal name, customer, and type. Then:
 # 5. Drop your solicitation into the inputs folder
 #    (PDF, DOCX, or markdown — Claude will read it)
 
-# 6. Run the workflow in sequence:
-/customer-intel                 # Research customer — open source intel + relationship template
+# 6. Run the workflow in sequence (your proposal type's
+#    working/proposal-type.md declares which steps apply):
+/opportunity-quick-look         # Rapid triage — go/hold/no-go before committing effort
+/submission-summary             # One-page deliverable spec — what exactly must be submitted (human sign-off)
 /proposal-manager               # Analyze solicitation, compliance framework, win themes, bid/no-bid
+/customer-intel                 # Research customer — open source intel + relationship template
 /competitor-assessment          # Research competitors, Bidder Comparison Chart, teaming gaps (competitive bids)
+/capture-intent                 # Strategic intent — beliefs to create, posture, ghosting, prohibited claims
 /proposal-solution-architect    # Design solution against approved plan + competitor assessment
 /past-performance               # Map PP repository to eval criteria, draft PPQ narratives
-/pricing-analyst                # Build cost model and cost volume narrative
+/pricing-analyst                # Produce the type-specific pricing artifact (ROM / SBIR budget / cost volume / …)
+/narrative-spine                # One-page argument of what the proposal claims (human sign-off)
+/proposal-storyboard            # Section-by-section writing plan from the approved spine
+/technical-review --phase=approach   # Feasibility gate before tokens go to prose
 /proposal-graphics              # Create visual concepts + HTML graphics
-/proposal-writer                # Draft all sections
-/red-team-review                # Score like a government evaluator
+/proposal-writer                # Draft all sections (draft-loose, then bind evidence)
+/proposal-editor                # Editorial pass — tighten prose, remove AI smell
+/compliance-check               # Diff required vs. covered requirements
+/evidence-check                 # Audit claims against the evidence ledger
+/red-team-review                # Score like a government evaluator (Red → Gold → White Glove)
+/export-proposal                # Pre-submit gate + native Office export
 ```
 
 ## How It Works
@@ -76,14 +87,15 @@ You'll be asked for the proposal name, customer, and type. Then:
 ### The Workflow
 
 ```
-Customer Intel → Proposal Plan → Competitor Assessment → Solution Architecture → PP + Pricing → Graphics → Draft → Red Team → Submission
-      ↑                ↑                   ↑                       ↑                  ↑              ↑         ↑         ↑
-  AI searches      AI builds           AI researches           AI designs          AI maps PP    AI renders  AI writes  AI scores
-  open source +    compliance          competitors via         from your           to criteria    HTML files  sections   & rewrites
-  you fill in      framework &         open source +           capabilities        + builds
-  relationship     win themes          teaming gaps            + competitor        cost volume
-  knowledge                                                    assessment
+Quick Look → Submission Summary ✋ → Proposal Plan → Customer Intel + Competitors → Capture Intent
+   → Solution Architecture → PP + Pricing → Narrative Spine ✋ → Storyboard → Technical Review
+   → Graphics → Draft (loose → bind) → Editor → Compliance + Evidence Checks
+   → Red Team (Red → Gold → White Glove) → Pre-Submit Gate → Office Export → Submission
+
+✋ = stops for human sign-off before the pipeline continues
 ```
+
+The pipeline is **requirement-first by construction**: the deliverable spec and the narrative spine are approved by a human before any prose is drafted, the storyboard constrains what each section may claim, and the pre-submit gate blocks export on prose-quality or structural findings introduced during late edits. Each proposal type's `working/proposal-type.md` declares which steps apply — a 3-page white paper doesn't run the full sequence.
 
 ### Skills
 
@@ -92,20 +104,29 @@ Customer Intel → Proposal Plan → Competitor Assessment → Solution Architec
 | `/setup-company` | One-time setup — creates your company profile and boilerplate |
 | `/new-proposal` | Scaffolds a new proposal workspace, **selects a proposal type from the registry**, and generates a type-specific Next Steps list |
 | `/opportunity-quick-look` | Rapid triage of a new opportunity — go/hold/no-go before committing effort |
+| `/capture-portal-structure` | For web-form submissions (DIANA, AFWERX, Challenge.gov, …) — captures portal section structure, hard character limits, and submission mechanics *before* drafting, so sections are written to fit |
+| `/submission-summary` | One-page, factual spec of exactly what the customer requires you to submit — format, volumes, page limits, due date, mechanics. Stops for human confirmation before planning begins |
 | `/customer-intel` | Researches the customer via open source (budget docs, awards history, key personnel, hot buttons) and produces a profile template for you to complete with relationship knowledge |
 | `/proposal-manager` | Analyzes the solicitation — builds compliance framework, **seeds the compliance matrix**, evaluates criteria, defines win themes, recommends bid/no-bid |
 | `/competitor-assessment` | Researches likely competitors via open source, builds weighted Bidder Comparison Chart, identifies teaming gaps, generates strategy statements |
 | `/capture-scorecard` | 9-dimension readiness stoplight — go/no-go before committing proposal resources |
+| `/capture-intent` | Strategic intent layer — why you're bidding, customer beliefs to create, competitive posture, ghosting strategy, prohibited claims. Keeps every downstream skill strategically coherent |
 | `/proposal-solution-architect` | Designs the solution against the approved plan and competitor assessment — requirements matrix, capability mapping, architecture concept |
+| `/narrative-spine` | Writes the proposal's one-page narrative spine — what the proposal claims and why it's compelling against the customer's actual problem — then **stops for human sign-off** before storyboarding |
+| `/proposal-storyboard` | Decomposes the approved spine into a section-by-section writing plan: evaluator question, required answer, allowed/prohibited claims, proof points, graphic argument, target length |
+| `/technical-review` | Feasibility and claim-realism gate. `--phase=approach` validates architecture/storyboard before prose is written; `--phase=drafts` validates draft claims against the architecture afterward |
 | `/past-performance` | Maps your PP repository to evaluation criteria, selects best references, drafts PPQ narratives and past performance volume |
 | `/pricing-analyst` | Dispatches on the proposal type's `pricing_artifact` to produce the right vehicle-specific artifact — ROM, SBIR budget, OTA milestones, CSO commercial, or FAR cost volume. Templates in [`reference/pricing-artifacts/`](reference/pricing-artifacts/). |
 | `/proposal-graphics` | Creates proposal-ready HTML graphics (architecture diagrams, timelines, matrices) |
-| `/proposal-writer` | Drafts all proposal sections from the approved architecture, **applies the four winning patterns** (theme statements, discriminator proof points, action captions, ghosting — see [`reference/proposal-writing-patterns.md`](reference/proposal-writing-patterns.md), gated by proposal type), **updates the compliance matrix** as sections land |
+| `/proposal-writer` | Two-pass drafting: **draft-loose** writes each section as a confident in-voice argument from the spine; **bind** attaches evidence citations, **applies the four winning patterns** (theme statements, discriminator proof points, action captions, ghosting — see [`reference/proposal-writing-patterns.md`](reference/proposal-writing-patterns.md), gated by proposal type), and **updates the compliance matrix** as sections land |
+| `/proposal-editor` | Editorial pass — tightens prose, removes marketing language and AI smell, preserves compliance/evidence/proof. Edits bound drafts in place; the pre-edit version stays in `drafts/loose/` |
+| `/proposal-patcher` | Applies audit findings (Gold Team Weaknesses/Deficiencies, `CLAIM-UNSUPPORTED` markers) as surgical fixes to bound drafts — never rewrites globally |
 | `/compliance-check` | Diffs required vs. covered requirements, recomputes coverage counters, writes `reviews/compliance-gaps.md`. Run after each writer pass. |
 | `/evidence-check` | Audits evidence citations in drafts against `my-company/evidence-ledger.json` — flags unsupported claims (`CLAIM-UNSUPPORTED` markers), typo'd IDs, retired evidence, and unused proof points. Run after `/proposal-writer`, before Gold Team. Writes `reviews/evidence-check.md`. |
 | `/red-team-review` | Pink (compliance, delegates to `/compliance-check`) → Red (narrative) → **Gold (rubric-driven scoring using [`reference/evaluator-rubrics/`](reference/evaluator-rubrics/) — adjectival ratings, Strengths/Weaknesses/Deficiencies with cited evidence, pWin estimate)** → White Glove |
 | `/status` | Read-only: shows proposal type, pipeline progress, compliance coverage, and next recommended command. Use any time. |
-| `/export-proposal` | **Converts markdown drafts to native Office formats.** Produces .docx (Word narratives), .xlsx (compliance matrix, pricing artifacts), .pptx (optional briefings), + graphics rendered to PNG. Writes to `final/`. User opens Word and saves as PDF for submission. Uses `anthropic-skills:docx/xlsx/pptx` and supports branded base templates at `my-company/templates/`. |
+| `/export-proposal` | **Converts markdown drafts to native Office formats.** Runs the **pre-submit gate** first (prose lint, structural lint, Significant-Strength preservation check — each blocks export on a HIGH finding), then produces .docx (Word narratives), .xlsx (compliance matrix, pricing artifacts), .pptx (optional briefings), + graphics rendered to PNG. Writes to `final/`. User opens Word and saves as PDF for submission. Uses `anthropic-skills:docx/xlsx/pptx` and supports branded base templates at `my-company/templates/`. |
+| `/dashboard` | Launches the local read-only Streamlit portfolio dashboard — compliance coverage, evidence coverage, Gold Team pWin, and AI spend across all proposals |
 | `/capture-submission` | Snapshots the AI-generated draft and your final submitted version into `corpus/calibration/` for framework learning. Run twice: once after `/proposal-writer` (before editing) to capture the AI baseline, and again after submission to record your edits and improvement notes. |
 | `/import-from-capture` | Imports a qualified opportunity from the capture-pipeline with solicitation facts and Go/No-Go pre-populated |
 
@@ -259,6 +280,7 @@ If no brand palette is provided, a professional default palette (dark background
 - **Captions go in the document, not the graphic.** Keep figure numbers and captions in your Word doc text, not embedded in the HTML graphic.
 - **Check the section patterns.** `reference/section-patterns/` has fill-in-the-blank templates for every standard proposal section, organized by vehicle.
 - **Run `/evidence-check` before Gold Team.** Resolving `CLAIM-UNSUPPORTED` markers before the Gold Team pass saves a round of rework — Gold Team automatically converts them to Weakness findings.
+- **Re-run the pre-submit gate after team edits.** Late revisions are how prose-quality and structural defects sneak past color-team reviews. `python scripts/prose-lint.py --proposal <slug>`, `python scripts/lint-document-structure.py --proposal <slug>`, and `python scripts/check-strengths.py --proposal <slug>` catch them; `/export-proposal` runs all three automatically and refuses to export on a blocking finding.
 - **Capture every submission.** Run `/capture-submission` after writing (before you edit) and again after submission. This is how the framework learns from your real edits over time.
 - **Portfolio visibility.** `streamlit run dashboard/app.py` gives a read-only view of all active proposals, compliance coverage, and AI run costs — useful when working multiple opportunities in parallel.
 
