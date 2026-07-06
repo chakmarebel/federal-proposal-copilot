@@ -42,7 +42,8 @@ The writer runs in **two passes**, because composing a compelling argument and v
 10. `working/compliance-matrix.md` — the traceability map. Required reading for `bind` (see "Compliance Matrix Maintenance"); not needed for `draft-loose`.
 
 ### Read if relevant
-- `working/storyboard.md` — if `/proposal-storyboard` was run; the section-by-section decomposition of the spine. Primary `draft-loose` planning input when present. Carries the per-section `Reader Movement`, `Narrative Mode`, `Transition Job`, and `Compression Rule` fields.
+- `working/storyboard.md` — if `/proposal-storyboard` was run; the section-by-section decomposition of the spine. Primary `draft-loose` planning input when present. Carries the per-section `Reader Movement`, `Narrative Mode`, `Transition Job`, and `Compression Rule` fields — plus the factor-keyed fields (`Target Evaluation Factors`, `Evaluated Strength to Earn`, `Discriminator`) consumed by the "Write toward the rubric" step below.
+- `working/evaluation-model.md` — if `/proposal-manager` Step 4b was run; **this solicitation's typed rubric** (factors, weighting, pass/fail gates, constraints with provenance). Read the "Drafting Context Block" section. When present, these criteria override generic doctrine about what evaluators reward.
 - `working/capture-intent.md` — strategic guidance: customer beliefs, **prohibited claims**, posture, ghosting direction. Binding on **both** passes — `draft-loose` may not make claims capture-intent prohibits.
 - `working/requirement-matrix.md`, `working/capability-matrix.md`, `working/assumptions-and-risks.md` — grounding for the relevant sections.
 - `my-company/evidence-ledger.json` — required for `bind` when Phase C is enabled (evidence citation).
@@ -104,6 +105,22 @@ Before `draft-loose` begins, select one **narrative operating mode** for the res
 - No writing "to pass Gold Team."
 
 **Do:**
+- **Write toward the rubric (evaluator-upstream injection — additive only).** Before composing
+  each section, assemble its drafting context in this order, including each block **only when
+  its artifact exists**:
+  1. **Storyboard block** — from the section's `working/storyboard.md` entry: the target
+     evaluation factors to win, the evaluated strength to earn, the discriminator, the proof
+     points, and the planned beat order. The draft *fills this plan*.
+  2. **Evaluation-model block** — the "Drafting Context Block" from
+     `working/evaluation-model.md`: this solicitation's factors, weighting, pass/fail gates,
+     and constraints. These override generic doctrine when they conflict.
+
+  When the evaluation model exists, add one output rule for every section: **lead with what
+  the listed evaluation factors reward; make discriminators and benefits explicit so the
+  evaluator can score them without inference.**
+
+  When neither artifact exists, skip this step entirely and draft exactly as described below —
+  this injection changes nothing for proposals without a rubric or storyboard.
 - **Draft the spine's argument, in the operating mode.** Each section advances one movement of `working/narrative-spine.md` (the storyboard, if present, says which), at the depth and length the operating mode allows.
 - **Move the reader.** Each section should move the evaluator from one belief to the next — problem recognized → answer understood → feasibility believed → risk reduced → next action obvious. Use the storyboard's `Reader Movement` and `Transition Job` fields when present; infer them when not. A section that only "tells the reader more about our capability" is not earning its place.
 - **Open concern-first.** Lead with the customer's mission problem, the evaluator's question, a load-bearing number, or a blunt statement of stakes — whatever states the section's point fastest. Do **not** open with a dramatized or cinematic scene ("Picture the demonstration room...", "In August, four personas will..."); staged openings read as cheesy and weaken the impression that the team understands the mission. Do **not** open every section with the same theme-statement formula. Vary openings across sections — the human element comes from visible command of the problem, not theatrics.

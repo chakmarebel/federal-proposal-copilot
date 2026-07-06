@@ -102,6 +102,36 @@ Note:
 - Which factors are easy wins vs. competitive battlegrounds
 - Whether price is evaluated separately or as a factor in best value
 
+### Step 4b: Extract the Evaluation Model (typed rubric with provenance)
+
+The table in Step 4 is the analysis view. The **evaluation model** is the living, typed
+representation of this solicitation's rubric — factors, relative weighting, pass/fail
+gates, and submission constraints, each traced to a source sentence — that downstream
+skills (`/proposal-storyboard`, `/proposal-writer`, `/red-team-review`) inject so the
+draft is written toward how it will be judged.
+
+1. **Deterministic baseline first:**
+   ```bash
+   python scripts/extract-evaluation-model.py --proposal <slug>
+   ```
+   This writes `working/evaluation-model.md` (the human-curatable running log) and
+   `working/evaluation-model.json` (derived sidecar per
+   [`reference/schemas/evaluation-model.schema.json`](../../../reference/schemas/evaluation-model.schema.json)).
+2. **Enrichment pass (this skill):** read the solicitation sources and the extracted table, then
+   add criteria the patterns missed — implied priorities, soft weighting, evaluator hot buttons
+   stated indirectly. Append them as new table rows with `Origin: ai-inferred`, `Status: extracted`,
+   and empty Source columns. **Never present an inferred criterion as a cited one**, and do not
+   duplicate rows the baseline already found (compare normalized text). Do not invent criteria
+   not grounded in the text. After appending, run the script again with `--resync` to re-derive
+   the JSON and context block.
+3. **Tell the user to curate:** the table is a running log. They mark rows `confirmed` /
+   `edited` / `rejected` (or add `manual` rows), then run `--resync`. Re-extraction never
+   destroys reviewed or manual rows.
+
+If the proposal type has no formal evaluation criteria (white paper, RFI), still run the
+extraction — inferred reader priorities from Step 4's analysis become `ai-inferred` rows, so the
+writer drafts against an explicit rubric instead of an implicit one.
+
 ### Step 5: Prime vs. Sub Decision
 Before scoring bid/no-bid, make the prime vs. sub call. This shapes every downstream decision — competitive strategy, teaming, pricing, and proposal structure all differ fundamentally based on this.
 
@@ -214,6 +244,7 @@ Produce **all three** on every successful run:
 1. **`working/proposal-plan.md`** — the narrative plan (human-readable)
 2. **`working/proposal-plan.json`** — structured sidecar conforming to [`reference/schemas/proposal-plan.schema.json`](../../../reference/schemas/proposal-plan.schema.json) (machine-readable; consumed by dashboard + downstream skills)
 3. **`working/compliance-matrix.md`** — living traceability artifact (unless `compliance_sources` is empty for this type)
+4. **`working/evaluation-model.md`** + **`working/evaluation-model.json`** — the typed rubric running log from Step 4b (produced by `scripts/extract-evaluation-model.py` plus the enrichment pass)
 
 The `.md` and `.json` forms must stay in sync on every invocation — write both atomically. Humans can edit the markdown freely; on the next `/proposal-manager` run, the JSON is regenerated. If a user hand-edits the JSON, that edit is preserved only until the next run.
 
@@ -236,7 +267,7 @@ See the schema file for field definitions, enum values, and validation rules.
 On completion, append to `working/activity.md` (one line):
 
 ```
-## <timestamp> — proposal-manager — <N requirements seeded>, <M eval factors>, bid/no-bid: <GO/NO-GO/CONDITIONAL> → working/proposal-plan.md + working/proposal-plan.json + working/compliance-matrix.md
+## <timestamp> — proposal-manager — <N requirements seeded>, <M eval factors>, <K evaluation-model criteria (J ai-inferred)>, bid/no-bid: <GO/NO-GO/CONDITIONAL> → working/proposal-plan.md + working/proposal-plan.json + working/compliance-matrix.md + working/evaluation-model.md
 ```
 
 Also append one JSON line to `working/ai-runs.jsonl` per [`reference/schemas/ai-run.schema.json`](../../../reference/schemas/ai-run.schema.json) with `job_type: "planning"`. If the skill made multiple model calls (e.g., one for extraction, one for win-theme generation), log each one.

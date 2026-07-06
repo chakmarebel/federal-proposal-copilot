@@ -97,6 +97,7 @@ If no mode is specified, ask before proceeding.
 **Inputs:**
 - `working/proposal-type.md` — determines whether formal scoring or lightweight pass applies
 - `working/proposal-plan.md` — evaluation factors, subfactors, and weights extracted by `proposal-manager`
+- `working/evaluation-model.md` — if present, **this solicitation's typed rubric** (the same one injected into the draft prompt by `/proposal-writer`). Score against its specific factors, weighting, and pass/fail gates; they override the generic rubric files where they conflict. Treat `rejected` rows as out of scope.
 - `working/compliance-matrix.md` — current coverage status (informs Technical/Management ratings)
 - All files in `drafts/`
 - **Reference rubrics (mandatory):**
@@ -245,12 +246,33 @@ If no mode is specified, ask before proceeding.
 [2-3 paragraphs. Honest view of whether this wins as drafted. If No, what must change. If Yes, what preserves the win.]
 ```
 
+### Scored snapshot (mandatory — feeds the lift metric)
+
+Every run that produces `reviews/gold-team-scorecard.md` **must also append exactly one JSON
+line** to `reviews/gold-team-history.jsonl`, conforming to
+[`reference/schemas/gold-team-snapshot.schema.json`](../../../reference/schemas/gold-team-snapshot.schema.json):
+
+```json
+{"schema_version":"gold-team-snapshot.v1","timestamp":"<ISO-8601>","proposal_id":"<slug>","mode":"mock-eval","pwin":"Moderate","factor_ratings":[{"factor":"Technical Approach","rating":"Good"}],"counts":{"strengths":4,"significant_strengths":1,"weaknesses":2,"significant_weaknesses":0,"deficiencies":0},"draft_word_count":8214,"unsupported_claim_count":3,"notes":null}
+```
+
+- **Append-only.** Never rewrite, reorder, or delete prior lines — the accumulated series is
+  the data `scripts/compute-lift.py` turns into the baseline→current pWin trajectory and the
+  shrinking-edit-ratio proof. The scorecard `.md` may be overwritten each run; the history may not.
+- Counts come from the findings actually enumerated in the scorecard (do not estimate).
+- `draft_word_count` and `unsupported_claim_count` reflect `drafts/*.md` (top level) at review time.
+- The Lightweight Reader Response pass appends too, with `"mode":"lightweight"` and `"pwin":null`.
+- If `reviews/gold-team-history.jsonl` does not exist, create it with this first line.
+
+After appending, optionally run `python scripts/compute-lift.py --proposal <slug>` to refresh
+`reviews/lift.md` and show the trajectory.
+
 ### Activity trail
 
 Append to `working/activity.md`:
 
 ```
-## <timestamp> — red-team-review [gold] — <N factors scored>: <OutstandingCount>O/<GoodCount>G/<AcceptableCount>A/<MarginalCount>M/<UnacceptableCount>U, pWin: <level> → reviews/gold-team-scorecard.md
+## <timestamp> — red-team-review [gold] — <N factors scored>: <OutstandingCount>O/<GoodCount>G/<AcceptableCount>A/<MarginalCount>M/<UnacceptableCount>U, pWin: <level> → reviews/gold-team-scorecard.md + reviews/gold-team-history.jsonl
 ```
 
 ### Lightweight Reader Response

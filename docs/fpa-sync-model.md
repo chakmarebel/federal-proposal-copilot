@@ -36,18 +36,32 @@ Run `tools/sync-voice-anchors.sh` (pulls from `proposal-workbench`). See `refere
 
 No automated cross-repo CI. Each consumer (copilot) owns when it pulls. The cost is occasional drift; the benefit is no inter-repo coupling and no surprises in a downstream repo on a day the upstream lands an unfinished change.
 
-## Current sync surface (as of this commit)
+## Current sync surface
 
-Three canonical paths:
+**Reference docs**
 - `PROPOSAL-AGENT-DIAGNOSIS-2026-05-15.md` — the empirical prose-quality diagnosis that `reference/PROSE-QUALITY-DOCTRINE.md` cites.
 - `PROPOSAL-AGENT-REDESIGN-2026-05-15.md` — the proposed redesign (Track A items A1–A6, Track B narrative-first tool) that the M-series operationalized in proposal-workbench and that FPA + copilot consume via the doctrine.
-- `.claude/skills/proposal-patcher/` — the Track B audit-driven patcher skill that replaces `/proposal-editor` for white papers.
-- `.claude/skills/proposal-writer/` — added WP-N5. No intentional divergence from FPA.
-- `.claude/skills/proposal-manager/` — added WP-N5. No intentional divergence from FPA.
-- `.claude/skills/proposal-storyboard/` — added WP-N5. No intentional divergence from FPA.
-- `.claude/skills/red-team-review/` — added WP-N5. No intentional divergence from FPA.
 
-Surface grows as more cross-repo-shared content is identified.
+**Skills** (no intentional divergence from FPA — confirmed byte-identical modulo line endings)
+- `.claude/skills/proposal-patcher/` — the Track B audit-driven patcher skill that replaces `/proposal-editor` for white papers.
+- `.claude/skills/proposal-writer/`, `.claude/skills/proposal-manager/`, `.claude/skills/proposal-storyboard/`, `.claude/skills/red-team-review/` — added WP-N5. Also carry the evaluator-upstream drafting integration.
+- `.claude/skills/adversarial-review/` — the context-blind adversarial review loop.
+
+**Feature scripts** (stdlib-only, no company/path strings — a skill and its scripts must sync together)
+- `scripts/extract-evaluation-model.py`, `scripts/compute-lift.py`, `scripts/backfill-gold-snapshots.py` — the evaluator-upstream drafting toolchain.
+
+**Reference data**
+- `reference/adversarial-personas.md` — reviewer personas for `/adversarial-review`.
+
+**JSON schemas** (synced with `$id`-host normalization — see below)
+- `reference/schemas/evaluation-model.schema.json`, `reference/schemas/gold-team-snapshot.schema.json`, `reference/schemas/adversarial-round.schema.json`.
+
+Surface grows as more cross-repo-shared content is identified. **Rule of thumb: when a feature spans a skill plus supporting scripts, schemas, or reference data, add *all* of those paths in the same PR — a skill synced without its scripts is worse than not synced.**
+
+### Two transforms the sync applies after copy
+
+1. **`$id`-host normalization.** The one systematic FPA→copilot difference in otherwise-shared files is the schema `$id` namespace host (`federal-proposal-assistant.local` → `federal-proposal-copilot.local`). `sync-from-fpa.sh`'s `normalize_namespace` rewrites it after each copy, so schemas stay on the sync surface without importing FPA's identity. Idempotent — re-running yields zero diff. This is why a one-line host difference is **not** grounds for the intentional-divergence list; a systematic, mechanical transform is.
+2. **Index regeneration.** After syncing, the script runs `scripts/build-skills-index.py` so `SKILLS.md` never drifts from the synced SKILL.md frontmatter.
 
 ## Known divergence (intentional)
 
