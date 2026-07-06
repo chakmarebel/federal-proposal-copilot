@@ -42,7 +42,40 @@ SYNC_PATHS=(
   ".claude/skills/proposal-manager"
   ".claude/skills/proposal-storyboard"
   ".claude/skills/red-team-review"
+  ".claude/skills/adversarial-review"
+  # Reference data consumed by the skills above (no company-specific content).
+  "reference/adversarial-personas.md"
+  # Feature scripts. A skill and its supporting scripts must sync together, or
+  # copilot ends up with a skill that calls a script it doesn't have. These are
+  # stdlib-only and carry no company/path strings.
+  "scripts/extract-evaluation-model.py"
+  "scripts/compute-lift.py"
+  "scripts/backfill-gold-snapshots.py"
+  # JSON schemas. The ONLY FPA/copilot difference in these is the $id namespace
+  # host, which the post-copy normalize_namespace step rewrites — so they stay
+  # structurally in sync while keeping copilot's own schema identity. Without
+  # that step a byte-copy would drag "federal-proposal-assistant.local" into
+  # copilot; do not add host-namespaced files here unless normalize covers them.
+  "reference/schemas/evaluation-model.schema.json"
+  "reference/schemas/gold-team-snapshot.schema.json"
+  "reference/schemas/adversarial-round.schema.json"
 )
+
+# The one systematic FPA->copilot difference in otherwise-shared files is the
+# schema $id namespace host. Rewrite it after each copy so these files can live
+# on the sync surface without importing FPA's identity. Idempotent: re-running
+# with the same FPA_REF still produces zero diff. Extend the sed if other
+# host-namespaced identifiers ever appear in synced content.
+normalize_namespace() {
+  local target="$1"
+  if [[ -d "$target" ]]; then
+    grep -rlZ "federal-proposal-assistant.local" "$target" 2>/dev/null | while IFS= read -r -d '' f; do
+      sed -i 's#federal-proposal-assistant\.local#federal-proposal-copilot.local#g' "$f"
+    done
+  elif [[ -f "$target" ]]; then
+    sed -i 's#federal-proposal-assistant\.local#federal-proposal-copilot.local#g' "$target"
+  fi
+}
 
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
@@ -70,8 +103,15 @@ for path in "${SYNC_PATHS[@]}"; do
     [[ "$dest_dir" != "." ]] && mkdir -p "$dest_dir"
     cp "$src" "$path"
   fi
+  normalize_namespace "$path"
   echo "  synced: $path"
 done
+
+# Skills may have been added/changed/removed above; keep the generated index in
+# step so SKILLS.md never drifts from the SKILL.md frontmatter.
+if [[ -f scripts/build-skills-index.py ]]; then
+  python scripts/build-skills-index.py >/dev/null 2>&1 && echo "  regenerated: SKILLS.md" || true
+fi
 
 echo ""
 echo "Synced from ${FPA_REPO}@${FPA_REF}"
