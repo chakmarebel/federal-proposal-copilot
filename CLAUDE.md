@@ -71,6 +71,22 @@ python scripts/check-strengths.py --proposal <slug> --target docx
 
 `check-strengths.py` writes `reviews/strength-preservation.md` with the specific phrases preserved vs. missing for each Significant Strength. Use `--target docx` after `/export-proposal` to verify the rendered Word doc still carries the load-bearing claims; use `--target drafts` (default) for a pre-export sanity check.
 
+**Evaluator-upstream drafting (ported from `chakmarebel/proposal-workbench`, 2026-06).** The evaluator's lens runs *before* the draft, not only at Gold Team, so the Gold Team confirms instead of triggering a structural rewrite. Four pieces:
+
+```bash
+# 1. Typed rubric with provenance — extract / re-extract (preserves human-reviewed rows)
+python scripts/extract-evaluation-model.py --proposal <slug>
+python scripts/extract-evaluation-model.py --proposal <slug> --resync   # after hand-curating the table
+
+# 4. Lift metric — baseline→current pWin + unsupported-claim density from the snapshot series
+python scripts/compute-lift.py --proposal <slug>
+```
+
+1. **Evaluation model** (`working/evaluation-model.md` + `.json`) — this solicitation's factors / weighting / pass-fail / constraints as a curatable running log (`/proposal-manager` Step 4b). Re-extraction never destroys `confirmed`/`edited`/`rejected`/`manual` rows; AI-inferred criteria are labeled `ai-inferred`, never mixed with cited ones.
+2. **Factor-keyed storyboard** — `/proposal-storyboard` keys each section to the factors it must win (`Target Evaluation Factors`, `Evaluated Strength to Earn`, `Discriminator`, `Status`), flags sections with no factor, and preserves `confirmed`/`edited` sections across re-runs.
+3. **Draft-prompt injection** — `/proposal-writer` Pass 1 prepends the storyboard block + evaluation-model block per section, **only when those artifacts exist** (no behavior change otherwise).
+4. **Lift** — every scoring `/red-team-review` run appends a snapshot to `reviews/gold-team-history.jsonl` (append-only); `compute-lift.py` writes `reviews/lift.md`. Both scripts have `--selftest` (deterministic, offline).
+
 **Read review artifacts in Word, not markdown.** The framework authors review / lessons-learned / proposal-plan / team-review-brief artifacts in `.md` because it's the format the skills write. Bill reads them in `.docx`. After any session that produces review artifacts, run:
 
 ```bash
@@ -85,6 +101,8 @@ python scripts/render-md-to-docx.py --all
 ```
 
 `.docx` lands beside the `.md` (e.g., `reviews/gold-team-scorecard.md` → `reviews/gold-team-scorecard.docx`). The `.md` is the source of truth; the `.docx` is a derived artifact (gitignored). `scripts/build-team-review-brief.py` auto-emits `.docx` alongside `.md` because that artifact is meant for human reading from day one.
+
+**White-glove .docx rendering standard (2026-07-03).** Every `.md → .docx` render applies a white-glove pass automatically — `scripts/render-md-to-docx.py` calls `tools/polish_docx.py::whiteglove()` on each document before saving. The pass: content-proportional table column widths (fixed layout, 6.5" usable width), table header rows repeat across page breaks, rows never split mid-cell across pages, cell paragraph spacing tightened to 2pt, 1" page margins. `/export-proposal` Step 4b runs the full polish (`python tools/polish_docx.py --proposal <slug>`), which adds the running header/footer on top; `--tables-only` applies just the white-glove pass to arbitrary files. Before sending any customer-facing .docx, do a visual QA: export to PDF via Word and inspect rasterized pages (pymupdf) for split rows, cramped columns, or orphaned headings. A proposal may layer curated column widths on top with a proposal-local script.
 
 ## Standard Workflow
 
@@ -122,8 +140,36 @@ The full skill catalog below is the superset. Each proposal type uses only the s
 16. `/evidence-check` — (Phase C) Audit evidence citations in drafts against `my-company/evidence-ledger.json`: flag `CLAIM-UNSUPPORTED` markers, typo'd IDs, retired/restricted evidence, and surface unused approved evidence. Run after `/proposal-editor`, before `/red-team-review --mode=gold`. Writes `reviews/evidence-check.md` and updates `working/compliance-matrix.json` evidence_coverage metric.
 17. `/technical-review --phase=drafts` — Post-write claim-truthfulness review. Validates draft prose against architecture for hand-waving, hidden contradictions, magical integrations, ATO/cyber realism, claim truthfulness → `reviews/technical-review-drafts.md`. Cites the approach-phase report.
 18. `/red-team-review` — Red (narrative quality + customer focus) → **Gold (rubric-driven mock evaluation using `reference/evaluator-rubrics/`: adjectival ratings, Strengths/Weaknesses/Deficiencies with paragraph-cited evidence, win-theme visibility, discriminator proof-point check, Phase C unsupported-claim scan, pWin estimate)** → White Glove → `reviews/`. Compliance coverage is validated separately by `/compliance-check`.
+18b. `/adversarial-review` — **Optional for every type; never in `required_skills`.** Context-blind adversarial review loop: fresh-context reviewer agents (personas in `reference/adversarial-personas.md`) read only what an outsider would see — no `working/`, no `reviews/`, no conversation context — return cost-cited findings, and feed a converging critique → triage → patch cycle under `proposal-patcher` rules until a round comes back dry (max 3 rounds default). Replaces the manual "paste the finished draft into an external AI" step; `--mode=export-prompt` / `--mode=ingest` keep the external-model path available in the same findings format for A/B comparison. Runs after `/red-team-review`, before `/export-proposal` → `reviews/adversarial-review.md` + `reviews/adversarial-history.jsonl` (append-only round snapshots).
 19. `/export-proposal` — After drafting + Gold Team, convert markdown drafts to native Office: .docx (Word narratives), .xlsx (compliance matrix, pricing), .pptx (optional briefings), + graphics PNGs. Writes to `final/`. User then opens Word and saves as PDF for submission.
 20. `/status` — Read-only: show pipeline state, compliance coverage, next recommended command. Use any time.
+
+## Track B — White Paper Workflow (narrative-first)
+
+White papers use a different order of operations from the main pipeline. The standard pipeline generates prose inside a pre-built structural lattice (storyboard → writer → editor); Track B lets composition happen first, then validates afterward.
+
+**Active for:** `type_id: white-paper`. Skips `proposal-storyboard` and `proposal-editor`.
+
+```
+/submission-summary
+/customer-intel
+/proposal-solution-architect
+/narrative-spine          → 1-page prose argument → human sign-off
+/proposal-graphics
+/proposal-writer          → draft-loose (voice draft) then bind (evidence + verification)
+/evidence-check           → CLAIM-UNSUPPORTED audit
+/red-team-review          → Gold Team W/D findings
+/proposal-patcher         → surgical fixes from audit only; Strengths untouched
+/adversarial-review       → optional: context-blind fresh-agent critique loop until a round comes back dry
+/export-proposal
+```
+
+The key difference from the main pipeline:
+- **No storyboard.** The narrative spine + writer's loose pass replaces the per-section field-table. The spine runs lengthwise through the argument; the storyboard runs crosswise per section. White papers need the former.
+- **No editor.** `/proposal-patcher` replaces `/proposal-editor` for white papers. The editor does a global style pass on structure-first prose; the patcher does surgical audit-driven fixes on narrative-first prose. Running both defeats the purpose.
+- **Patch list = audit output only.** The patcher reads `reviews/gold-team-scorecard.md` (W/D items) and `reviews/evidence-check.md` (CLAIM-UNSUPPORTED). It presents a patch table for human confirmation before applying anything.
+
+The design rationale is in [`PROPOSAL-AGENT-REDESIGN-2026-05-15.md`](PROPOSAL-AGENT-REDESIGN-2026-05-15.md).
 
 ## Directory Structure
 ```

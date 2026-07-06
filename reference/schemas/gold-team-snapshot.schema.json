@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://federal-proposal-copilot.local/schemas/gold-team-snapshot.v1.json",
+  "title": "Gold Team Snapshot",
+  "description": "One JSON Lines entry per Gold Team / mock-evaluation run, appended to reviews/gold-team-history.jsonl. Append-only: never rewrite or delete prior lines. The accumulated series is what scripts/compute-lift.py turns into the discipline-lift metric (baseline-to-current pWin convergence and falling edit ratio).",
+  "type": "object",
+  "required": ["schema_version", "timestamp", "proposal_id", "mode", "pwin", "counts"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "gold-team-snapshot.v1"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of the review run"
+    },
+    "proposal_id": {
+      "type": "string",
+      "description": "The proposals/<slug>/ directory name"
+    },
+    "mode": {
+      "type": "string",
+      "description": "The red-team-review mode that produced the scorecard (e.g., 'mock-eval', 'red', 'full', 'lightweight')"
+    },
+    "pwin": {
+      "type": ["string", "null"],
+      "enum": ["High", "Moderate", "Low", "Very Low", null],
+      "description": "The run's pWin estimate. Null for lightweight reader-response passes that do not score."
+    },
+    "factor_ratings": {
+      "type": "array",
+      "description": "Per-factor adjectival ratings from the scorecard summary table",
+      "items": {
+        "type": "object",
+        "required": ["factor", "rating"],
+        "properties": {
+          "factor": {"type": "string"},
+          "rating": {"type": "string", "description": "Outstanding/Good/Acceptable/Marginal/Unacceptable, or a PP-confidence rating"}
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "required": ["strengths", "weaknesses", "deficiencies"],
+      "properties": {
+        "strengths": {"type": "integer", "minimum": 0, "description": "Ordinary Strengths"},
+        "significant_strengths": {"type": "integer", "minimum": 0},
+        "weaknesses": {"type": "integer", "minimum": 0, "description": "Ordinary Weaknesses"},
+        "significant_weaknesses": {"type": "integer", "minimum": 0},
+        "deficiencies": {"type": "integer", "minimum": 0}
+      }
+    },
+    "draft_word_count": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Total words across drafts/*.md (top level, excluding loose/) at review time"
+    },
+    "unsupported_claim_count": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "CLAIM-UNSUPPORTED markers across drafts/*.md at review time"
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "One-line free-text context (e.g., 'post-patcher re-review')"
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://federal-proposal-copilot.local/schemas/adversarial-round.v1.json",
+  "title": "Adversarial Review Round Snapshot",
+  "description": "One JSON Lines entry per /adversarial-review round, appended to reviews/adversarial-history.jsonl. Append-only: never rewrite or delete prior lines. The accumulated series is the evidence that the critique loop converges (falling new-finding counts round over round) and the native-vs-external reviewer comparison data.",
+  "type": "object",
+  "required": ["schema_version", "timestamp", "proposal_id", "round", "reviewer", "personas", "counts", "converged"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "adversarial-round.v1"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of the round's consolidation step"
+    },
+    "proposal_id": {
+      "type": "string",
+      "description": "The proposals/<slug>/ directory name"
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1-based round number within this review loop"
+    },
+    "reviewer": {
+      "type": "string",
+      "enum": ["native", "external"],
+      "description": "'native' = fresh-context subagent panel; 'external' = findings ingested from an outside model via --mode=export-prompt / --mode=ingest"
+    },
+    "personas": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Persona ids from reference/adversarial-personas.md used this round (for external rounds, the persona brief that was exported)"
+    },
+    "counts": {
+      "type": "object",
+      "required": ["material", "improvement", "polish"],
+      "description": "New findings this round after dedupe against prior rounds and the dismissed ledger",
+      "properties": {
+        "material": {"type": "integer", "minimum": 0},
+        "improvement": {"type": "integer", "minimum": 0},
+        "polish": {"type": "integer", "minimum": 0, "description": "Reported but not patched by default"}
+      }
+    },
+    "convergent_findings": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Findings independently raised by 2+ personas this round"
+    },
+    "accepted": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Findings the user accepted at triage"
+    },
+    "rejected": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Findings the user rejected (appended to reviews/adversarial-dismissed.md)"
+    },
+    "deferred": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Findings carried to the next round unapplied"
+    },
+    "patches_applied": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Accepted findings actually patched into drafts/ this round"
+    },
+    "converged": {
+      "type": "boolean",
+      "description": "True when this round met the stop condition (zero new accepted Material findings and <=1 new accepted Improvement finding)"
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "One-line free-text context (e.g., 'stopped at --max-rounds unconverged', 'external round for A/B vs round 2')"
+    }
+  }
+}

@@ -2,7 +2,7 @@
 name: proposal-patcher
 description: Apply audit findings (Gold Team Weaknesses/Deficiencies and evidence-check CLAIM-UNSUPPORTED markers) as surgical fixes to bound drafts. Never rewrites globally. Preserves voice, structure, and all Strengths. Final stage of the Track B white-paper workflow before export.
 phase: review
-composes: [proposal-writer, evidence-check, red-team-review]
+composes: [proposal-writer, evidence-check, red-team-review, adversarial-review]
 conflicts_with: [proposal-editor]  # proposal-editor does a global editorial pass; patcher is surgical — one does not follow the other
 ---
 
@@ -43,6 +43,7 @@ Do not run `/proposal-editor` before this skill. They are mutually exclusive fin
 ### Read if available
 - `working/narrative-spine.md` — the through-line the patched drafts must still carry after edits.
 - `reviews/technical-review-drafts.md` — if `/technical-review --phase=drafts` was run; include its findings in the patch list.
+- `reviews/adversarial/round-<N>-findings.md` — if `/adversarial-review --mode=single` (or `--mode=ingest`) produced findings without patching them; include the **accepted** Material/Improvement findings in the patch list (never the Polish appendix). When `/adversarial-review` runs in loop mode it applies its own patches under this skill's rules — don't re-apply the same round here.
 
 ## Build the Patch List First
 

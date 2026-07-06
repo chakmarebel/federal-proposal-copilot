@@ -47,6 +47,7 @@ Recommended workflow:
 6. `working/architecture-concept.md`
 7. `reference/section-patterns/<section_patterns>.md` — derived from `working/proposal-type.md`.
 8. `reference/narrative-operating-modes.md` — select the prose mode that matches `page_target`, `submission_mechanism`, and `evaluator_framing`. Record that mode in the storyboard header and apply it to section length, depth, and transition planning.
+9. `working/evaluation-model.md` — **this solicitation's typed rubric** (produced by `/proposal-manager` Step 4b via `scripts/extract-evaluation-model.py`). The source for each section's `Target Evaluation Factors` field. If it does not exist, recommend running `python scripts/extract-evaluation-model.py --proposal <slug>` first; proceed using `working/proposal-plan.md` evaluation factors as the fallback key.
 
 ### Read if relevant
 - `working/requirement-matrix.md` — for traceability columns in coverage map.
@@ -84,6 +85,8 @@ For each required section, produce:
 ```markdown
 ## <section-id>: <Section Title>
 
+**Status:** <proposed | confirmed | edited>
+
 **Purpose:** <why this section exists>
 
 **Evaluator Question:** <the question the evaluator is trying to answer>
@@ -100,7 +103,13 @@ For each required section, produce:
 
 **Requirements Covered:** <Req IDs from compliance matrix, or "None/formal compliance not applicable">
 
-**Evaluation Factor / Scoring Tie:** <Section M factor, AOI, CSO criterion, SBIR merit factor, or reader concern>
+**Target Evaluation Factors:** <EC-IDs + criterion text from working/evaluation-model.md that this section must win, or "⚠ NONE — no evaluation factor maps to this section">
+
+**Evaluated Strength to Earn:** <the specific Strength or Significant Strength finding a mock evaluator should write after reading this section — one sentence, in S/W/D language>
+
+**Discriminator:** <why us vs. likely competitors for these factors, or "None">
+
+**Evaluation Factor / Scoring Tie:** <Section M factor, AOI, CSO criterion, SBIR merit factor, or reader concern — free-text context behind the Target Evaluation Factors above>
 
 **Customer Language to Reuse:**
 - <exact term or phrase from solicitation/customer docs>
@@ -140,6 +149,35 @@ For each required section, produce:
 ```
 
 ## Storyboard Quality Rules
+
+### Key Every Section to the Factors
+
+For each section, decide which evaluation-model criteria (kind `factor` or `pass-fail`) the
+section must win, and list them in `Target Evaluation Factors` by EC-ID. Map by genuine
+subject-matter overlap between the factor's distinctive terms and the section's title plus its
+mapped compliance rows — not by wishful assignment. Then:
+
+- **A section with no factor gets the warning verbatim:** `⚠ NONE — no evaluation factor maps
+  to this section`. That warning is a strong "why is this section here?" signal — either the
+  section earns its place another way (mandatory boilerplate, reader orientation) or it is a
+  candidate for cutting. Say which in `Purpose`.
+- **A factor with no section is a coverage gap** — surface it in the coverage map's factor
+  table (below), never silently.
+- `Evaluated Strength to Earn` states the finding we want the mock evaluator to write; the
+  Gold Team later checks the draft against exactly this sentence.
+
+### Regeneration Discipline (running log)
+
+Storyboards are curated, not disposable. On every re-run of this skill:
+
+1. Read the existing `working/storyboard.md` first.
+2. **Preserve verbatim** every section whose `Status` is `confirmed` or `edited` — copy the
+   block through unchanged, even if inputs changed. A human reviewed it; regeneration must
+   not destroy that work. (Note inconsistencies with updated inputs in
+   `working/storyboard-open-questions.md` instead of editing the block.)
+3. Regenerate only sections with `Status: proposed` (or sections that are new).
+4. New sections start at `Status: proposed`. Humans flip status to `confirmed` (right as
+   generated) or `edited` (hand-tuned) as they review.
 
 ### Be Specific
 
@@ -235,6 +273,15 @@ Create `working/storyboard-coverage-map.md` with a table:
 Use this to ensure the storyboard covers every known requirement before prose begins.
 
 If a requirement has no planned section home, mark it as a gap. Do not bury it.
+
+When `working/evaluation-model.md` exists, also add a **factor coverage** table — the Section-M
+analog of requirement coverage:
+
+| EC-ID | Factor / Pass-Fail Criterion | Targeted By Section(s) | Gap? |
+|---|---|---|---|
+
+Every `factor` and `pass-fail` row from the evaluation model appears here. A factor targeted by
+no section is flagged `⚠ GAP` — we are not answering something we are scored on.
 
 ## Open Questions
 

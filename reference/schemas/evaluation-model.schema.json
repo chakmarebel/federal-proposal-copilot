@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://federal-proposal-copilot.local/schemas/evaluation-model.v1.json",
+  "title": "Evaluation Model",
+  "description": "Structured sidecar for working/evaluation-model.md. The typed representation of THIS solicitation's rubric: evaluation factors, relative weighting, pass/fail items, and submission constraints, each with sentence-level provenance and a human review status. Derived from the markdown table by scripts/extract-evaluation-model.py; do not hand-edit the JSON.",
+  "type": "object",
+  "required": ["schema_version", "generated_by", "generated_at", "proposal_name", "criteria", "summary"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "evaluation-model.v1",
+      "description": "Must match the schema $id version"
+    },
+    "generated_by": {
+      "type": "string",
+      "description": "Producer (e.g., 'extract-evaluation-model.py', 'proposal-manager')"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of generation"
+    },
+    "proposal_name": {
+      "type": "string",
+      "description": "The proposals/<slug>/ directory name"
+    },
+    "criteria": {
+      "type": "array",
+      "description": "One entry per evaluation criterion. Running-log discipline: re-extraction replaces only rows with origin 'extracted'/'ai-inferred' AND status 'extracted'; manual rows and confirmed/edited/rejected rows are never destroyed.",
+      "items": {
+        "type": "object",
+        "required": ["id", "criterion", "kind", "origin", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^EC-[0-9]+$",
+            "description": "Stable identifier (e.g., 'EC-3'). Preserved across re-extraction for reviewed rows."
+          },
+          "criterion": {
+            "type": "string",
+            "description": "The criterion text, normally a verbatim sentence from the solicitation"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["factor", "weighting", "pass-fail", "constraint"],
+            "description": "factor = a scored evaluation factor; weighting = a relative-importance statement; pass-fail = a disqualifier / gate; constraint = a submission constraint (page limit, format, deadline) stated in Section L/M context"
+          },
+          "weight_text": {
+            "type": "string",
+            "description": "Relative-importance phrase when stated (e.g., 'significantly more important than'); empty otherwise"
+          },
+          "detail": {
+            "type": "string",
+            "description": "Evaluator notes: what good looks like, hot buttons. Empty when not stated."
+          },
+          "source_file": {
+            "type": "string",
+            "description": "Provenance: the inputs/ file the sentence came from. Empty ONLY for origin 'ai-inferred' or 'manual'."
+          },
+          "source_section": {
+            "type": "string",
+            "description": "Provenance: detected solicitation section context ('section-l', 'section-m', or empty)"
+          },
+          "origin": {
+            "type": "string",
+            "enum": ["extracted", "ai-inferred", "manual"],
+            "description": "extracted = deterministic pattern match with provenance; ai-inferred = added by the model enrichment pass (no source sentence — never silently mixed with cited rows); manual = human-added"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["extracted", "confirmed", "edited", "rejected"],
+            "description": "Human review state. 'confirmed'/'edited'/'rejected' rows survive re-extraction; 'rejected' rows are kept in the running log but excluded from the drafting context block."
+          },
+          "ordinal": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Display/render order"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total", "confirmed", "factors", "constraints"],
+      "properties": {
+        "total": {"type": "integer", "minimum": 0},
+        "confirmed": {"type": "integer", "minimum": 0, "description": "Rows with status confirmed or edited"},
+        "factors": {"type": "integer", "minimum": 0},
+        "weighting": {"type": "integer", "minimum": 0},
+        "pass_fail": {"type": "integer", "minimum": 0},
+        "constraints": {"type": "integer", "minimum": 0},
+        "rejected": {"type": "integer", "minimum": 0},
+        "ai_inferred": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}
