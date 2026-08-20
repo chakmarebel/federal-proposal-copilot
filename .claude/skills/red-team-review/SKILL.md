@@ -141,6 +141,14 @@ If no mode is specified, ask before proceeding.
 
    If `my-company/evidence-ledger.json` does not exist, skip this step with a note: "Phase C evidence ledger not populated — evidence citation scoring not applied."
 
+5c. **Check acquisition-guidance compliance.** Read `reference/doctrine/acquisition-guidance-catalog.md` and apply its Applicability Matrix for this `type_id`:
+   - **Every ATO / IL / FedRAMP / CMMC / certification claim must carry an evidence-ledger cite** (per `reference/doctrine/prohibited-claims-doctrine.md`). An uncited one is a Significant Weakness — and if it generalizes a program-scoped posture (e.g., citing IL-6 outside the ICOP/PMW-120 context), flag it as a potential integrity Deficiency.
+   - **For Software Acquisition Pathway (DoDI 5000.87) efforts** — verify the technical approach answers the customer's own success criteria: an MVP→MVCR structure and a first-delivery commitment (applications path: ≤1 year from first funds, then at least annually). A SWP response that never names the cadence is a Weakness.
+   - **For Navy software efforts** — verify RAISE 2.0 mechanics are addressed where relevant (container/security-gate posture, residual risk ≤Moderate, and **edge ConMon via stage-sync** for DDIL/disconnected deployments). An edge-AI proposal silent on edge ConMon is a missed discriminator (opportunity note), not a Weakness.
+   - **For any costed response** — verify the pricing artifact is defensible against GAO-20-195G's four characteristics (and DoDI 5000.73 framing for DoD cost estimates). A point number with no stated basis/method is a Weakness.
+
+   If `reference/doctrine/acquisition-guidance-catalog.md` does not exist, skip this step with a note.
+
 6. **Compute overall rating pattern.** Tabulate factor ratings weighted per Section M's statement of importance. Do not invent percentages.
 
 7. **Estimate pWin (rough, not definitive).**
@@ -290,6 +298,7 @@ For white papers, RFIs, ROMs, and sources-sought responses — no Section M exis
 
 ### Gold Team discipline
 
+- **Preventable findings should already be closed by `bind`.** `proposal-writer` Pass 2 Step 2b runs the `reference/preventable-gold-team-findings.md` sweep (scored-field placeholders, unnamed personnel, undefined acronyms, vague comparators, unanswered evaluator questions). Still score any that survive — they are real Weaknesses — but when several recur, note in the Overall Assessment that the bind sweep was likely skipped, so the fix is upstream (re-run `/proposal-writer --mode=bind`) rather than one-off patches. Reserve Gold Team's own judgment for the residue the sweep cannot prevent: compliance/eligibility, "reads as a pitch" / captured-not-live, and the rating call itself.
 - **Never assign a rating without Strength/Weakness analysis first.** The rating must *emerge* from the findings.
 - **Every finding cites a specific location or absence.** No "feels weak" — show me where.
 - **Use the rubric language verbatim.** "Appreciably increases" is an FAR term of art; use it, don't paraphrase.

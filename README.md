@@ -128,6 +128,8 @@ The pipeline is **requirement-first by construction**: the deliverable spec and 
 | `/export-proposal` | **Converts markdown drafts to native Office formats.** Runs the **pre-submit gate** first (prose lint, structural lint, Significant-Strength preservation check — each blocks export on a HIGH finding), then produces .docx (Word narratives), .xlsx (compliance matrix, pricing artifacts), .pptx (optional briefings), + graphics rendered to PNG. Writes to `final/`. User opens Word and saves as PDF for submission. Uses `anthropic-skills:docx/xlsx/pptx` and supports branded base templates at `my-company/templates/`. |
 | `/dashboard` | Launches the local read-only Streamlit portfolio dashboard — compliance coverage, evidence coverage, Gold Team pWin, and AI spend across all proposals |
 | `/capture-submission` | Snapshots the AI-generated draft and your final submitted version into `corpus/calibration/` for framework learning. Run twice: once after `/proposal-writer` (before editing) to capture the AI baseline, and again after submission to record your edits and improvement notes. |
+| `/adversarial-review` | Context-blind adversarial review loop — fresh-context reviewer agents read only what an outside evaluator would see, return cost-cited findings, and feed a converging critique → triage → patch cycle until a round comes back dry. Personas in [`reference/adversarial-personas.md`](reference/adversarial-personas.md). Required for short-form types; optional elsewhere |
+| `/capture-demand-signals` | Cross-pursuit: records what customers asked for into an append-only demand register, so engineering sees demand by frequency and customer breadth instead of as anecdotes. Runs outside the per-type workflow. See [`docs/BD-CTO-DEMAND-SIGNAL-SYNC.md`](docs/BD-CTO-DEMAND-SIGNAL-SYNC.md) |
 | `/import-from-capture` | Imports a qualified opportunity from the capture-pipeline with solicitation facts and Go/No-Go pre-populated |
 
 ### Directory Structure
@@ -301,6 +303,10 @@ Each type has a dedicated file in [`reference/proposal-types/`](reference/propos
 | `sbir-phase1` | SBIR Phase I | SBIR budget | per topic |
 | `sbir-phase2` | SBIR Phase II | SBIR budget | per topic |
 | `white-paper` | Unsolicited / directed | None | 3-10 |
+| `baa-white-paper` | BAA white paper / pre-proposal | ROM | 3-5 |
+| `unsolicited-proposal` | FAR 15.6 unsolicited proposal | FAR cost volume | 15-30 (excl. cover, appendices, cost) |
+| `pitch-demo` | Pitch + live demo (down-select) | ROM | ≤20 slides + ≤20-min demo |
+| `marketplace-video-pitch` | Video pitch / solutions marketplace | Pricing-model narrative | ≤5:00 video + 5 slides |
 | `rfi` | RFI response | None | 5-15 |
 | `sources-sought` | Sources Sought | None | 2-5 |
 | `rom` | Standalone ROM | ROM | 1-3 |

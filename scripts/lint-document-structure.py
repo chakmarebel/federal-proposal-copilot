@@ -214,6 +214,32 @@ def lint_first_page_markings(first_page: str) -> list[dict]:
     return findings
 
 
+# Characters that must never reach a rendered deliverable. The section sign is a standing
+# workspace rule (write "Section X.Y" or bare "X.Y"); source material legitimately contains
+# it because solicitations quote statutes that way, so the gate belongs on the output.
+PROHIBITED_GLYPHS = {
+    "\u00a7": ('section-sign glyph', 'write "Section X.Y" or bare "X.Y"'),
+}
+
+
+def lint_prohibited_glyphs(full_text: str) -> list[dict]:
+    """Flag characters banned from rendered deliverables."""
+    findings: list[dict] = []
+    for glyph, (name, remedy) in PROHIBITED_GLYPHS.items():
+        n = full_text.count(glyph)
+        if not n:
+            continue
+        idx = full_text.find(glyph)
+        snippet = full_text[max(0, idx - 45): idx + 45].replace("\n", " ").strip()
+        findings.append({
+            "severity": "HIGH",
+            "category": "prohibited-glyph",
+            "issue": f"{name} appears {n} time(s) — {remedy}",
+            "detail": f"first occurrence: ...{snippet}...",
+        })
+    return findings
+
+
 def lint_one(path: Path) -> list[dict]:
     if path.suffix.lower() == ".docx":
         headings, full, first_page = extract_headings_and_text_from_docx(path)
@@ -226,7 +252,14 @@ def lint_one(path: Path) -> list[dict]:
     findings.extend(lint_section_numbering(headings))
     findings.extend(lint_figures(full))
     findings.extend(lint_first_page_markings(first_page))
+    findings.extend(lint_prohibited_glyphs(full))
     return findings
+
+
+try:  # a Windows cp1252 console must not crash the gate before it reports
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 
 def print_report(path: Path, findings: list[dict]) -> int:

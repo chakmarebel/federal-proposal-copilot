@@ -5,12 +5,21 @@ polish_docx.py - post-export polish for proposal Word documents.
 Runs after tools/md_to_docx.py. For every .docx in a proposal's final/docx/:
   1. Optimizes table column widths - narrow short-content columns, widen wordy
      ones - instead of the converter's even split.
-  2. Adds a running header (the document's first H1 title, pages 2+).
-  3. Adds a footer with the company name and a "Page X of Y" field (all pages).
+  2. White-glove table behavior: header row repeats across page breaks, rows
+     never split mid-cell across pages, cell paragraph spacing tightened.
+  3. Normalizes page margins to 1" (6.5" usable width on Letter).
+  4. Adds a running header (the document's first H1 title, pages 2+).
+  5. Adds a footer with the company name and a "Page X of Y" field (all pages).
+
+Items 1-3 are also applied automatically by scripts/render-md-to-docx.py on
+every .md -> .docx render (the standard white-glove rendering process); this
+script remains the full-polish entry point for export (final/docx/), where the
+header/footer treatment is added on top.
 
 Usage:
   python tools/polish_docx.py --proposal <slug> [--company "[Your Company], Inc."]
   python tools/polish_docx.py --files path/to/a.docx path/to/b.docx
+  python tools/polish_docx.py --files a.docx --tables-only   # skip header/footer
 
 Idempotent: re-running re-applies the same polish. If you re-export from
 markdown, re-run this script - the export step does not preserve it.
@@ -77,6 +86,43 @@ def optimize_table(table):
     return widths
 
 
+def whiteglove_table(table):
+    """Header row repeats on page breaks; rows never split; tight cell spacing."""
+    if len(table.rows) > 1 and len(table.columns) > 1:
+        trPr = table.rows[0]._tr.get_or_add_trPr()
+        if trPr.find(qn('w:tblHeader')) is None:
+            el = OxmlElement('w:tblHeader')
+            el.set(qn('w:val'), 'true')
+            trPr.append(el)
+    for row in table.rows:
+        trPr = row._tr.get_or_add_trPr()
+        if trPr.find(qn('w:cantSplit')) is None:
+            trPr.append(OxmlElement('w:cantSplit'))
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                p.paragraph_format.space_before = Pt(2)
+                p.paragraph_format.space_after = Pt(2)
+
+
+def set_margins(doc, inches=1.0):
+    for section in doc.sections:
+        section.left_margin = Inches(inches)
+        section.right_margin = Inches(inches)
+        section.top_margin = Inches(inches)
+        section.bottom_margin = Inches(inches)
+
+
+def whiteglove(doc):
+    """The standard white-glove pass applied to every rendered .docx:
+    content-proportional column widths, repeating headers, unsplit rows,
+    tight cell spacing, 1-inch margins. No header/footer (export adds that)."""
+    set_margins(doc)
+    for table in doc.tables:
+        optimize_table(table)
+        whiteglove_table(table)
+    return len(doc.tables)
+
+
 def _page_field(paragraph, instr):
     run = paragraph.add_run()
     b = OxmlElement('w:fldChar'); b.set(qn('w:fldCharType'), 'begin')
@@ -133,15 +179,14 @@ def add_header_footer(doc, company):
             _page_field(fp, 'NUMPAGES')
 
 
-def polish(path, company):
+def polish(path, company, tables_only=False):
     doc = Document(path)
-    ntables = 0
-    for table in doc.tables:
-        optimize_table(table)
-        ntables += 1
-    add_header_footer(doc, company)
+    ntables = whiteglove(doc)
+    if not tables_only:
+        add_header_footer(doc, company)
     doc.save(path)
-    print(f'  [OK] {os.path.basename(path)} - {ntables} table(s) optimized, header/footer added')
+    suffix = 'white-glove' if tables_only else 'white-glove + header/footer'
+    print(f'  [OK] {os.path.basename(path)} - {ntables} table(s), {suffix}')
 
 
 def main():
@@ -149,6 +194,8 @@ def main():
     ap.add_argument('--proposal')
     ap.add_argument('--files', nargs='*')
     ap.add_argument('--company', default='[Your Company], Inc.')
+    ap.add_argument('--tables-only', action='store_true',
+                    help='apply the white-glove table/margin pass only (no header/footer)')
     args = ap.parse_args()
 
     if args.files:
@@ -164,7 +211,7 @@ def main():
         print('No .docx files found.'); sys.exit(1)
     print(f'Polishing {len(targets)} document(s):')
     for t in targets:
-        polish(t, args.company)
+        polish(t, args.company, tables_only=args.tables_only)
     print('Done.')
 
 

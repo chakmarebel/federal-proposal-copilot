@@ -1,5 +1,9 @@
 ﻿# Federal Proposal Workspace
 
+> **New to this repo?** Read [docs/AGENT-ORIENTATION.md](docs/AGENT-ORIENTATION.md) first — the
+> mental model, what is enforced mechanically, and the traps, in one pass. This file stays
+> authoritative for the rules; that one explains how the pieces relate and why.
+
 ## Mission
 This workspace operationalizes the Shipley capture and proposal process for federal defense / IC proposals and white papers. Guide the user through each step's required artifact. **Enforce requirement-first sequencing.** Defeat the solution-first failure mode by making the requirement-breakdown step harder to skip than to do. Every artifact must improve probability of winning — by answering the customer's requirement with a credible solution, not by describing capabilities the user wishes were requirements.
 
@@ -71,6 +75,15 @@ python scripts/check-strengths.py --proposal <slug> --target docx
 
 `check-strengths.py` writes `reviews/strength-preservation.md` with the specific phrases preserved vs. missing for each Significant Strength. Use `--target docx` after `/export-proposal` to verify the rendered Word doc still carries the load-bearing claims; use `--target drafts` (default) for a pre-export sanity check.
 
+```bash
+# Final-file lint — HIGH rules + bracket-placeholder scan on the ACTUAL outgoing .pdf/.docx
+python scripts/lint-submission-file.py final/docx/<name>.docx final/pdf/<name>.pdf
+```
+
+`lint-submission-file.py` extracts text from the file that will actually be uploaded and applies the prose-lint HIGH rules plus a `[NEEDS]`/`[TBD]` bracket scan. It exists because team review typically forks to Google Docs or Word, where the markdown lint never sees the submitted file — a drafts-only lint cannot catch a defect introduced after the fork. Run it as the last gate before upload, on every submission artifact. `--selftest` available.
+
+**Paste-ready-language sync rule (mandatory).** When providing paste-ready proposal language in chat for the user to paste into an external doc, **apply the same change to the corresponding `drafts/*.md` in the same turn** (or, if the drafts are known-stale, say so explicitly). Chat-provided language that only lands in the external doc silently forks the pipeline: the drafts and every lint/gate go stale while the submission evolves elsewhere. Corollary: once team review begins in an external doc, treat that doc as the source of truth and reconcile before any export.
+
 **Evaluator-upstream drafting (ported from `chakmarebel/proposal-workbench`, 2026-06).** The evaluator's lens runs *before* the draft, not only at Gold Team, so the Gold Team confirms instead of triggering a structural rewrite. Four pieces:
 
 ```bash
@@ -103,6 +116,73 @@ python scripts/render-md-to-docx.py --all
 `.docx` lands beside the `.md` (e.g., `reviews/gold-team-scorecard.md` → `reviews/gold-team-scorecard.docx`). The `.md` is the source of truth; the `.docx` is a derived artifact (gitignored). `scripts/build-team-review-brief.py` auto-emits `.docx` alongside `.md` because that artifact is meant for human reading from day one.
 
 **White-glove .docx rendering standard (2026-07-03).** Every `.md → .docx` render applies a white-glove pass automatically — `scripts/render-md-to-docx.py` calls `tools/polish_docx.py::whiteglove()` on each document before saving. The pass: content-proportional table column widths (fixed layout, 6.5" usable width), table header rows repeat across page breaks, rows never split mid-cell across pages, cell paragraph spacing tightened to 2pt, 1" page margins. `/export-proposal` Step 4b runs the full polish (`python tools/polish_docx.py --proposal <slug>`), which adds the running header/footer on top; `--tables-only` applies just the white-glove pass to arbitrary files. Before sending any customer-facing .docx, do a visual QA: export to PDF via Word and inspect rasterized pages (pymupdf) for split rows, cramped columns, or orphaned headings. A proposal may layer curated column widths on top with a proposal-local script.
+
+**Matrices go to Excel, not Word.** A matrix is a working table — reviewers sort it, filter it, add a column, and hand it back. Word cannot do any of that. **Render every matrix-style artifact to `.xlsx`**; `.docx` stays correct for narrative artifacts (reviews, plans, briefs).
+
+```bash
+# Single file — .xlsx lands beside the .md
+python scripts/render-matrix-to-xlsx.py proposals/<slug>/working/capability-matrix.md
+
+# Every matrix for one proposal (capability, requirement, risks, coverage map, pp-relevance)
+python scripts/render-matrix-to-xlsx.py --proposal <slug>
+
+# Workspace-wide sweep; idempotent, only re-renders when the .md is newer
+python scripts/render-matrix-to-xlsx.py --all
+
+# compliance-matrix.md has its OWN richer renderer — the generic one defers to it
+python tools/compliance_to_xlsx.py --proposal <slug>      # -> final/xlsx/, w/ Summary + Gaps sheets
+
+python scripts/render-matrix-to-xlsx.py --selftest
+```
+
+**The tool never overwrites a workbook it did not write.** Every generated `.xlsx` is stamped in its document properties; an unstamped file at a target path is reported as `[KEEP]` and left alone, even under `--force`. This guard exists because a `--force` sweep destroyed hand-curated workbooks whose extra sheets existed only in the `.xlsx` and not in the `.md`. `--adopt-existing` bypasses the guard and exists only for one-time migration — **do not use it on a routine sweep.** The lesson generalizes: `working/*.xlsx` is gitignored, so a hand-edited workbook has no copy anywhere. If you curate a workbook by hand, either fold the curation back into the `.md` or keep it under a filename with no `.md` twin.
+
+Each markdown heading containing tables becomes a worksheet; prose under those headings is preserved on a final `Notes` sheet. Verdict columns (headers matching verdict / status / coverage / gap / risk / rating / severity / likelihood / impact / maturity) are colour-coded green / yellow / red from the cell's marker or word; other columns are never painted, so a requirement that merely contains the word "high" stays uncoloured. Header rows are frozen and filterable, and column widths are content-proportional. The `.md` remains the source of truth.
+
+**BD to CTO demand signal loop.** Requirements customers state — in solicitations and in conversation — aggregate into one workspace-global, append-only register, so the engineering shop sees demand by frequency and customer breadth instead of as anecdotes, and answers back in writing. Design: [docs/BD-CTO-DEMAND-SIGNAL-SYNC.md](docs/BD-CTO-DEMAND-SIGNAL-SYNC.md).
+
+```bash
+# Capture (skill): mine a pursuit's requirement matrix, or a conference / 1:1 / trial note
+/capture-demand-signals            # --from-proposal <slug> | --from-notes <path>
+
+# Mechanical first pass — suggests a theme by keyword, infers status from Gap/Risk prose
+python scripts/extract-demand-signals.py --proposal <slug>
+
+# The weekly artifact for the engineering shop — .xlsx, five sheets, disposition dropdown
+python scripts/build-demand-signal-workbook.py
+python scripts/build-demand-signal-workbook.py --ingest <returned.xlsx>   # reads answers back
+
+# Narrative version of the same data (exposure-ranked prose brief)
+python scripts/build-demand-signal-brief.py          # add --full to list every signal
+
+# Optional second feeder: a capture/CRM pipeline's vetted requirements
+python scripts/ingest-crm-candidates.py --file <candidates.jsonl> --stats-only
+python scripts/promote-crm-candidates.py --candidates signals/candidates/<date>-crm-candidates.jsonl --decisions reference/demand-signals/<date>-crm-decisions.tsv
+```
+
+`signals/demand-signals.jsonl` is the register ([schema](reference/schemas/demand-signal.schema.json)); `reference/capability-themes.md` is the controlled vocabulary and the join key — an unknown theme is a hard validation failure, because a typo silently splits a theme and understates its weight. **`our_status` is BD's read and `cto_disposition` is engineering's; never merge them** — the disagreements are the meeting agenda.
+
+**A CRM feeder is not a requirement matrix, so every candidate is adjudicated by hand.** Triage-stage requirement text mixes real customer asks with submission mechanics, eligibility rules, and the tool's own inferences about opportunities whose text it could not read. A keyword themer calibrated on curated matrix rows does not survive that difference. So `promote-crm-candidates.py` takes a **decisions file** rather than a classifier: `signal <theme>` promotes, `hold <slug>` marks a real ask the vocabulary has no home for, and six closed drop reasons (`mechanics`, `posture`, `speculation`, `off-domain`, `too-generic`, `stale-closed`) account for the rest. A candidate with no decision **aborts the run** — silence must not read as a drop. Promoted rows enter with `our_status: "unknown"`, so they rank themes and assert nothing about coverage.
+
+**`customer` is a ranking dimension, so it is normalized before ingest.** The brief ranks a theme by how many *distinct* customers asked for it, and raw agency strings yield one organization many ways. `reference/customer-aliases.tsv` maps raw spellings to canonical names and carries per-pursuit corrections where the raw value is simply wrong. Unlisted names pass through unchanged; an unrecognized customer should appear as itself rather than be folded into a neighbour. A signal with no resolvable customer is refused, never guessed.
+
+**Send the workbook, not the .docx.** Everything in the brief is a table, and Word cannot sort, filter, or pivot one — and its dispositions have to be hand-transcribed, which is the loop's weakest link. The workbook's `Gap Queue` sheet is the write-back surface (data-validated dropdown), and `--ingest` applies the returned answers to the register directly. Invalid values are reported and never written; an unchanged re-ingest is a no-op.
+
+`/capture-demand-signals` runs **outside** the per-type `required_skills` workflow: it is cross-pursuit, and a proposal type neither requires nor skips it. `signals/` is gitignored and blocked by `scripts/check-git-boundary.sh` — the register aggregates verbatim customer requirements and your own gap admissions across every pursuit, which is a worse leak than any single proposal directory.
+
+**Repo hygiene: the boundary guard and the company-asset backup.** `my-company/` is gitignored and boundary-protected, so the evidence ledger, past performance, claim envelope, and capability docs have **no copy in git**. An ordinary git operation can destroy them with no undo.
+
+```bash
+bash scripts/install-hooks.sh                      # install the pre-commit boundary + backup hooks
+bash scripts/check-git-boundary.sh                 # refuse to publish company-private paths
+
+python scripts/backup-company-assets.py            # snapshot anything that changed
+python scripts/backup-company-assets.py --list     # what is protected, and how stale
+python scripts/backup-company-assets.py --verify   # exit 1 if anything is unprotected
+python scripts/backup-company-assets.py --restore my-company/evidence-ledger.json
+```
+
+Snapshots go outside the repo, timestamped and content-hashed so an unchanged file costs nothing. The script **refuses** to snapshot a file that is empty, unparseable, or — the silent killer — a ledger whose `items[]` has collapsed to zero, so a corrupt file can never overwrite good history. The pre-commit hook runs it automatically and never blocks a commit on backup failure. **Before any branch switch, run it.** Note the boundary guard matches **paths, not content**: it cannot see a company name inlined in a script.
 
 ## Standard Workflow
 

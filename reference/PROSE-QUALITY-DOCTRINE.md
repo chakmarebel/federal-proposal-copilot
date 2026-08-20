@@ -36,7 +36,7 @@ Compelling prose is produced in two stages:
    - "The customer needs Y" → "Our review of the solicitation indicates the customer requires Y"
    - "AFRL's strategic priority is Z" → "AFRL's published priorities suggest Z is central to this opportunity"
 
-   Preserve declarative voice when the underlying fact is genuinely objective: statute, published policy, public solicitation language, EdgeRunner's own verified capabilities. Require bounded epistemic voice when the subject is the customer's *unstated* priorities, challenges, decisions, or internal posture.
+   Preserve declarative voice when the underlying fact is genuinely objective: statute, published policy, public solicitation language, [Your Company]'s own verified capabilities. Require bounded epistemic voice when the subject is the customer's *unstated* priorities, challenges, decisions, or internal posture.
 
    Polish is not decoration. It is a guard against author overreach. Skipping it because the reframe "sounds customer-centric" produces ventriloquism in nicer wrapping, and evaluators read that as the vendor presuming to speak for them.
 
@@ -54,8 +54,8 @@ author instead of answering the requirement, and it frequently smuggles in the v
 claims to disavow. The polish pass must delete it. State the capability and its boundary plainly and
 let the precision carry the credibility:
 
-> "EdgeRunner's agents run disconnected at the edge. Cross-domain networking is provided by the
-> integrating program, not by EdgeRunner."
+> "[Your Company]'s agents run disconnected at the edge. Cross-domain networking is provided by the
+> integrating program, not by [Your Company]."
 
 Rule: never describe the proposal's own honesty, restraint, or understanding. Assert the bounded
 fact; the boundary itself is the signal. Enforced deterministically by the prose-lint

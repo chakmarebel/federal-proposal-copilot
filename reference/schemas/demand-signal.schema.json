@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "demand-signal.schema.json",
+  "title": "Demand Signal",
+  "description": "One atomic record of a customer asking for a capability, from any source — solicitation, RFI, industry day, conference, one-on-one, trial, demo feedback, debrief, or partner conversation. The register (signals/demand-signals.jsonl) is append-only and workspace-global, not per-proposal: its purpose is to aggregate demand across the whole pipeline so the CTO shop sees frequency and weight rather than anecdotes. BD owns our_status; the CTO shop owns cto_disposition. The two are deliberately separate opinions and must never be merged — where they disagree is the agenda of the quarterly capability-demand review.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "signal_id",
+    "date_observed",
+    "source_type",
+    "source_ref",
+    "customer",
+    "requirement",
+    "capability_theme",
+    "demand_strength",
+    "our_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "demand-signal.v1"
+    },
+    "signal_id": {
+      "type": "string",
+      "pattern": "^SIG-[0-9]{4}$",
+      "description": "Stable identifier, monotonically assigned. Never reused, never renumbered — briefs and CTO dispositions cite it."
+    },
+    "date_observed": {
+      "type": "string",
+      "format": "date",
+      "description": "The date the customer said it, NOT the date it was transcribed. Verbal asks lead the RFP by 6-18 months; the observation date is what makes that lead time measurable."
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "solicitation",
+        "rfi",
+        "industry-day",
+        "conference",
+        "one-on-one",
+        "trial",
+        "demo-feedback",
+        "debrief",
+        "partner"
+      ],
+      "description": "Where the ask came from. Non-solicitation sources are first-class: they are earlier and usually less filtered than the written requirement."
+    },
+    "source_ref": {
+      "type": "string",
+      "description": "Auditable pointer back to the source. For proposals: 'proposals/<slug>/working/requirement-matrix.md#R3'. For notes: the path under inputs/06_notes/ or scrubs/. Every signal must be traceable to a document or a dated note, or engineering is right not to trust it."
+    },
+    "customer": {
+      "type": "string",
+      "description": "Agency or organization that made the ask (DIA, USSOCOM, Army FCC, NATO ACT)."
+    },
+    "program": {
+      "type": ["string", "null"],
+      "description": "Program, challenge, or effort name, when the ask is attached to one."
+    },
+    "proposal_slug": {
+      "type": ["string", "null"],
+      "description": "The proposals/<slug>/ directory, when the signal came out of an active pursuit. Null for conference and relationship signals with no pursuit yet."
+    },
+    "requirement": {
+      "type": "string",
+      "description": "The ask in one sentence, in the customer's own words wherever possible. Verbatim customer language is the part engineering trusts; paraphrase loses it."
+    },
+    "capability_theme": {
+      "type": "string",
+      "description": "One theme from reference/capability-themes.md. This is the join key that turns 400 one-off requirements into a leaderboard. Adding a new theme is a deliberate edit to that file, not a free-text entry."
+    },
+    "demand_strength": {
+      "type": "string",
+      "enum": ["mandatory-passfail", "mandatory-scored", "desired", "curiosity"],
+      "description": "How hard the customer asked. mandatory-passfail = no bid without it. mandatory-scored = scored evaluation criterion. desired = stated preference or 'desired solution' language. curiosity = asked in conversation, not yet a requirement (the most valuable class for roadmap lead time)."
+    },
+    "rubric_weight_pct": {
+      "type": ["number", "null"],
+      "description": "Percentage weight of the scored criterion this ask maps to, when the solicitation publishes weights. Lets the brief rank by evaluated points rather than raw count."
+    },
+    "pursuit_value_usd": {
+      "type": ["number", "null"],
+      "description": "Estimated value of the pursuit this signal came from, for dollar-weighted theme ranking. Sourced from HubSpot; null when unknown."
+    },
+    "our_status": {
+      "type": "string",
+      "enum": ["shipping", "prototype", "roadmap", "gap", "no-plan", "unknown"],
+      "description": "BD's read at the time of observation. 'shipping' = provable today with a ledger citation. 'prototype' = exists, not productized. 'roadmap' = BD believes it is planned. 'gap' = we could not answer the ask. 'no-plan' = gap with no known intent to close it. 'unknown' = extracted mechanically, not yet reviewed by a human."
+    },
+    "bid_impact": {
+      "type": ["string", "null"],
+      "description": "What this ask cost us in the bid: prose we had to hedge, a teaming arrangement we had to make, criteria we scored low on, or a no-bid. The single most persuasive field in the register — 'the customer wanted X' is a wish, 'we hedged 3.2 and teamed it out' is a requirement."
+    },
+    "evidence_id": {
+      "type": ["string", "null"],
+      "pattern": "^EV-[0-9]{3}$",
+      "description": "The my-company/evidence-ledger.json item that proves this capability, once one exists. A capability that is real but absent from the ledger is invisible to the proposal pipeline, which means we do not get credit for it."
+    },
+    "cto_disposition": {
+      "type": ["string", "null"],
+      "enum": [
+        "already-exists-ask-me",
+        "building",
+        "planned",
+        "needs-scoping",
+        "wont-build",
+        null
+      ],
+      "description": "The CTO shop's answer. Owned by engineering, transcribed by BD from the brief's disposition column. 'already-exists-ask-me' means BD and enablement have a communication problem, not engineering. 'wont-build' is a valid and useful answer: it tells BD to team for the theme instead of hedging, earlier."
+    },
+    "cto_disposition_detail": {
+      "type": ["string", "null"],
+      "description": "Free text from engineering — target quarter for 'planned', what needs scoping, why not building, or which existing capability already covers it."
+    },
+    "cto_disposition_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "When the disposition was given. Drives the median-age-of-undispositioned-gap metric and flags dispositions stale enough to re-ask."
+    },
+    "cto_owner": {
+      "type": ["string", "null"],
+      "description": "Named individual in the CTO shop accountable for the disposition. A theme with no owner does not get closed."
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Anything that does not fit a field. Keep short."
+    }
+  },
+  "additionalProperties": false
+}

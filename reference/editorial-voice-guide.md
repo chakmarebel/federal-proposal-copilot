@@ -17,7 +17,7 @@ Compelling prose is produced in two stages, in this order:
    - "The customer needs Y" -> "Our review of the solicitation indicates the customer requires Y"
    - "AFRL's strategic priority is Z" -> "AFRL's published priorities suggest Z is central to this opportunity"
 
-Preserve declarative voice for objective facts (statute, published policy, public solicitation language, EdgeRunner's own verified capabilities). Require bounded epistemic voice when the subject is the customer's *unstated* priorities, challenges, decisions, or internal posture.
+Preserve declarative voice for objective facts (statute, published policy, public solicitation language, [Your Company]'s own verified capabilities). Require bounded epistemic voice when the subject is the customer's *unstated* priorities, challenges, decisions, or internal posture.
 
 Polish is not decoration. It is a guard against author overreach. Skipping it because the reframe "sounds customer-centric" produces ventriloquism in nicer wrapping -- evaluators read that as the vendor presuming to speak for them.
 
@@ -141,7 +141,7 @@ These three rules are the generation-side mirror of the deterministic `prose-lin
 
 1. **No dashes as sentence punctuation.** Do not use em-dashes (—), en-dashes (–), or double-hyphens (`--`) to join clauses. Models reach for them constantly; federal house style does not use them. Rewrite with a period, comma, colon, or parentheses. (Hyphenated compounds like "air-gapped" and numeric ranges like "10–20" written as ranges are fine; the rule is about dashes used as *punctuation between clauses*.) — **HIGH; blocks export.**
 
-2. **No self-narration or performative honesty.** Never describe the proposal's own honesty, candor, restraint, or insight. Prose like "saying so is itself a signal that we understand the real problem rather than overselling a capability we do not hold" praises the author instead of answering the evaluator, and often smuggles in the very overclaim it disavows. State the capability and its boundary plainly and let the precision carry the credibility: "EdgeRunner's agents run disconnected at the edge. Cross-domain networking is provided by the integrating program, not by EdgeRunner."
+2. **No self-narration or performative honesty.** Never describe the proposal's own honesty, candor, restraint, or insight. Prose like "saying so is itself a signal that we understand the real problem rather than overselling a capability we do not hold" praises the author instead of answering the evaluator, and often smuggles in the very overclaim it disavows. State the capability and its boundary plainly and let the precision carry the credibility: "[Your Company]'s agents run disconnected at the edge. Cross-domain networking is provided by the integrating program, not by [Your Company]."
 
 3. **Prohibited-claim diction needs a ledger cite; absolutes need a number.** Categorical compliance terms — FedRAMP, SOC 2, ISO 27001, CMMC, SPRS, ATO/"authorization to operate", "accredited" — may appear only when a direct `evidence-ledger.json` citation backs the specific claim; otherwise state the actual posture or move it to a `Gaps and Follow-Ups` note. Drop implicit-superiority absolutes ("military-grade", "battle-tested", "unmatched", "most secure", "bank-grade"); replace with a quantified, sourced comparison or cut them. See [`doctrine/prohibited-claims-doctrine.md`](doctrine/prohibited-claims-doctrine.md) for the full universal list.
 

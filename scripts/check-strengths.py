@@ -7,9 +7,19 @@ alphanumeric codes, quantified claims, specific named entities), then
 searches the current draft (or final .docx) for those phrases.
 
 For each Strength, reports:
-  PRESENT  — most distinctive phrases present in the draft (>=70%)
-  REDUCED  — partial coverage (30–70%)
-  MISSING  — most phrases absent (<30%)
+  PRESENT    — most distinctive phrases present in the draft (>=70%)
+  REDUCED    — partial coverage (30-70%)
+  MISSING    — most phrases absent (<30%)
+  UNCHECKED  — no fingerprint could be formed from the scorecard's Basis/Benefit,
+               so preservation is unverifiable. Never counted as a pass: a strength
+               with no must-have phrases would otherwise score 100% against an
+               empty document.
+
+Phrase sources, strongest first: verbatim quotes in the Basis, alphanumeric codes
+(IL-6, GPT-5, FM 3-01), proper-noun runs, ALL-CAPS acronyms, quantified claims.
+Workspace-internal pointers (EV-###, PR#, LOE#, F#) are scrubbed before extraction —
+they are bookkeeping the render is *supposed* to strip, and demanding them inverts
+the check. Run --selftest after touching any of this.
 
 This is the check that would have caught the EXTiC 26-2 MOS-adapter-slate
 stripping: Gold Team called out "FA14 anchor at D+30, 14E/14G/14H/14P + 17E
@@ -68,15 +78,79 @@ STOPWORDS = {
     "Section", "Sections", "Paragraph", "Table", "Figure",
     "AI", "API", "OS",
     "TRL", "MOS", "OEM", "TTP", "TTPs", "USA", "USAF",
-    "Acme", "Acme Defense",  # the company name appears everywhere; not a discriminator
+    "[Your Company]", "[Your Company]",  # the company name appears everywhere; not a discriminator
 }
+
+
+# Phrases that are workspace-internal BY CONSTRUCTION and must never be treated as
+# must-have content. A Gold Team scorecard cites where a strength lives and what
+# backs it ("drafts/03, PR3 paragraph 1 ... EV-079, EV-104"), and the extractor
+# cannot tell those pointers apart from the strength's substance. Demanding them in
+# the rendered document inverts the check: it fails precisely when the pipeline has
+# done the right thing.
+#
+#   EV-###   evidence-ledger IDs. Carried as HTML comments and deliberately stripped
+#            from every customer-facing render. Their ABSENCE is correct.
+#   PR#      "Prototype Requirement N" shorthand — a locator, and the document spells
+#            the phrase out in full.
+#   LOE#     same, for Lines of Effort (the document writes "LOE 3", not "LOE3").
+#   F#       adversarial-review fact-request IDs.
+#
+# Observed live three times on army-brevity-companion, each a false MISSING while
+# every substantive claim was present. Guarded by --selftest.
+INTERNAL_ONLY = re.compile(r"^(?:EV-\d+|PR\d+|LOE\d+|F\d+)$", re.IGNORECASE)
+
+# Same vocabulary, scrubbed from the text BEFORE phrase extraction. Filtering the
+# extracted set is not enough: the multi-word rule happily builds "Answers PR3 and
+# LOE3" out of pointer tokens, and that composite matches no single-token filter.
+INTERNAL_ONLY_INLINE = re.compile(r"\b(?:EV-\d+|PR\d+|LOE\d+|F\d+)\b", re.IGNORECASE)
+
+# Words that make "<Word> <number>" a cross-reference rather than a product or
+# standard. "Microsoft 365" is a name worth guarding; "Figure 3" and "Month 1" are
+# pointers that appear everywhere and would flood the must-have set with noise.
+# Exception, applied below: a 3+ digit number reads as a standard, not a locator,
+# so "Section 508" and "Part 139" survive while "Section 3.2" does not.
+LOCATOR_NOUNS = {
+    "Section", "Sections", "Paragraph", "Paragraphs", "Figure", "Table", "Page",
+    "Phase", "Month", "Months", "Milestone", "Step", "Volume", "Appendix",
+    "Annex", "Chapter", "Line", "Item", "Note", "Year", "Day", "Days", "Week",
+    "Quarter", "Tier", "Round", "Version", "Option", "Task", "Level",
+}
+
+
+def _normalize(s: str) -> str:
+    """Fold spacing/hyphenation inside alphanumeric codes so 'IL-6' matches 'IL 6'.
+
+    Deliberately narrow: it only removes separators, so a genuinely absent phrase
+    stays absent. Without it, a scorecard writing 'LOE3' misses a document writing
+    'LOE 3' and reports a strength as stripped when nothing was stripped.
+    """
+    return re.sub(r"[\s\-/]+", "", s).lower()
+
+
+def extract_quoted_spans(text: str) -> set[str]:
+    """Pull quoted excerpts from a scorecard basis — the strongest fingerprints available.
+
+    A Gold Team basis quotes the draft verbatim ("keeps working when the network
+    does not"). Those spans are literal draft text, so they survive rendering and
+    are exactly what stripping would remove. Ellipses mark elided text, so each
+    quote is split on them and only runs of >=3 words are kept.
+    """
+    spans: set[str] = set()
+    for m in re.finditer(r"[\"“]([^\"”]{6,300})[\"”]", text):
+        for part in re.split(r"\.{3}|…", m.group(1)):
+            part = part.strip().strip(",;:").strip()
+            if len(part.split()) >= 3:
+                spans.add(part)
+    return spans
 
 
 def extract_distinctive_phrases(text: str) -> set[str]:
     """Pull capitalized multi-word phrases, alphanumeric codes, and quantified claims."""
     text = re.sub(r"<!--.*?-->", "", text)
     text = re.sub(r"`[^`]+`", " ", text)  # strip code spans
-    phrases: set[str] = set()
+    text = INTERNAL_ONLY_INLINE.sub(" ", text)  # drop workspace-internal pointers
+    phrases: set[str] = extract_quoted_spans(text)
 
     # 1. Alphanumeric codes with internal digits/dashes: FA14, IL-6, GPT-5, 14E, 17E, JP 3-13.1, AJP-01
     for m in re.finditer(r"\b[A-Z][A-Z0-9]*[-/]?[A-Z0-9.]*\d[A-Z0-9./-]*\b", text):
@@ -111,8 +185,21 @@ def extract_distinctive_phrases(text: str) -> set[str]:
     for m in re.finditer(r"\bIL[-\s]?\d\b", text):
         phrases.add(m.group(0))
 
-    # Filter stopwords
-    return {p for p in phrases if p not in STOPWORDS and len(p) > 1}
+    # 5. Mixed-case name + bare number: "Microsoft 365", "Windows 11", "Section 508".
+    #    This shape fell through every rule above — rule 1 needs a digit inside the
+    #    token, rule 2 needs the next token to start with a letter, and the
+    #    letter-prefix-number rule needs an ALL-CAPS prefix. Product and platform
+    #    names in this form are common discriminators, so losing them left real
+    #    strengths unguarded.
+    for m in re.finditer(r"\b([A-Z][a-zA-Z]+)\s+(\d[\d.]*)\b", text):
+        head, num = m.group(1), m.group(2)
+        if head in LOCATOR_NOUNS and len(num.split(".")[0]) < 3:
+            continue  # cross-reference ("Figure 3"), not a name
+        phrases.add(m.group(0))
+
+    # Filter stopwords and workspace-internal pointers
+    return {p for p in phrases
+            if p not in STOPWORDS and len(p) > 1 and not INTERNAL_ONLY.match(p)}
 
 
 def _clean_md(s: str) -> str:
@@ -183,14 +270,22 @@ def classify(strength: dict, target_text: str) -> dict:
     # Build the "must-have" phrase set from the strength's basis + benefit text
     must_have = extract_distinctive_phrases(strength["basis"] + " " + strength["benefit"])
     if not must_have:
-        return {**strength, "status": "PRESENT", "score": 1.0, "found": set(), "missing": set(), "note": "no distinctive phrases extracted from strength text"}
+        # No fingerprint could be formed, so this strength is NOT being guarded.
+        # Reporting PRESENT here would be a vacuous pass — it scores 100% against an
+        # empty document. Say so instead, and tell the author how to make it checkable.
+        return {**strength, "status": "UNCHECKED", "score": 0.0, "found": set(), "missing": set(),
+                "note": "no distinctive phrases could be extracted from this strength's "
+                        "Basis/Benefit text, so preservation cannot be verified. Quote a "
+                        "verbatim phrase from the draft in the Basis to make it checkable."}
 
     found: set[str] = set()
     missing: set[str] = set()
     target_lower = target_text.lower()
+    target_norm = _normalize(target_text)
     for phrase in must_have:
-        # Case-insensitive substring match for robustness against minor formatting drift
-        if phrase.lower() in target_lower:
+        # Case-insensitive substring match for robustness against minor formatting
+        # drift, then a separator-insensitive retry so "LOE3" finds "LOE 3".
+        if phrase.lower() in target_lower or _normalize(phrase) in target_norm:
             found.add(phrase)
         else:
             missing.add(phrase)
@@ -207,7 +302,7 @@ def classify(strength: dict, target_text: str) -> dict:
 
 
 def render_report(slug: str, source_desc: str, results: list[dict]) -> str:
-    counts = {"PRESENT": 0, "REDUCED": 0, "MISSING": 0}
+    counts = {"PRESENT": 0, "REDUCED": 0, "MISSING": 0, "UNCHECKED": 0}
     for r in results:
         counts[r["status"]] += 1
 
@@ -221,6 +316,7 @@ def render_report(slug: str, source_desc: str, results: list[dict]) -> str:
     out.append(f"- ✓ **PRESENT:** {counts['PRESENT']}")
     out.append(f"- ⚠ **REDUCED:** {counts['REDUCED']}")
     out.append(f"- ✗ **MISSING:** {counts['MISSING']}")
+    out.append(f"- ? **UNCHECKED:** {counts['UNCHECKED']}")
     out.append("")
     out.append("Verdict: " + (
         "**MISSING strengths — pre-submit gate FAILED.** Restore or document the omissions before submission."
@@ -233,11 +329,11 @@ def render_report(slug: str, source_desc: str, results: list[dict]) -> str:
     out.append("---")
     out.append("")
 
-    for status_order in ("MISSING", "REDUCED", "PRESENT"):
+    for status_order in ("MISSING", "UNCHECKED", "REDUCED", "PRESENT"):
         for r in results:
             if r["status"] != status_order:
                 continue
-            marker = {"PRESENT": "✓", "REDUCED": "⚠", "MISSING": "✗"}[r["status"]]
+            marker = {"PRESENT": "✓", "REDUCED": "⚠", "MISSING": "✗", "UNCHECKED": "?"}[r["status"]]
             out.append(f"## {marker} [{r['status']}] {r['title']}")
             out.append("")
             out.append(f"- **Cited basis:** {r['basis']}")
@@ -262,14 +358,110 @@ def render_report(slug: str, source_desc: str, results: list[dict]) -> str:
     return "\n".join(out).rstrip() + "\n"
 
 
+def selftest() -> int:
+    """Deterministic, offline. Pins the false positive AND the real detection.
+
+    A gate that stops crying wolf is only useful if it still barks at a wolf, so
+    the negative cases (a genuinely stripped strength) matter as much as the
+    positive ones.
+    """
+    ok = True
+
+    # 1. Internal-only pointers must never become must-have phrases — including
+    #    composites the multi-word rule assembles out of them.
+    basis = ("drafts/03, PR3 paragraph 1 (IL-6 IATT surface at Fort Bragg; "
+             "\"a standard that stays with the unit\"; EV-079, EV-104) LOE3")
+    phrases = extract_distinctive_phrases(basis)
+    leaked = sorted(p for p in phrases
+                    if INTERNAL_ONLY.match(p) or INTERNAL_ONLY_INLINE.search(p))
+    if leaked:
+        ok = False
+        print("  FAIL internal pointers leaked into must-have set:", leaked)
+    else:
+        print("  [ok ] EV-###, PR#, LOE# excluded, singly and in composites")
+
+    # 2. Real content still extracted from the same string.
+    substantive = {"IL-6", "Fort Bragg"}
+    got = substantive & phrases
+    if got != substantive:
+        ok = False
+        print(f"  FAIL substantive phrases dropped: {sorted(substantive - got)} "
+              f"(extracted: {sorted(phrases)})")
+    else:
+        print("  [ok ] substantive phrases still extracted")
+
+    # 3. The live false positive: strength present in prose, IDs stripped -> PRESENT.
+    strength = {"title": "Significant Strength: Doctrine tradecraft as versioned software",
+                "basis": basis,
+                "benefit": "Answers PR3 and LOE3 with one mechanism competitors lack"}
+    rendered = ("Authorized to test at IL-6 under an active IATT, "
+                "demonstrated at Fort Bragg. A standard that stays with the unit. "
+                "See LOE 3 for validation.")
+    r = classify(strength, rendered)
+    if r["status"] != "PRESENT":
+        ok = False
+        print(f"  FAIL stripped-ID false positive returned {r['status']} "
+              f"({int(r['score']*100)}%), missing={sorted(r['missing'])}")
+    else:
+        print("  [ok ] stripped EV IDs no longer produce a false MISSING")
+
+    # 4. Separator drift: scorecard "LOE3" must find document "LOE 3".
+    if "LOE 3" not in rendered or not _normalize("LOE3") in _normalize(rendered):
+        ok = False
+        print("  FAIL separator-insensitive match failed for LOE3 / 'LOE 3'")
+    else:
+        print("  [ok ] separator drift tolerated (LOE3 finds 'LOE 3')")
+
+    # 5. Name + bare number is extracted; cross-references are not.
+    named = extract_distinctive_phrases(
+        "Native Microsoft 365 surface on Windows 11, conformant to Section 508.")
+    want = {"Microsoft 365", "Windows 11", "Section 508"}
+    if not want <= named:
+        ok = False
+        print(f"  FAIL name+number not extracted: {sorted(want - named)}")
+    else:
+        print("  [ok ] 'Microsoft 365' / 'Windows 11' / 'Section 508' extracted")
+
+    noise = extract_distinctive_phrases(
+        "See Figure 3 and Table 2 in Section 3.2 at Month 1 of Phase 2.")
+    leaked_locators = {p for p in noise
+                       if p.split()[0] in LOCATOR_NOUNS and p not in {"Section 508"}}
+    if leaked_locators:
+        ok = False
+        print(f"  FAIL cross-references leaked as must-have: {sorted(leaked_locators)}")
+    else:
+        print("  [ok ] cross-references (Figure 3, Month 1, Section 3.2) excluded")
+
+    # 6. A GENUINELY stripped strength must still be caught (the EXTiC case).
+    stripped = {"title": "Significant Strength: MOS adapter slate",
+                "basis": "FA14 anchor at D+30, 14E/14G/14H/14P at D+60, Fort Sill, FM 3-01",
+                "benefit": "Breadth of the adapter slate is the discriminator"}
+    r2 = classify(stripped, "We will deliver an FA14 Air Defense model configuration.")
+    if r2["status"] != "MISSING":
+        ok = False
+        print(f"  FAIL real stripping not caught: {r2['status']} ({int(r2['score']*100)}%)")
+    else:
+        print("  [ok ] genuinely stripped strength still reports MISSING")
+
+    print("selftest:", "PASS" if ok else "FAIL")
+    return 0 if ok else 1
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--proposal", required=True, help="Proposal slug")
+    ap.add_argument("--proposal", help="Proposal slug")
+    ap.add_argument("--selftest", action="store_true",
+                    help="run deterministic offline self-test")
     ap.add_argument("--target", choices=("drafts", "docx"), default="drafts",
                     help="What to check against (default: drafts/)")
     ap.add_argument("--target-path", help="Override: specific .md or .docx file to check")
     ap.add_argument("--out", help="Output report path (default: proposals/<slug>/reviews/strength-preservation.md)")
     args = ap.parse_args()
+
+    if args.selftest:
+        return selftest()
+    if not args.proposal:
+        ap.error("--proposal is required (or use --selftest)")
 
     prop_dir = WORKSPACE_ROOT / "proposals" / args.proposal
     if not prop_dir.exists():
@@ -300,13 +492,13 @@ def main() -> int:
 
     # Console summary
     print()
-    counts = {"PRESENT": 0, "REDUCED": 0, "MISSING": 0}
+    counts = {"PRESENT": 0, "REDUCED": 0, "MISSING": 0, "UNCHECKED": 0}
     for r in results:
         counts[r["status"]] += 1
-        marker = {"PRESENT": "✓", "REDUCED": "⚠", "MISSING": "✗"}[r["status"]]
+        marker = {"PRESENT": "✓", "REDUCED": "⚠", "MISSING": "✗", "UNCHECKED": "?"}[r["status"]]
         print(f"  {marker} [{r['status']:7}] {r['title']}  ({int(r['score'] * 100)}%)")
     print()
-    print(f"Summary: ✓ PRESENT {counts['PRESENT']}  ⚠ REDUCED {counts['REDUCED']}  ✗ MISSING {counts['MISSING']}")
+    print(f"Summary: ✓ PRESENT {counts['PRESENT']}  ⚠ REDUCED {counts['REDUCED']}  ✗ MISSING {counts['MISSING']}  ? UNCHECKED {counts['UNCHECKED']}")
 
     return 1 if counts["MISSING"] else 0
 

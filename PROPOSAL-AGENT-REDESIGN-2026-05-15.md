@@ -110,14 +110,14 @@ I read three generated white papers and the human-review record behind one of th
 
 This is an early SOCPAC pipeline draft. It is the symptom in its purest form.
 
-> "EdgeRunner AI provides a distributed tactical layer enabling secure, on-device execution of open-weight models in DDIL environments while capturing structured, mission-relevant data for GCC-level and enterprise refinement."
+> "[Your Company] provides a distributed tactical layer enabling secure, on-device execution of open-weight models in DDIL environments while capturing structured, mission-relevant data for GCC-level and enterprise refinement."
 
 That sentence is four nouns deep before it does anything. It reuses the same "distributed tactical layer enabling..." frame three more times in the section. The Representative Capabilities table contains a row literally labeled **"Scalable"** — a word banned by name in *both* `style-guide.md` and `editorial-voice-guide.md`. There is a concatenation typo, **"improvedbetter data management."** The closing line of the exec summary — *"It's a mature, deployable capability that integrates with current enterprise and GCC ecosystems, delivering immediate measurable workflow and mission execution improvements"* — is a press release.
 
 Mark the failure modes the prompt asked me to look for:
 - **Robotic / press-release-y:** the exec summary, throughout.
 - **Repeating the requirement back:** §2 restates the three challenges, then §3 restates them again as solutions, then §4 restates the lifecycle a third time. Section 3 and Section 4 substantially overlap.
-- **No spine:** ask "what is this paper *arguing*?" and there is no answer. It is a tour of capabilities. It describes EdgeRunner; it does not make a case.
+- **No spine:** ask "what is this paper *arguing*?" and there is no answer. It is a tour of capabilities. It describes [Your Company]; it does not make a case.
 
 The damning detail: the rules to prevent every one of these failures already exist in the reference files. "Scalable" is on the banned list. "No redundancy across sections" is a writing rule. The pipeline produced a draft that violates its own rulebook — because **rules applied as a checklist to slot-filled content don't survive contact with slot-filling.**
 
@@ -135,7 +135,7 @@ This is the recent one. It is roughly 90%+. It opens:
 
 > "The proliferation of low-cost autonomous systems has shifted the limiting factor in tactical UxS employment from platform availability to operator cognitive bandwidth."
 
-It has a spine, stated in one line and held for nine sections: *"disconnected adaptive autonomy infrastructure for tactical UxS operations — not another AI platform."* It is confident where it has earned it ("EVELYN is TRL 8 and ready for immediate integration") and honestly hedged where it has not ("the specific reduction ratio will be characterized during Vulcan integration testing"). It teaches without padding.
+It has a spine, stated in one line and held for nine sections: *"disconnected adaptive autonomy infrastructure for tactical UxS operations — not another AI platform."* It is confident where it has earned it ("[Reasoning Product] is TRL 8 and ready for immediate integration") and honestly hedged where it has not ("the specific reduction ratio will be characterized during Vulcan integration testing"). It teaches without padding.
 
 Now the critical fact. From `vulcan-jatf/working/activity.md`, this proposal **never ran the full pipeline.** It ran `new-proposal`, then `manual-review-adjudication` and `manual-review-incorporation` — and `proposal-editor` only in `executive-compression` mode. There is no `proposal-manager`, no `storyboard`, no `proposal-writer` entry. What it had instead: **62 accepted in-person human review edits.**
 
@@ -302,7 +302,7 @@ Think of it as **five stages, and the order is the whole point.**
 
 1. **Spine.** The agent reads the solicitation and the customer material *directly* — not matrices — and drafts a one-page argument in prose: what we're saying, why it beats the alternative, the through-line. **Bill reads it and signs off or redirects.** This is the collaboration moment — the agent and Bill align on the *argument*, which is the part that actually needs his judgment. Three minutes of his time, spent where it matters.
 
-2. **Voice draft.** The agent writes the entire white paper, start to finish, from the approved spine — loose, confident, in character, no compliance scaffolding, no per-section template, no evidence markers. Its only job is to make the case and sound like EdgeRunner. It is allowed to be wrong about facts here.
+2. **Voice draft.** The agent writes the entire white paper, start to finish, from the approved spine — loose, confident, in character, no compliance scaffolding, no per-section template, no evidence markers. Its only job is to make the case and sound like [Your Company]. It is allowed to be wrong about facts here.
 
 3. **Bind.** A separate pass walks the voice draft and does the verification: every factual claim checked against the architecture and the evidence ledger; evidence markers attached; anything unsupported flagged `CLAIM-UNSUPPORTED`; numbers checked. Prose is touched *only* to soften a claim that failed verification — never for style.
 

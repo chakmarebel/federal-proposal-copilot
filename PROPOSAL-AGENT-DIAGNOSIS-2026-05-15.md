@@ -104,7 +104,7 @@ vertically. The figure becomes unreadable.
 ### Evidence
 
 `proposals/vulcan-jatf/drafts/system-blueprint.md` lines 38–100 contain a
-62-line fenced ASCII architecture diagram (the WarClaw/EVELYN block diagram).
+62-line fenced ASCII architecture diagram (the [Runtime Product]/[Reasoning Product] block diagram).
 Extracting the rendered `proposals/vulcan-jatf/drafts/system-blueprint.docx`
 with `python-docx` shows every diagram line as:
 
@@ -284,7 +284,7 @@ the same regardless of how the copies got there.
 #### Fix #3 — `vulcan-jatf` architecture figure ⚠ PARTIAL — needs Bill
 - The diagram now renders correctly as a monospace block once Fix #2 reaches the
   export path (see "Action required" below). That resolves the *formatting*.
-- Whether the WarClaw/EVELYN diagram should instead be a proper HTML→PNG figure
+- Whether the [Runtime Product]/[Reasoning Product] diagram should instead be a proper HTML→PNG figure
   via `/proposal-graphics` (recommended, consistent with `extic-26-2`) is a
   content call left to Bill — say the word and I will run `/proposal-graphics`
   for `vulcan-jatf`.
