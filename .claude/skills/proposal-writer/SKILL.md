@@ -40,6 +40,7 @@ The writer runs in **two passes**, because composing a compelling argument and v
 8. **`reference/voice-anchors/*.md`** — voice cadence exemplars. Read these BEFORE composing the loose draft. Imitate their rhythm and clinical confidence; do NOT reuse their content. Anchors take precedence over a banned-words list when the two conflict. (Canonical source: `reference/PROSE-QUALITY-DOCTRINE.md`.)
 9. **`reference/narrative-operating-modes.md`** — the prose strategy for the response. Select the operating mode before `draft-loose` begins (see "Narrative Operating Mode" below).
 10. `working/compliance-matrix.md` — the traceability map. Required reading for `bind` (see "Compliance Matrix Maintenance"); not needed for `draft-loose`.
+11. **`reference/preventable-gold-team-findings.md`** — the bind-pass completeness sweep (Pass 2, Step 2b) that closes the preventable ~70% of Gold-Team findings before review. Required reading for `bind`; **not** a `draft-loose` input (loose stays free of Gold-Team constraints by design).
 
 ### Read if relevant
 - `working/storyboard.md` — if `/proposal-storyboard` was run; the section-by-section decomposition of the spine. Primary `draft-loose` planning input when present. Carries the per-section `Reader Movement`, `Narrative Mode`, `Transition Job`, and `Compression Rule` fields — plus the factor-keyed fields (`Target Evaluation Factors`, `Evaluated Strength to Earn`, `Discriminator`) consumed by the "Write toward the rubric" step below.
@@ -97,6 +98,17 @@ Before `draft-loose` begins, select one **narrative operating mode** for the res
 
 **Goal:** write each section as a confident argument a senior capture lead would make explaining the case to a sharp colleague — in the selected narrative operating mode. Make the case; sound like a person.
 
+### Step 0 — Build the response skeleton (rubric-scored types)
+
+**For rubric-scored technical types (`ota-*`, `cso-*`, `far-rfp`, `idiq-to`, `sbir-*`, `baa`), the draft is written INTO the customer's own structure, not into an essay shape of the writer's choosing.** Calibration evidence (DIA DMA submission diff, 2026-07-26): only 14% of an essay-shaped loose draft survived to submission; the 71% rewrite was substantially a *shape* problem — the human end-state was organized in the customer's vocabulary (LOE names, factor names, required-content headings), so well-written sentences in the wrong structure died anyway.
+
+Before composing any prose:
+1. From the solicitation (`inputs/00_priority/`), `working/submission-summary.md`, and `working/evaluation-model.md`, extract the customer's own structural vocabulary: named lines of effort / task areas, evaluation factor names, and the required-content list (deliverables, schedule, payment, data rights, POC, past performance).
+2. Emit a **response skeleton**: the section/heading tree the customer's documents imply, using the customer's terms verbatim (e.g., "Line of Effort 1: <customer's own LOE title>", the factor names as sub-blocks of the technical approach). Reconcile with `section_patterns` — the pattern file gives the file set; the skeleton gives the headings *inside* those files.
+3. The voice draft **fills the skeleton**. The skeleton is never derived from the draft.
+
+For narrative-first types (`white-paper`, `rfi`, `sources-sought`) skip this step — the essay shape is the point there.
+
 **Suspended in this pass** — do not do any of these now, they belong to `bind`:
 - No `<!-- evidence: -->` markers.
 - No compliance-matrix updates.
@@ -109,8 +121,10 @@ Before `draft-loose` begins, select one **narrative operating mode** for the res
   each section, assemble its drafting context in this order, including each block **only when
   its artifact exists**:
   1. **Storyboard block** — from the section's `working/storyboard.md` entry: the target
-     evaluation factors to win, the evaluated strength to earn, the discriminator, the proof
-     points, and the planned beat order. The draft *fills this plan*.
+     evaluation factors to win, the evaluated strength to earn, the **acceptance measure**
+     (the verifiable commitment the section's prose must state — emit it, don't paraphrase it
+     away), the discriminator, the proof points, and the planned beat order. The draft
+     *fills this plan*.
   2. **Evaluation-model block** — the "Drafting Context Block" from
      `working/evaluation-model.md`: this solicitation's factors, weighting, pass/fail gates,
      and constraints. These override generic doctrine when they conflict.
@@ -166,6 +180,52 @@ For each scoring section, confirm it lands: a clear point up front, at least one
 - **Ghosting:** only ghost competitor weaknesses documented in `working/competitor-assessment.md`. If it is absent, do not invent ghosts.
 - **Action captions:** for each referenced graphic, read its brief in `working/graphics-brief.md` and write a caption that asserts what the graphic *proves*.
 
+### 2b. Sweep the preventable Gold-Team findings
+
+Read `reference/preventable-gold-team-findings.md` and run its five-check sweep on each
+bound section. These are the "fill-the-field / show-your-work" failures the Gold Team
+otherwise catches late; closing them now raises the floor so the adversarial pass spends
+its judgment on the residue that needs an evaluator's frame. This is a **completeness
+sweep on real prose, not a generation template** — same discipline as Step 2.
+
+1. **A scored or required field is never a placeholder.** If a required datum (ROM/price, NAICS, contract number, POC, period of performance, a required certification) is missing, surface it to the user as a **blocker** — convert the `[NEEDS: …]` to a flagged blocker; never leave a bracketed blank or `[TBD]` in the body. An unscorable required field caps pWin and can read as non-responsive. (Stricter than the White Glove placeholder scan, which runs too late to protect the score.)
+2. **Name key personnel** with a one-line relevant credential where the type expects named personnel; a role-only "experienced team" is a high-impact finding. If a name is genuinely unassigned, carry `[NEEDS: named <role>]` as a blocker.
+3. **Define each acronym / term of art on first use; one canonical term** per concept across sections (no double-labeling).
+4. **Name the specific comparator / benchmark result**, not "state-of-the-art" or "leading." If the specific number isn't held, it is a `CLAIM-UNSUPPORTED` (Step 1), not a vague superlative.
+5. **Preempt the evaluator's obvious unasked question** for each scoring section (impact level, who validates, how it is tested, transition path) rather than leaving it for the reviewer to raise.
+
+Apply per the type table in the reference. Do not add a check the type marks Not
+applicable (an RFI gets no personnel sweep; a ROM gets no comparator sweep).
+
+### 2c. Operational-specificity sweep
+
+**Rule of thumb (from submission-diff calibration): a capability sentence that contains no noun-list and no number will be rewritten by a human before submission.** The enumerations that give a winning response its texture almost always already exist in `working/` — the failure mode is suspending them for voice and never reinstalling them.
+
+For each capability claim in a scoring section, check that the bound prose carries its operational specifics, pulled from the artifact that already holds them:
+
+| Claim type | Required specificity | Source |
+|---|---|---|
+| An interface / API | The surface enumerated (endpoints, operations, metadata) | `working/architecture-concept.md` |
+| A support package / deliverable | The artifact inventory named (e.g., SSP inputs, SBOM, POA&M inputs, ConMon plan) | architecture-concept, requirement-matrix |
+| Monitoring / metrics | The metric list (who, what, by model/workflow/user) | architecture-concept, storyboard |
+| Evaluation / TEVV | The measure list and who adjudicates | storyboard, evaluation-model |
+| A process (update, onboarding, adaptation) | The step sequence + cycle time + rollback/failure path | architecture-concept |
+| Schedule / scope | Milestone table with dates/months; counts ("two to three models") | prototype scope, pricing-inputs |
+
+Add the missing enumeration minimally, in the section's own voice. If the specifics genuinely don't exist anywhere in `working/`, that is an architecture gap — flag it to the user rather than inventing detail.
+
+### 2d. Constrained-claim sweep (overclaim-by-scope)
+
+The claim form that survives every review names its own boundary. For each product-capability claim, verify the draft states the scope limit **in-line**, using the constrained idioms:
+
+- *supports / contributes to* X, not *performs* X (e.g., "contributes the factual-support measure to TEVV rather than performing TEVV itself")
+- *initiates / supports* accreditation, not *achieves* ATO
+- capability applies *where its precondition holds* ("federated where its endpoint is available")
+- component is *core but separable* (adds capability without becoming a lock-in or failure point)
+- what cannot be verified is *labeled as such*, not silently included
+
+An unconstrained capability claim is a latent Gold-Team weakness even when true — the evaluator reads the strongest possible interpretation and scores the risk of it. Write the boundary before a reviewer asks for it.
+
 ### 3. Update the compliance matrix
 
 If `working/compliance-matrix.md` exists, every section bound **must** update it — this is how the writer hands off to compliance-check and red-team.
@@ -200,3 +260,28 @@ On completion, append to `working/activity.md`:
 ```
 
 Append one JSON line per pass to `working/ai-runs.jsonl` per [`reference/schemas/ai-run.schema.json`](../../../reference/schemas/ai-run.schema.json) with `job_type: "drafting"` and `notes` recording the pass mode and the narrative operating mode.
+
+## Voice Standard: Active, Declarative, Operator-Focused (adopted 2026-07-30)
+
+Adopted from the army-brevity-companion voice retrospective. The failure this standard
+prevents is not passive voice; it is prose built around explanation, qualification, and
+self-justification: sentences that prove the writer understood the requirement instead of
+stating what the solution does. `scripts/prose-lint.py` flags the mechanical signatures
+as ADVISORY (`ai_proposalese` terms, `explainer_tail` pattern).
+
+**Rules:**
+1. Lead each sentence with an actor: [Your Company], the Companion, the Army, staff, the Government. Put the verb in the first half.
+2. One main idea per sentence. Split any sentence carrying claim + explanation + implication + solicitation mapping.
+3. State the capability, then the evidence. Do not narrate the reasoning that connects them.
+4. No trailing explainer clauses: ", which is...", ", which means...", ", which allows...", "which is what makes...". Promote the point to its own sentence with an actor, or fold it into the verb.
+5. No pseudo-clefts or abstract-subject openers: "What does not vary is...", "The value to this effort is...", "The consequence for the Army is...", "The result is a...". Write "The Army can...", "[Your Company] delivers...".
+6. Do not explain the solicitation back to the evaluator ("which is the level this Challenge targets", "this is why the Challenge requires"). State that the solution meets the requirement and move on.
+7. Ration contrast constructions ("not X but Y", "rather than", "does not merely"). Keep only the ones carrying a load-bearing distinction; more than a handful reads as a debate brief.
+8. Prefer verbs over nominalizations: "the Army deploys" over "deployment occurs"; "staff produce" over "the resulting communication".
+9. Vary sentence length; break the balanced-triad cadence deliberately. Target a 15 to 22 word average.
+10. Never use internal product-component names (Garrison, Operator, ODIN, DORIS). [Your Company] is the integrated product; name [Runtime Product] and Ground Truth only where they help the evaluator.
+11. Default narrative hierarchy: military-native models, then the secure runtime that executes them, then Army-specific adaptation, then verification and traceability, then workflow integration, then measured improvement.
+
+**Test for every paragraph:** name its single purpose, make the first sentence state that
+purpose with an actor and a verb, and let the remaining sentences carry only evidence or
+execution detail. Write as though a staff officer has 30 seconds.

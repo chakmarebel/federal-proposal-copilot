@@ -47,12 +47,15 @@ notes: <free text>
 | [idiq-to.md](idiq-to.md) | IDIQ Task Order | far-cost-volume | relevant-experience | short |
 | [cso-brief.md](cso-brief.md) | CSO Solution Brief (Phase 1) | none or rom | false | 5-10 |
 | [cso-full.md](cso-full.md) | CSO Full Proposal (Phase 2) | cso-commercial | relevant-experience | 15-30 |
+| [pitch-demo.md](pitch-demo.md) | Pitch + Demo (CSO/OTA Phase 2 down-select) | rom | relevant-experience | deck + video + short vol |
 | [baa.md](baa.md) | BAA | rom or far-cost-volume | relevant-experience | 15-30 |
+| [baa-white-paper.md](baa-white-paper.md) | BAA, step 1 of 2 | rom | false | 3-5 |
 | [ota-white-paper.md](ota-white-paper.md) | OTA White Paper | rom | false | 5-10 |
 | [ota-proposal.md](ota-proposal.md) | OTA Full Proposal | ota-milestones | relevant-experience | 20-40 |
 | [sbir-phase1.md](sbir-phase1.md) | SBIR Phase I | sbir-budget | false | per topic |
 | [sbir-phase2.md](sbir-phase2.md) | SBIR Phase II | sbir-budget | true | per topic |
 | [white-paper.md](white-paper.md) | Unsolicited / directed WP | none or rom | false | 3-10 |
+| [unsolicited-proposal.md](unsolicited-proposal.md) | FAR Subpart 15.6 Unsolicited Proposal | far-cost-volume | true | 15-30 |
 | [rfi.md](rfi.md) | RFI response | none | false | 5-15 |
 | [sources-sought.md](sources-sought.md) | Sources Sought | none | relevant-experience | 2-5 |
 | [rom.md](rom.md) | Standalone ROM | rom | false | 1-3 |
@@ -70,7 +73,18 @@ Every skill's first action should be:
 4. Adapt output to match page_target, pricing_artifact, pp_required, evaluator_framing
 5. Use section-patterns/<patterns-set-id>.md for section templates
 6. When submission_mechanism: web-form, use working/section-budgets.md for per-section char limits
+7. Apply reference/doctrine/acquisition-guidance-catalog.md — its Applicability Matrix maps this
+   type_id to the government cost / pathway / ATO / AI / IP guidance the response must cite
 ```
+
+## Acquisition guidance (applies to every type)
+
+Each type's body carries an **Acquisition guidance** section pointing into
+[`reference/doctrine/acquisition-guidance-catalog.md`](../doctrine/acquisition-guidance-catalog.md).
+The catalog's Applicability Matrix is the single source of truth for which tier(s) apply per type;
+`/proposal-storyboard` and `/red-team-review` read it directly, so the guidance is enforced even
+for a type whose body has not yet been annotated. Info-only responses (`rfi`, `sources-sought`)
+make no cost/ATO claims and so invoke the catalog only if an AI or eligibility claim is made.
 
 ## Adding a new type
 

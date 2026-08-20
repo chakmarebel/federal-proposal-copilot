@@ -4,41 +4,114 @@
   "_severity_policy": "term_lists.process_terms and patterns.em_dash and the section-sign glyph are HIGH. Everything else is ADVISORY. (How each consumer maps HIGH/ADVISORY to blocking is the consumer's policy: the FPA/copilot CLI gate exits 1 on HIGH; this app emits high/medium ReviewFindings.)",
   "term_lists": {
     "process_terms": [
-      "narrative spine", "storyboard", "draft-loose", "bind pass", "gold team",
-      "red team", "red-team", "white glove", "white-glove", "compliance matrix",
-      "win theme", "win-theme", "ghosting", "discriminator proof point",
-      "narrative operating mode", "operating mode", "capture-intent",
-      "proposal-writer", "proposal-editor", "evidence ledger", "section pattern",
+      "narrative spine",
+      "storyboard",
+      "draft-loose",
+      "bind pass",
+      "gold team",
+      "red team",
+      "red-team",
+      "white glove",
+      "white-glove",
+      "compliance matrix",
+      "win theme",
+      "win-theme",
+      "ghosting",
+      "discriminator proof point",
+      "narrative operating mode",
+      "operating mode",
+      "capture-intent",
+      "proposal-writer",
+      "proposal-editor",
+      "evidence ledger",
+      "section pattern",
       "claim-unsupported"
     ],
     "banned_words": [
-      "cutting-edge", "cutting edge", "innovative", "robust", "seamless",
-      "transformative", "best-in-class", "world-class", "next-generation",
-      "game-changing", "holistic", "synergy", "synergies", "utilize", "utilizes",
-      "utilizing", "scalable", "end-to-end"
+      "cutting-edge",
+      "cutting edge",
+      "innovative",
+      "robust",
+      "seamless",
+      "transformative",
+      "best-in-class",
+      "world-class",
+      "next-generation",
+      "game-changing",
+      "holistic",
+      "synergy",
+      "synergies",
+      "utilize",
+      "utilizes",
+      "utilizing",
+      "scalable",
+      "end-to-end"
     ],
     "meta_commentary": [
-      "saying so is itself", "is itself a signal", "itself a signal that we",
-      "rather than overselling", "rather than overclaiming", "a capability we do not hold",
-      "we do not hold", "signal that we understand", "shows we understand",
-      "demonstrates that we understand", "this honesty", "in the interest of candor",
-      "to be candid", "being honest about our"
+      "saying so is itself",
+      "is itself a signal",
+      "itself a signal that we",
+      "rather than overselling",
+      "rather than overclaiming",
+      "a capability we do not hold",
+      "we do not hold",
+      "signal that we understand",
+      "shows we understand",
+      "demonstrates that we understand",
+      "this honesty",
+      "in the interest of candor",
+      "to be candid",
+      "being honest about our"
     ],
     "prohibited_claim_terms": [
-      "fedramp", "soc 2", "iso 27001", "cmmc", "sprs",
-      "authorization to operate", "ato", "accredited", "accreditation"
+      "fedramp",
+      "soc 2",
+      "iso 27001",
+      "cmmc",
+      "sprs",
+      "authorization to operate",
+      "ato",
+      "accredited",
+      "accreditation"
     ],
     "forbidden_absolutes": [
-      "military-grade", "military grade", "battle-tested", "battle tested",
-      "unmatched", "most secure", "bank-grade"
+      "military-grade",
+      "military grade",
+      "battle-tested",
+      "battle tested",
+      "unmatched",
+      "most secure",
+      "bank-grade"
+    ],
+    "ai_proposalese": [
+      "the value to this effort",
+      "the consequence for the army",
+      "the operational consequence",
+      "the result is a",
+      "what does not vary",
+      "is what makes",
+      "is what allows",
+      "is what lets",
+      "which is why the",
+      "this is why the challenge",
+      "the challenge exists to fund",
+      "that is the design working",
+      "that is a scoping decision"
     ]
   },
   "patterns": {
     "em_dash": "[—–]|\\s--\\s|\\w--\\w",
-    "leverage": "\\bleverag(?:e|es|ed|ing)\\b"
+    "leverage": "\\bleverag(?:e|es|ed|ing)\\b",
+    "explainer_tail": ",\\s*which\\s+(?:is|are|means|allows|makes|enables)\\b",
+    "negation_dismissal": "\\b(?:so|therefore|which means|meaning)\\b[^.;]{0,120}?\\b(?:no|not|none)\\b[^.;]{0,80}?\\b(?:required|needed|necessary|applies|apply|applicable|claimed)\\b",
+    "raise_then_permit": "\\b(?:is|are|was|were)\\s+not\\s+(?:required|claimed|proposed)\\b[^.;]{0,140}?\\b(?:acceptable|permitted|permissible|is not claimed|are not claimed)\\b"
   },
   "thresholds": {
     "we_will": 8,
     "repeated_opening": 3
+  },
+  "_pattern_notes": {
+    "negation_dismissal": "Catches '...so no X is required' — a sentence whose payload is a non-event. Known false positive: a negative conclusion that has no affirmative form ('IRB review therefore does not apply'). ADVISORY, so it informs rather than blocks. Added 2026-08-18 from the arl-collaborative-aitr-sbir volume, where five instances survived two editorial passes because no mechanical rule existed.",
+    "raise_then_permit": "Catches 'X is not required ... Y is acceptable'. Requires BOTH halves so a bare scope limit ('no VLA is proposed in Phase I') is not flagged."
   }
 }

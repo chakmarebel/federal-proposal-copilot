@@ -93,7 +93,7 @@ For each `graphics/*.html`:
 The workspace ships a tested, proposal-agnostic converter at `tools/md_to_docx.py` (uses `python-docx`). Invoke it via Bash:
 
 ```bash
-cd "C:/Users/wbal9/Claude Code Projects/federal-proposal-assistant"
+cd /path/to/federal-proposal-copilot
 python tools/md_to_docx.py --proposal <slug>
 ```
 
@@ -138,6 +138,14 @@ This matches the expected white-paper docx output without requiring manual headi
 
 **Optional HTML preview.** `python scripts/render-md-to-html.py --proposal <slug>` renders the narrative drafts to self-contained HTML in `final/html/` — a screen-review format that keeps graphics as crisp vector (HTML/SVG) rather than rasterized PNG. It is a review aid, not a submission format; the submission deliverable remains the `.docx`.
 
+**Step 4b: White-glove polish (mandatory).** After the converter writes `final/docx/`, run the standard white-glove polish so every submitted document carries the format standard:
+
+```bash
+python tools/polish_docx.py --proposal <slug>
+```
+
+This applies content-proportional table column widths (fixed layout, 6.5\" usable), repeating table header rows across page breaks, no mid-cell row splits, tightened cell spacing, 1\" margins, and the running header/footer (title, company, Page X of Y). It is idempotent; re-run it after any re-export. For a visual QA before submission, export the .docx to PDF via Word and inspect the rendered pages (rasterize with pymupdf) for split rows, cramped columns, or orphaned headings.
+
 ### Step 5: Produce Excel artifacts (.xlsx)
 
 **5a. Compliance Matrix → xlsx (always, when matrix exists)**
@@ -145,7 +153,7 @@ This matches the expected white-paper docx output without requiring manual headi
 **Use the shared Python script — do NOT delegate to anthropic-skills:xlsx.**
 
 ```bash
-cd "C:/Users/wbal9/Claude Code Projects/federal-proposal-assistant"
+cd /path/to/federal-proposal-copilot
 python tools/compliance_to_xlsx.py --proposal <slug>
 ```
 

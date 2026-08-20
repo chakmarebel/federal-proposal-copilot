@@ -5,6 +5,107 @@ All notable changes to Federal Proposal Copilot are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versions are pre-1.0 while the framework's skill surface stabilizes.
 
+## [0.3.0] — 2026-08-20
+
+Two months of upstream work, and the sync mechanism rebuilt so it stops going stale.
+
+### Added
+
+- **Final-file lint — the gate that sees what you actually upload.**
+  `scripts/lint-submission-file.py` extracts text from the outgoing `.docx` / `.pdf` and
+  applies the prose-lint HIGH rules plus a `[NEEDS]` / `[TBD]` bracket scan. It exists
+  because team review forks to Google Docs or Word, where a drafts-only lint never sees
+  the submitted file — the markdown can be clean while the shipped document is not. Run
+  it last, on every submission artifact. `--selftest` included.
+- **Matrices render to Excel, not Word.** `scripts/render-matrix-to-xlsx.py` turns any
+  matrix-style markdown artifact into a working `.xlsx` — one worksheet per heading,
+  prose preserved on a `Notes` sheet, verdict columns colour-coded, header rows frozen
+  and filterable. A matrix is a table reviewers sort, filter, and hand back; Word cannot
+  do any of that. Narrative artifacts still render to `.docx`.
+  The renderer **never overwrites a workbook it did not write**: generated files are
+  stamped in their document properties, and an unstamped file at a target path is
+  reported `[KEEP]` and left alone even under `--force`. That guard is there because a
+  `--force` sweep destroyed hand-curated workbooks whose extra sheets existed only in
+  the `.xlsx`.
+- **White-glove `.docx` rendering on every render.** `scripts/render-md-to-docx.py` now
+  calls `tools/polish_docx.py::whiteglove()` on each document: content-proportional
+  table column widths, header rows repeating across page breaks, rows that never split
+  mid-cell, tightened cell spacing, 1" margins. `polish_docx.py --tables-only` applies
+  just that pass to arbitrary files; the full polish adds the running header/footer.
+- **Four proposal types**, each with its section pattern: `baa-white-paper`,
+  `unsolicited-proposal` (FAR 15.6), `pitch-demo` (with
+  `reference/pitch-demo-readiness-gate.md`), and `marketplace-video-pitch`. Plus the
+  `colosseum` portal format.
+- **`/capture-demand-signals` and the demand-signal loop.** An append-only, workspace-global
+  register of what customers actually asked for, so the engineering shop sees demand by
+  frequency and customer breadth instead of as anecdotes — and answers back in writing.
+  Ships the schema, the controlled capability vocabulary, the extractor, the CRM-candidate
+  ingest/promote pair, the exposure-ranked prose brief, and the five-sheet `.xlsx` workbook
+  whose `Gap Queue` sheet is the write-back surface. Design in
+  `docs/BD-CTO-DEMAND-SIGNAL-SYNC.md`. The framework ships the machinery; the register is
+  yours and is gitignored.
+- **Repo hygiene tooling.** `scripts/check-git-boundary.sh` refuses to publish
+  company-private paths, `scripts/install-hooks.sh` wires it to pre-commit, and
+  `scripts/backup-company-assets.py` snapshots the gitignored `my-company/` outside the
+  repo — content-hashed, and refusing to snapshot a file that is empty, unparseable, or
+  a ledger whose `items[]` has collapsed to zero. `my-company/` has no copy in git, so an
+  ordinary git operation can destroy it with no undo.
+- **Voice doctrine corpus.** `reference/voice-profiles/proposal.md` and the
+  `reference/voice-pairs/proposal` paired before/after examples — six named
+  AI-proposalese failure modes (explainer tail, abstract subject, narrated reasoning,
+  overloaded benefit tail, pseudo-cleft, solicitation echo), each with the rewrite.
+- **`docs/AGENT-ORIENTATION.md`** — the fast path for an agent new to the repo: the
+  mental model, what is enforced mechanically, and the traps, in one pass.
+- **`reference/preventable-gold-team-findings.md`** — findings that should have been
+  caught before Gold Team, so they are.
+- **Calibration tooling** — `scripts/calibration-status.py` and
+  `scripts/new-calibration-entry.sh` support the existing `/capture-submission` skill.
+
+### Changed
+
+- **The sync mechanism is now transform-based rather than freeze-based.**
+  Company neutralization moved out of hand-edits and into
+  `tools/neutralize-company.sed`, shared by `tools/sync-from-fpa.sh` and
+  `tools/sync-voice-anchors.sh`. This matters because a hand-neutralized file has to be
+  frozen off the sync surface forever, and frozen content goes stale — which is exactly
+  what had happened. Files whose only divergence is mechanical now stay on the surface
+  and keep receiving upstream improvements.
+- **`tools/sync-from-fpa.sh` gained `FPA_LOCAL`**, to sync from a local upstream checkout
+  rather than a clone, and reports the HEAD it read.
+- Refreshed from upstream: `proposal-writer`, `proposal-manager`, `proposal-storyboard`,
+  `red-team-review`, `adversarial-review`, `proposal-patcher`, the prose-lint rule set,
+  the evaluator-upstream toolchain, `check-strengths.py`, `md_to_docx.py`, and the
+  shared doctrine.
+
+### Fixed
+
+- **Company identity that had been published.** `reference/voice-anchors/` carried two
+  full upstream proposal passages naming a real company and two real products, and
+  `.claude/skills/export-proposal/SKILL.md` carried an operator's local Windows path in
+  two usage examples — despite the sync model documenting the latter as already
+  neutralized. All are now neutralized by transform, so they cannot silently return.
+- Two neutralization rules that were correct token-by-token but wrong sentence-by-sentence:
+  rewriting the bare upstream repo name produced "copilot, and copilot" in doctrine that
+  names all three sibling repos, and collapsing two distinct product names to one
+  placeholder turned a voice anchor into "[Your Product] and [Your Product] form a
+  two-layer stack." Both are documented in `docs/fpa-sync-model.md` as standing lessons.
+
+### Added — safeguards
+
+- **`tools/leak-scan.sh`** greps the whole distributable tree for company-identity markers
+  and exits non-zero on any survivor. Both sync scripts run it as their closing step, so a
+  sync that would publish an identifier fails loudly instead of committing quietly. The
+  neutralize table is only ever as complete as the last thing someone noticed; this is the
+  part that notices.
+
+### Known issues
+
+- `scripts/promote-crm-candidates.py --selftest` fails: it asserts an alias mapping that
+  `reference/customer-aliases.tsv` no longer contains. This is an upstream defect mirrored
+  faithfully, not sync damage. Fixing it requires deciding whether the alias rows were lost
+  or the assertion is stale — a data question, not a code question. Tracked in
+  `docs/fpa-sync-model.md`.
+
 ## [0.2.0] — 2026-07-06
 
 Evaluator-first drafting and a native external-review loop.

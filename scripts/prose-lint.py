@@ -68,6 +68,10 @@ META_COMMENTARY = _TERMS.get("meta_commentary", [])
 PROHIBITED_CLAIM_TERMS = _TERMS.get("prohibited_claim_terms", [])
 # ADVISORY: implicit-superiority absolutes.
 FORBIDDEN_ABSOLUTES = _TERMS.get("forbidden_absolutes", [])
+# ADVISORY: AI-proposalese — reasoning narration and abstract-subject openers
+# (adopted 2026-07-30 from the army-brevity-companion voice retrospective: prose
+# that explains its own significance instead of stating what the actor does).
+AI_PROPOSALESE = _TERMS.get("ai_proposalese", [])
 
 # HIGH: em-/en-dash or "--" as sentence punctuation. "---" rules and "|---|" separators
 # do not match because the double-hyphen forms require surrounding whitespace/word chars.
@@ -75,6 +79,20 @@ _NEVER = r"(?!x)x"  # never-matches, if a pattern is absent from the rules file
 EM_DASH = re.compile(_PATTERNS.get("em_dash", _NEVER))
 # ADVISORY: "leverage" in any form — prefer use/apply/extend.
 LEVERAGE = re.compile(_PATTERNS.get("leverage", _NEVER), re.IGNORECASE)
+# ADVISORY: trailing explainer clause (", which is/means/allows/makes ...") —
+# the claim-then-annotation tail that reads as narrated reasoning. State the
+# point as its own sentence or fold it into the verb.
+EXPLAINER_TAIL = re.compile(_PATTERNS.get("explainer_tail", _NEVER), re.IGNORECASE)
+# ADVISORY: negation-stacked dismissal — a sentence whose payload is a non-event
+# ("...collects no performance data on human operators, so no IRB review is required").
+# The reader decodes two negations to reach one fact. State the affirmative fact and let
+# the negative be the consequence, not the subject. Checked per SENTENCE, not per line,
+# because drafts are hard-wrapped and these constructions routinely span two lines.
+NEGATION_DISMISSAL = re.compile(_PATTERNS.get("negation_dismissal", _NEVER), re.IGNORECASE)
+# ADVISORY: raise-then-permit — "X is not required ... and Y is acceptable". Same family as
+# negation_dismissal: the sentence spends its subject on something that does not happen.
+# Requires BOTH halves, so a bare scope limit ("no VLA is proposed in Phase I") is not flagged.
+RAISE_THEN_PERMIT = re.compile(_PATTERNS.get("raise_then_permit", _NEVER), re.IGNORECASE)
 
 WE_WILL_THRESHOLD = _THRESHOLDS.get("we_will", 8)  # occurrences before it reads as a wall
 REPEATED_OPENING_THRESHOLD = _THRESHOLDS.get("repeated_opening", 3)
@@ -135,6 +153,12 @@ def lint_file(path: Path) -> list[tuple[str, int, str]]:
             if phrase in low:
                 findings.append(("ADVISORY", ln, f"forbidden absolute: '{phrase}' — replace with a quantified, sourced comparison"))
 
+        if EXPLAINER_TAIL.search(line):
+            findings.append(("ADVISORY", ln, "explainer tail (', which is/means/allows...') — state the point as its own sentence with an actor, or fold it into the verb"))
+        for phrase in AI_PROPOSALESE:
+            if phrase in low:
+                findings.append(("ADVISORY", ln, f"AI-proposalese: '{phrase}' — lead with the actor ([Your Company] / the Army / staff) and a strong verb; do not narrate the reasoning"))
+
         we_will += len(re.findall(r"\bwe will\b", low))
 
     if we_will > WE_WILL_THRESHOLD:
@@ -142,6 +166,37 @@ def lint_file(path: Path) -> list[tuple[str, int, str]]:
 
     # Repeated paragraph openings: first 3 words of each body paragraph.
     blob = "\n".join(l for _, l in lines)
+    # Sentence-level check. Rejoin hard-wrapped lines, then map each hit back to the line
+    # the sentence starts on so the report stays actionable.
+    starts, off = [], 0
+    for ln, line in lines:
+        starts.append((off, ln))
+        off += len(line) + 1
+    flat = " ".join(line for _, line in lines)
+
+    def _line_of(pos: int) -> int:
+        best = starts[0][1] if starts else 0
+        for o, ln in starts:
+            if o <= pos:
+                best = ln
+            else:
+                break
+        return best
+
+    for m in RAISE_THEN_PERMIT.finditer(flat):
+        findings.append((
+            "ADVISORY", _line_of(m.start()),
+            "raise-then-permit ('X is not required ... Y is acceptable') — lead with what the "
+            "approach does and what the customer accepts, not with what is absent",
+        ))
+
+    for m in NEGATION_DISMISSAL.finditer(flat):
+        findings.append((
+            "ADVISORY", _line_of(m.start()),
+            "negation-stacked dismissal ('...so no X is required') — the sentence's payload is a "
+            "non-event; state the affirmative fact and let the negative be the consequence",
+        ))
+
     openers: dict[str, int] = {}
     for para in re.split(r"\n\s*\n", blob):
         p = para.strip()

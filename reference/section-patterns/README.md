@@ -8,6 +8,7 @@ One pattern set per proposal-type category. The registry's `section_patterns` fi
 |---|---|---|
 | `full-proposal` | [full-proposal.md](full-proposal.md) | `far-rfp`, `idiq-to`, `cso-full` |
 | `white-paper` | [white-paper.md](white-paper.md) | `white-paper`, `cso-brief`, `ota-white-paper` |
+| `unsolicited-proposal` | [unsolicited-proposal.md](unsolicited-proposal.md) | `unsolicited-proposal` (NEW — FAR Subpart 15.6. Distinct from `white-paper`: an unsolicited *proposal* offers work for a price and carries the fixed 15.603(c)/15.605/15.609 requirement set. The section templates in this file are the reusable shelf skeleton) |
 | `baa` | [baa.md](baa.md) | `baa` |
 | `ota` | [ota.md](ota.md) | `ota-proposal` |
 | `sbir` | [sbir.md](sbir.md) | `sbir-phase1`, `sbir-phase2` |

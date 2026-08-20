@@ -128,7 +128,7 @@ Write `reviews/patch-log.md`:
 | # | Source | Type | Location | Change Summary |
 |---|---|---|---|---|
 | 1 | evidence-check | CLAIM-UNSUPPORTED resolved | drafts/proposed-approach.md L42 | Attached EV-022; claim text unchanged |
-| 2 | gold-team W2 | Weakness addressed | drafts/outcomes-and-value.md §1 | Added "reduces operator decision time by ~40% (EVELYN bench, EV-031)" |
+| 2 | gold-team W2 | Weakness addressed | drafts/outcomes-and-value.md §1 | Added "reduces operator decision time by ~40% ([Reasoning Product] bench, EV-031)" |
 
 ## Blocked / User Action Required
 

@@ -1,0 +1,32 @@
+# Customer alias map — raw customer string  ->  canonical name  ->  why
+#
+# The demand signal brief ranks a capability theme primarily by HOW MANY DISTINCT CUSTOMERS
+# asked for it. That makes the customer string a ranking dimension, not a label: two spellings
+# of one organization silently double its apparent breadth and push a theme up the list.
+#
+# Consumed by scripts/demand_signal_core.py::canonical_customer(). The register keeps the RAW
+# string on every row — this map only affects grouping and counting, so nothing here rewrites
+# history and any mapping can be reversed by editing this file.
+#
+# Format: three TAB-separated columns. Lines starting with # are comments. Blank lines ignored.
+#   alias<TAB>canonical<TAB>note
+#
+# RULE: only map strings that name the SAME buying activity. Different program offices inside
+# one agency are different customers — they hold separate money and write separate
+# requirements — and collapsing them understates real breadth just as badly as duplicate
+# spellings overstate it. When unsure, leave it out; an unmapped name passes through unchanged.
+#
+# Run `python scripts/customer-aliases.py --suggest` to see grouping candidates the register
+# has accumulated. It proposes; it never edits this file.
+
+# ── Exact same organization, two spellings ──────────────────────────────────────────────
+AFLCMC	DAF AFLCMC	Air Force Life Cycle Management Center — the bare form appeared on CRM rows, the DAF-prefixed form on proposal rows.
+
+# ── Deliberately NOT mapped ──────────────────────────────────────────────────────────────
+# Names confirmed as DIFFERENT customers are recorded in reference/customer-distinct.tsv,
+# which is what stops --suggest re-proposing them every week. Currently recorded there:
+# the four AFRL directorates, and the five Army buying activities.
+#
+# Also left alone, and not worth a family entry because nothing resembles them:
+# "U.S. Department of Defense (office unresolved)" — honest about being unresolved. Mapping
+#   it to anything would invent a customer that no document names.

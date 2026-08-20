@@ -76,6 +76,21 @@
     "notes": {
       "type": ["string", "null"],
       "description": "One-line free-text context (e.g., 'stopped at --max-rounds unconverged', 'external round for A/B vs round 2')"
+    },
+    "tier": {
+      "type": ["string", "null"],
+      "enum": ["quick", "full", null],
+      "description": "Optional. Review depth this round ran at: 'quick' (2-persona cheap pass) or 'full' (default panel). Absent on legacy rounds."
+    },
+    "stage": {
+      "type": ["string", "null"],
+      "enum": ["doc", "plan", null],
+      "description": "Optional. Artifact stage reviewed: 'doc' (rendered draft, default) or 'plan' (storyboard / as-planned abstract, Pink-Team). Absent on legacy rounds."
+    },
+    "dimensions": {
+      "type": ["object", "null"],
+      "description": "Optional. Per-dimension convergence state for the round, keyed by dimension (substance / readability / register). Each value is the count of new accepted findings in that dimension, so convergence can be judged per-dimension rather than in aggregate.",
+      "additionalProperties": {"type": "integer", "minimum": 0}
     }
   }
 }

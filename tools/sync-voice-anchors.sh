@@ -65,3 +65,32 @@ echo "  -> $DEST_DOCTRINE_DIR/ (universal doctrine knowledge)"
 [[ -f "$src_lint_rules" ]] && echo "  -> $DEST_LINT_RULES (shared prose-lint rules)"
 echo ""
 echo "Commit the result to record the sync point."
+
+# ---- Company neutralization ----
+# The workbench is a single-company working repo; copilot is the public,
+# company-neutral mirror. Strip identity from everything this script just
+# copied, using the same table tools/sync-from-fpa.sh uses. Only runs when the
+# table is present, so this script stays usable in FPA (where it is absent and
+# the company-specific text is correct).
+NEUTRALIZE_SED="tools/neutralize-company.sed"
+if [[ -f "$NEUTRALIZE_SED" ]]; then
+  for target in "$DEST_DOCTRINE" "$DEST_ANCHORS" "$DEST_DOCTRINE_DIR" "$DEST_LINT_RULES"; do
+    [[ -e "$target" ]] || continue
+    if [[ -d "$target" ]]; then
+      find "$target" -type f -print0 | while IFS= read -r -d '' f; do
+        sed -i -f "$NEUTRALIZE_SED" "$f"
+      done
+    else
+      sed -i -f "$NEUTRALIZE_SED" "$target"
+    fi
+  done
+  echo "neutralized synced doctrine + anchors"
+fi
+
+# Gate: nothing company-identifying may survive into the distributable tree.
+if [[ -x tools/leak-scan.sh ]]; then
+  bash tools/leak-scan.sh || {
+    echo "Sync completed but the tree is NOT publishable." >&2
+    exit 1
+  }
+fi

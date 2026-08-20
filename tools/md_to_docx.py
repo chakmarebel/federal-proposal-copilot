@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-tools/md_to_docx.py — Shared markdown-to-Word converter for federal-proposal-copilot.
+tools/md_to_docx.py — Shared markdown-to-Word converter for federal-proposal-assistant.
 
 Converts proposal draft .md files → .docx in proposals/<slug>/final/docx/.
 
@@ -18,7 +18,7 @@ Usage:
     python tools/md_to_docx.py --proposal myproposal --files sec1.md sec2.md sec3.md
 
     # Explicit workspace root (if running from a different working directory):
-    python tools/md_to_docx.py --proposal myproposal --workspace "C:/path/to/federal-proposal-copilot"
+    python tools/md_to_docx.py --proposal myproposal --workspace "C:/path/to/federal-proposal-assistant"
 
 Supported markdown:
     # H1  ## H2  ### H3  #### H4  ##### H5  ###### H6
@@ -241,15 +241,110 @@ def add_figure(doc: Document, md_path: Path, fig_name: str) -> None:
 
 # ── Core converter ────────────────────────────────────────────────────────────
 
+def strip_html_comments(raw: str) -> str:
+    """
+    Remove HTML comments, but keep `<!-- figure: ... -->` markers, which the
+    render loop turns into embedded images.
+
+    An inline comment sitting between two spaces (the common case: an evidence
+    marker mid-paragraph) collapses to ONE space. Stripping it naively leaves a
+    double space in the rendered document, which the white-glove standard flags
+    and which a reader sees as a typo.
+
+    NOTE: the collapse rule must stay single-line. With re.DOTALL, a `.*?` here
+    backtracks across newlines whenever a comment is followed by a line break
+    instead of a space, swallowing every paragraph up to the next
+    space-followed `-->`. Using [^\\n]*? confines the match to one line. That
+    bug silently deleted 687 characters from a shipped draft while still
+    reporting [OK]; `--selftest` guards it.
+    """
+    raw = re.sub(r'[ \t]+<!--(?!\s*figure:)[^\n]*?-->[ \t]+', ' ', raw)
+    return re.sub(r'<!--(?!\s*figure:).*?-->', '', raw, flags=re.DOTALL)
+
+
+# ── Soft-wrap joining ─────────────────────────────────────────────────────────
+#
+# Markdown treats consecutive non-blank lines as ONE paragraph; only a blank line
+# starts a new one. Authors here hard-wrap prose at ~95 columns, so without this
+# every wrapped line became its own Word paragraph — the reader then had to delete
+# at the end of each line to make a paragraph flow. It also broke inline formatting:
+# add_formatted_runs' spans cannot cross a newline, so a **bold** phrase split by a
+# wrap matched nothing and its asterisks rendered literally into the document.
+
+# Internal metadata lines that are dropped rather than rendered. Hoisted to module
+# scope so _starts_new_block treats them as boundaries instead of swallowing them
+# into the preceding paragraph.
+_SKIP_PATTERNS = (r'^-{3,}$', r'^\*Note', r'^\*\*UNCLASSIFIED\*\*$',
+                  r'^\*UNCLASSIFIED\*$', r'^\*DRAFT\b', r'^\*Technical Execution Annex')
+
+
+def _starts_new_block(line: str) -> bool:
+    """True if `line` begins a new markdown block rather than continuing a paragraph."""
+    s = line.strip()
+    if not s:
+        return True
+    if re.match(r'^#{1,6} ', s):                      # heading
+        return True
+    if re.match(r'^[-*] ', s):                        # bullet
+        return True
+    if re.match(r'^\d+\. ', s):                       # numbered item
+        return True
+    if s.startswith('> ') or s.startswith('```'):     # quote, code fence
+        return True
+    if _is_table_line(s):                             # table row
+        return True
+    if re.match(r'^<!--\s*figure:', s):               # figure marker
+        return True
+    if any(re.match(p, s) for p in _SKIP_PATTERNS):   # dropped metadata
+        return True
+    return False
+
+
+# A continuation line only exists because the line before it hit the wrap column.
+# A line ending well short of that column was broken on purpose — an addressee
+# block ("For: ...", "From: ...", "Date: ..."), an address, a signature. Joining
+# those is as wrong as splitting a paragraph. Drafts here wrap at ~95 columns, so
+# anything reaching 60 is treated as having hit the margin.
+WRAP_JOIN_MIN = 60
+
+
+def _is_hard_break(raw: str) -> bool:
+    """True if the author forced a line break with markdown's two-space convention."""
+    return raw.endswith('  ') and raw.strip() != ''
+
+
+def _continues(prev_raw: str) -> bool:
+    """True if the line after `prev_raw` is a soft-wrap continuation of it."""
+    return len(prev_raw.rstrip()) >= WRAP_JOIN_MIN and not _is_hard_break(prev_raw)
+
+
+def _gather_wrapped(lines: list[str], i: int) -> tuple[str, int]:
+    """Join lines[i] with its soft-wrapped continuations.
+
+    Returns (joined text, index of the first line NOT consumed).
+    """
+    parts = [lines[i].strip()]
+    j = i + 1
+    while (j < len(lines)
+           and not _starts_new_block(lines[j])
+           and _continues(lines[j - 1])):
+        parts.append(lines[j].strip())
+        j += 1
+    return ' '.join(parts), j
+
+
 def convert_md_to_doc(md_path: Path, doc: Document, page_break: bool = False) -> int:
     """
     Parse one markdown file and append its content to doc.
     Returns the number of non-blank lines processed.
     """
     raw = md_path.read_text(encoding="utf-8")
-    # Strip HTML comments — but keep `<!-- figure: ... -->` markers, which the
-    # loop below turns into embedded images.
-    raw = re.sub(r'<!--(?!\s*figure:).*?-->', '', raw, flags=re.DOTALL)
+    # Strip YAML frontmatter (--- ... ---) at the start of the file.
+    if raw.startswith('---'):
+        end = raw.find('\n---', 3)
+        if end != -1:
+            raw = raw[end + 4:]
+    raw = strip_html_comments(raw)
     lines = raw.split('\n')
 
     if page_break:
@@ -267,8 +362,9 @@ def convert_md_to_doc(md_path: Path, doc: Document, page_break: bool = False) ->
             i += 1
             continue
 
-        # Skip internal metadata
-        if stripped.startswith('*Note') or re.match(r'^-{3,}$', stripped):
+        # Skip internal metadata: horizontal rules, *Note lines, classification
+        # markings, and version stamp italic lines at the foot of each document.
+        if any(re.match(p, stripped) for p in _SKIP_PATTERNS):
             i += 1
             continue
 
@@ -334,36 +430,57 @@ def convert_md_to_doc(md_path: Path, doc: Document, page_break: bool = False) ->
         bullet_m = re.match(r'^(\s*)[-*] (.+)', s)
         if bullet_m:
             level = _detect_list_indent(s)
-            _add_list_para(doc, bullet_m.group(2).strip(), "List Bullet", level)
-            line_count += 1; i += 1; continue
+            text, nxt = _gather_wrapped(lines, i)
+            text = re.sub(r'^\s*[-*]\s+', '', text)
+            _add_list_para(doc, text, "List Bullet", level)
+            line_count += nxt - i; i = nxt; continue
 
-        # Numbered list (possibly indented)
+        # Numbered list (possibly indented). Word's "List Number" style shares one
+        # numbering counter across every list in the document, so a second numbered
+        # list continues at 4, 5, 6... Emit the markdown's own literal number instead;
+        # each list then renders exactly as authored.
         num_m = re.match(r'^(\s*)(\d+)\. (.+)', s)
         if num_m:
             level = _detect_list_indent(s)
-            _add_list_para(doc, num_m.group(3).strip(), "List Number", level)
-            line_count += 1; i += 1; continue
+            text, nxt = _gather_wrapped(lines, i)
+            text = re.sub(r'^\s*\d+\.\s+', '', text)
+            para = doc.add_paragraph()
+            para.paragraph_format.left_indent = Inches(0.25 * (level + 1))
+            add_formatted_runs(para, f"{num_m.group(2)}. {text}")
+            line_count += nxt - i; i = nxt; continue
 
         # Blockquote (> ...) — used for action captions
         if stripped.startswith('> '):
+            # Consume every line of the quote, then join — a caption wrapped across
+            # three lines is one paragraph, and its inline markers only resolve once
+            # the lines are joined.
+            qparts = []
+            while i < len(lines) and lines[i].strip().startswith('> '):
+                qparts.append(lines[i].strip()[2:].strip())
+                line_count += 1; i += 1
+                # Same margin test as prose: a quote line that stopped short of the
+                # wrap column ends the quote's current line on purpose.
+                if not _continues(lines[i - 1]):
+                    break
             para = doc.add_paragraph()
             para.paragraph_format.left_indent = Inches(0.4)
             para.paragraph_format.space_before = Pt(2)
             para.paragraph_format.space_after = Pt(2)
             para.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
-            # Style it italic
-            run = para.add_run(stripped[2:].strip())
-            run.italic = True
-            run.font.name = BODY_FONT
-            run.font.size = Pt(10)
-            line_count += 1; i += 1; continue
+            add_formatted_runs(para, ' '.join(qparts))
+            for run in para.runs:          # the whole quote reads as an aside
+                run.italic = True
+                run.font.size = Pt(10)
+            continue
 
-        # Regular paragraph with inline formatting
+        # Regular paragraph with inline formatting. Consume soft-wrapped
+        # continuation lines so the paragraph flows in Word as authored.
+        text, nxt = _gather_wrapped(lines, i)
         para = doc.add_paragraph()
         para.paragraph_format.space_before = Pt(0)
         para.paragraph_format.space_after = Pt(6)
-        add_formatted_runs(para, stripped)
-        line_count += 1; i += 1
+        add_formatted_runs(para, text)
+        line_count += nxt - i; i = nxt
 
     return line_count
 
@@ -381,14 +498,137 @@ def discover_drafts(drafts_dir: Path) -> list[Path]:
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
+def selftest() -> int:
+    """
+    Deterministic, offline guard on strip_html_comments.
+
+    Case 2 is the regression that matters: a comment followed by a newline must
+    not swallow the paragraphs that follow it. Expectations are written against
+    the *rendered* result, so each case is passed through the same
+    `raw_line.rstrip()` the render loop applies — a comment that ends a line
+    leaves a trailing space, and that space never reaches the document.
+    """
+    def rendered(src: str) -> str:
+        return '\n'.join(l.rstrip() for l in strip_html_comments(src).split('\n'))
+
+    cases = [
+        ("inline marker collapses to one space",
+         "A claim. <!-- evidence: EV-001 --> Next.",
+         "A claim. Next."),
+        ("comment before newline does not eat following paragraphs",
+         "Para one. <!-- evidence: EV-001 -->\n\nPara two.\n\nPara three. <!-- x --> end",
+         "Para one.\n\nPara two.\n\nPara three. end"),
+        ("figure markers survive for the image loop",
+         "<!-- figure: fig1.png -->",
+         "<!-- figure: fig1.png -->"),
+        ("multi-line block comment is stripped whole",
+         "Before.\n<!-- PATCH-BLOCKED: multi\nline note -->\nAfter.",
+         "Before.\n\nAfter."),
+        ("two inline markers in one line",
+         "Two <!-- a --> markers <!-- b --> inline.",
+         "Two markers inline."),
+        ("figure marker survives alongside a stripped comment",
+         "Text. <!-- evidence: EV-002 -->\n<!-- figure: fig2.png -->",
+         "Text.\n<!-- figure: fig2.png -->"),
+    ]
+
+    failures = []
+    for label, src, want in cases:
+        got = rendered(src)
+        status = "ok " if got == want else "FAIL"
+        print(f"  [{status}] {label}")
+        if got != want:
+            failures.append((label, src, got, want))
+
+    for label, src, got, want in failures:
+        print(f"\n  {label}\n    in  : {src!r}\n    got : {got!r}\n    want: {want!r}")
+
+    failures += _selftest_softwrap()
+
+    print("selftest:", "PASS" if not failures else "FAIL")
+    return 0 if not failures else 1
+
+
+def _selftest_softwrap() -> list:
+    """Guard the soft-wrap join.
+
+    Drafts here are hard-wrapped at ~95 columns. Before this join every wrapped
+    line became its own Word paragraph, so prose arrived in Word as a column of
+    short lines the reader had to repair by hand — and any inline span split by a
+    wrap (**bold** most often) failed to match and leaked its asterisks into the
+    document. Both symptoms have one cause, so both are asserted here.
+    """
+    import tempfile
+    from docx import Document as _Doc
+
+    # Lines are written at the ~95-column width the drafts actually use, because
+    # the join is decided by whether a line reached the wrap column.
+    src = (
+        "For: Scott Shaul, MASS Group\n"
+        "From: Bill Bal, [Your Company]\n"
+        "Date: 17 August 2026\n"
+        "\n"
+        "Drop-in blocks keyed to the current draft. Blocks A-C sit in Section 5 of the paper, and\n"
+        "Block D appends to Section 6.\n"
+        "\n"
+        "The score updates as the floor runs, closing the gap between a self-assessed MRL 5-6 and a\n"
+        "**structurally evident MRL 7** that a program office can audit.\n"
+        "\n"
+        "- A bullet long enough to reach the wrap column and therefore continue onto a second\n"
+        "  source line without starting anything new.\n"
+        "- A short bullet.\n"
+        "\n"
+        "> *Figure 1. One platform advances all four readiness clocks from a single capture.* The\n"
+        "> evidence is a byproduct of the same digital work execution that runs the floor.\n"
+    )
+
+    with tempfile.TemporaryDirectory() as td:
+        md = Path(td) / "s.md"
+        md.write_text(src, encoding="utf-8")
+        doc = _Doc()
+        setup_document(doc)
+        convert_md_to_doc(md, doc)
+        paras = [p for p in doc.paragraphs if p.text.strip()]
+        joined = " ".join(p.text for p in paras)
+
+    checks = [
+        ("wrapped paragraph becomes one paragraph",
+         "Section 5 of the paper, and Block D appends to Section 6." in joined),
+        ("short deliberate lines stay separate",
+         any(p.text.strip() == "For: Scott Shaul, MASS Group" for p in paras)
+         and any(p.text.strip() == "Date: 17 August 2026" for p in paras)),
+        ("wrapped bullet becomes one list item",
+         any("wrap column and therefore continue onto a second source line" in p.text
+             for p in paras)),
+        ("bullet count is not inflated by wrapping",
+         sum(1 for p in paras if p.style.name == "List Bullet") == 2),
+        ("bold split across a wrap resolves to a bold run",
+         any(r.bold and "structurally evident" in r.text for p in paras for r in p.runs)),
+        ("no literal markdown reaches the document",
+         "**" not in joined and "*Figure" not in joined),
+        ("wrapped blockquote becomes one italic paragraph",
+         any("single capture. The evidence is a byproduct" in p.text
+             and all(r.italic for r in p.runs) for p in paras)),
+    ]
+
+    failures = []
+    for label, passed in checks:
+        print(f"  [{'ok ' if passed else 'FAIL'}] {label}")
+        if not passed:
+            failures.append((label, "<soft-wrap sample>", "see above", "joined output"))
+    return failures
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Convert proposal markdown drafts to Word .docx files.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
-    parser.add_argument("--proposal", required=True,
+    parser.add_argument("--proposal",
                         help="Proposal slug (directory name under proposals/)")
+    parser.add_argument("--selftest", action="store_true",
+                        help="run deterministic offline self-test on comment stripping")
     parser.add_argument("--mode", choices=["individual", "combined", "both"],
                         default="both",
                         help="Output mode (default: both)")
@@ -398,9 +638,14 @@ def main():
                         help="Explicit ordered file list (names relative to drafts/). "
                              "Overrides auto-discovery.")
     parser.add_argument("--workspace", default=None,
-                        help="Path to federal-proposal-copilot root. "
+                        help="Path to federal-proposal-assistant root. "
                              "Defaults to the parent of the tools/ directory.")
     args = parser.parse_args()
+
+    if args.selftest:
+        return selftest()
+    if not args.proposal:
+        parser.error("--proposal is required (or use --selftest)")
 
     # Resolve paths
     workspace = Path(args.workspace) if args.workspace else WORKSPACE_ROOT

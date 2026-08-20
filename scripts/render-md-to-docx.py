@@ -52,6 +52,14 @@ except ImportError as e:
     print("Make sure tools/md_to_docx.py exists and python-docx is installed.", file=sys.stderr)
     sys.exit(2)
 
+# Standard white-glove pass (tools/polish_docx.py): content-proportional table
+# widths, repeating header rows, unsplit rows, tight cell spacing, 1" margins.
+# Applied to every render; degrades gracefully if the tool is missing.
+try:
+    from polish_docx import whiteglove  # type: ignore
+except ImportError:
+    whiteglove = None
+
 try:
     from docx import Document
 except ImportError:
@@ -75,6 +83,46 @@ REVIEW_GLOBS = [
 ]
 
 
+SECTION_SIGN = "§"
+
+
+def strip_section_sign(doc) -> int:
+    """Replace the section-sign glyph with the word 'Section' throughout a Document.
+
+    Standing workspace rule: the section-sign character must never appear in a rendered
+    output. Source material legitimately contains it (solicitations quote statutes that way),
+    so the guard lives here, at the render boundary, rather than in the sources.
+
+    Returns the number of runs changed.
+    """
+    def fix(text: str) -> str:
+        out = (text.replace(SECTION_SIGN + SECTION_SIGN + " ", "Sections ")
+                   .replace(SECTION_SIGN + SECTION_SIGN, "Sections ")
+                   .replace(SECTION_SIGN + " ", "Section ")
+                   .replace(SECTION_SIGN, "Section "))
+        return out.replace("  ", " ")
+
+    changed = 0
+
+    def walk(paragraphs):
+        nonlocal changed
+        for para in paragraphs:
+            for run in para.runs:
+                if SECTION_SIGN in run.text:
+                    run.text = fix(run.text)
+                    changed += 1
+
+    walk(doc.paragraphs)
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                walk(cell.paragraphs)
+    for section in doc.sections:
+        for part in (section.header, section.footer):
+            walk(part.paragraphs)
+    return changed
+
+
 def render_one(md_path: Path, docx_path: Path, force: bool = False) -> tuple[bool, str]:
     """Render md_path → docx_path. Returns (rendered, reason)."""
     if not md_path.exists():
@@ -90,8 +138,12 @@ def render_one(md_path: Path, docx_path: Path, force: bool = False) -> tuple[boo
     doc = Document()
     setup_document(doc)
     n = convert_md_to_doc(md_path, doc)
+    if whiteglove is not None:
+        whiteglove(doc)
+    fixed = strip_section_sign(doc)
     doc.save(docx_path)
-    return True, f"{n} lines"
+    suffix = f", {fixed} section-sign run(s) replaced" if fixed else ""
+    return True, f"{n} lines{suffix}"
 
 
 def target_path(md_path: Path, docx_subdir: bool) -> Path:

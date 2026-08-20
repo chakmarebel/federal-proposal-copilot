@@ -58,6 +58,7 @@ Recommended workflow:
 - `working/capture-intent.md` — if `/capture-intent` was run (drives belief objectives + prohibited claims).
 - `working/graphics-brief.md` — if `/proposal-graphics` was run.
 - `reference/proposal-conventions/<vehicle-id>.md` — if convention file exists for this type.
+- `reference/doctrine/acquisition-guidance-catalog.md` — apply its Applicability Matrix for this `type_id` to decide which acquisition guidance a section must answer (drives the **Acquisition Anchor** field below). For DoD software efforts this is where the SWP MVP/MVCR cadence and, for Navy, RAISE 2.0 edge-ConMon become section-level discriminators.
 - `reference/editorial-voice-guide.md` — for tone-section calibration.
 - `my-company/evidence-ledger.json` — only if Phase C evidence is enabled.
 
@@ -107,7 +108,11 @@ For each required section, produce:
 
 **Evaluated Strength to Earn:** <the specific Strength or Significant Strength finding a mock evaluator should write after reading this section — one sentence, in S/W/D language>
 
+**Acceptance Measure:** <the verifiable, countable commitment this section makes that an evaluator (or the Government at acceptance) could test — e.g., "onboard a model in ≤5 business days; two apps invoke ≥3 endpoints through one API"; or "None" for non-scoring sections. Calibration evidence (DIA DMA 2026-07): the acceptance-measure idiom was the single highest-leverage addition between initial cut and submission — the writer MUST emit this field's commitment in the section's prose.>
+
 **Discriminator:** <why us vs. likely competitors for these factors, or "None">
+
+**Acquisition Anchor:** <govt guidance this section must visibly answer, per the acquisition-guidance-catalog Applicability Matrix — e.g., "DoDI 5000.87: commit MVCR ≤12 mo + annual cadence", "RAISE 2.0: edge ConMon via stage-sync", "GAO-20-195G: state cost basis/method", or "None"; keep ATO/IL claims evidence-cited>
 
 **Evaluation Factor / Scoring Tie:** <Section M factor, AOI, CSO criterion, SBIR merit factor, or reader concern — free-text context behind the Target Evaluation Factors above>
 
